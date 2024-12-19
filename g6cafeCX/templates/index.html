@@ -5,6 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G6 Cafe - Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .carousel {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-inner img {
+            width: 100%;
+            flex-shrink: 0;
+            transition: box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out;
+            cursor: pointer; /* Make the images clickable */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Default shadow */
+        }
+
+        /* Make all images visible initially */
+        .carousel-inner img {
+            opacity: 1;
+        }
+
+        .carousel-inner img:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow on hover */
+        }
+
+        /* Style when mouse hovers over the carousel */
+        .carousel:hover .carousel-inner {
+            transform: translateX(-100%); /* Move the images to the left */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -12,7 +50,6 @@
         <nav>
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="#">Promotion</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50"></a>
         </nav>
     </header>
@@ -24,18 +61,9 @@
         </a>
     </section>
 
-<!-- Best Sellers -->
+    <!-- Best Sellers -->
     <section class="best-sellers">
-    <!-- Additional Navigation -->
-    <div class="best-seller-navigation">
-        <a href="#coffee" class="nav-link"><img src="/static/images/coffee.png" alt="coffe"></a>
-        <a href="#tea" class="nav-link"><img src="/static/images/tea.png" alt="tea"></a>
-        <a href="ice blended" class="nav-link"><img src="/static/images/ice blended.png" alt="ice blended"></a>
-        <a href="pasta" class="nav-link"><img src="/static/images/pasta.png" alt="pasta"></a>
-        <a href="pastries" class="nav-link"><img src="/static/images/pastries.png" alt="pastries" ></a>
-    </div>
-
-    <h3>~~~Our Best Seller~~~</h3>
+    <h3 class="best-sellers-title">🌟 Our Best Seller – Loved by Everyone! 🌟</h3>
     <div class="products">
         <div class="product-card" id="coffee">
             <img src="/static/images/double espresso.png" alt="Double Espresso">
@@ -68,36 +96,63 @@
             <button>Add to Cart</button>
         </div>
     </div>
-</section>
-<script>
-        // Fetch menu items from the Flask backend
-        fetch('/menu')
-            .then(response => response.json())
-            .then(data => {
-                const menuContainer = document.getElementById('menu-items');
-                menuContainer.innerHTML = ''; // Clear loading text
+    </section>
 
-                data.forEach(item => {
-                    const menuItem = document.createElement('div');
-                    menuItem.classList.add('menu-item');
 
-                    const image = item.photo ? `<img src="/static/photo/${item.photo}" alt="${item.item_name}">` : '';
-                    menuItem.innerHTML = `
-                        ${image}
-                        <h4>${item.item_name}</h4>
-                        <p>Category: ${item.category_name}</p>
-                        <p>Price: P${parseFloat(item.unit_price).toFixed(2)}</p>
-                        <button>Add to Cart</button>
-                    `;
+    <!-- Promo Section with Carousel -->
+    <section class="promo">
+    <h3 class="promo-title">🎉 Unwrap Amazing Deals Now! 🎁</h3>
+    <div class="carousel">
+        <div class="carousel-inner">
+            <img src="/static/images/promo1.png" alt="Promo 1">
+            <img src="/static/images/promo2.png" alt="Promo 2">
+            <img src="/static/images/promo3.png" alt="Promo 3">
+        </div>
+    </div>
+    </section>
 
-                    menuContainer.appendChild(menuItem);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching menu:', error);
-                document.getElementById('menu-items').innerHTML = '<p>Error loading menu.</p>';
+
+    <script>
+        const carousel = document.querySelector('.carousel-inner');
+        const images = document.querySelectorAll('.carousel-inner img');
+        let index = 0;
+
+        // Function to update the carousel by sliding to the correct image
+        function updateCarousel() {
+            const offset = -index * 100;
+            carousel.style.transform = `translateX(${offset}%)`;
+
+            // Adjust scale and opacity based on the active image
+            images.forEach((image, i) => {
+                if (i === index) {
+                    image.style.transform = "scale(1)";
+                    image.style.opacity = "1";
+                } else {
+                    image.style.transform = "scale(0.8)";
+                    image.style.opacity = "0.6";
+                }
             });
+        }
+
+        // Function to move to the next image
+        function nextImage() {
+            index = (index < images.length - 1) ? index + 1 : 0;
+            updateCarousel();
+        }
+
+        // Function to handle clicking on the images
+        function handleImageClick() {
+            nextImage();
+        }
+
+        // Attach click event to each image in the carousel
+        images.forEach(image => {
+            image.addEventListener('click', handleImageClick);
+        });
+
+        // Automatically slide to the next image every 5 seconds
+        setInterval(nextImage, 5000);  // Change image every 5 seconds
     </script>
+
 </body>
 </html>
-

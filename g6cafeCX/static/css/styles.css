@@ -42,6 +42,7 @@ nav a {
 .hero h2 {
     width: 100%; /* Ensures that the text can take up the full width */
     text-align: justify; /* Justify the words in the text */
+    margin-left: 100px; /* Add margin to the left for the text only */
 }
 
 .container {
@@ -50,20 +51,38 @@ nav a {
 
 }
 
+@keyframes animateText {
+    0% {
+        color: white;
+        transform: translateY(0);
+    }
+    50% {
+        color: #f0a500;  /* Change to a golden color at the halfway point */
+        transform: translateY(-5px);  /* Move the text up slightly */
+    }
+    100% {
+        color: white;
+        transform: translateY(0);  /* Reset to original position */
+    }
+}
+
 .btn {
     position: absolute;
     right: 100px;  /* Adjust the right distance */
-    top: 40%;  /* Position the button at the vertical center */
+    top: 30%;  /* Position the button at the vertical center */
     transform: translateY(-50%);  /* Adjust to exact center */
-    width: 200px;  /* Adjust the width */
-    height: 50px;  /* Adjust the height */
+    width: 300px;  /* Adjust the width */
+    height: 70px;  /* Adjust the height */
     background-color: #ad8c5c;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 16px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 50px;  /* Vertically center the text */
+    animation: animateText 2s infinite;  /* Apply animation */
 }
 
 /* Hover effect */
@@ -108,7 +127,7 @@ nav a {
     height: 150px; /* Fixed height for all images */
     object-fit: cover; /* Ensures the image fits and crops if needed */
     border-radius: 5px; /* Optional rounded corners */
-    
+
 }
 .menu-items {
             display: flex;
@@ -185,7 +204,42 @@ nav a {
     flex-direction: column;  /* Align children vertically */
 }
 
+/* Add some basic styles for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/opacity */
+        }
 
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
 h2, h3 {
     text-align: center;
@@ -261,9 +315,88 @@ button:hover {
 .best-seller-navigation a {
     padding: 5px;
 }
-/* Checkout Section Styles */
+/* Best Sellers Title with Blinking Animation */
+.best-sellers-title {
+    font-size: 32px; /* Larger font for visibility */
+    text-align: center;
+    color: #FF5733; /* Bright, eye-catching color */
+    animation: blink 1s step-start infinite; /* Blinking effect */
+    margin-bottom: 20px; /* Space below the title */
+}
+
+/* Blinking Keyframes for the title */
+@keyframes blink {
+    0% {
+        opacity: 1; /* Fully visible */
+    }
+    50% {
+        opacity: 0; /* Invisible */
+    }
+    100% {
+        opacity: 1; /* Fully visible again */
+    }
+}
+/* Animation for the promo title */
+.promo-title {
+    font-size: 32px; /* Larger font for emphasis */
+    text-align: center;
+    color: #FF5733; /* Bright color for attention */
+    animation: blink 1s step-start infinite; /* Blinking animation */
+}
+
+/* Keyframes for blinking effect */
+@keyframes blink {
+    0% {
+        opacity: 1; /* Fully visible */
+    }
+    50% {
+        opacity: 0; /* Invisible */
+    }
+    100% {
+        opacity: 1; /* Fully visible again */
+    }
+}
+
+
+/* Layout for Checkout Section */
+        .checkout-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .checkout-form {
+            width: 60%; /* 60% for the checkout form */
+        }
+
+        .order-summary {
+            width: 35%; /* 35% for the order summary */
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .order-summary h3 {
+            margin-top: 0;
+        }
+
+        .order-summary p {
+            margin: 5px 0;
+        }
+
+        .order-summary button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .order-summary button:hover {
+            background-color: #45a049;
+        }
 .checkout {
-    max-width: 800px;
+    max-width: 1200px;
     background: #fff;
     margin: 40px auto;
     padding: 20px;
@@ -294,7 +427,7 @@ button:hover {
 .checkout label input[type="email"],
 .checkout label input[type="tel"],
 .checkout label input[type="date"] {
-    width: 97%;
+    width: 90%;
     padding: 10px;
     margin-top: 1px;
     border: 1px solid #ccc;
@@ -317,7 +450,7 @@ button:hover {
 
 button[type="submit"] {
     display: block;
-    width: 100%;
+    width: 55%; /* Adjust button width */
     background-color: #333;
     color: #fff;
     border: none;
@@ -326,8 +459,9 @@ button[type="submit"] {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 20px;
+    margin: 20px auto; /* Horizontally center the button and add margin on top/bottom */
 }
+
 
 button[type="submit"]:hover {
     background-color: #444;
@@ -386,5 +520,65 @@ button[type="submit"]:hover {
     text-decoration: none;
     cursor: pointer;
 }
+/* Style for modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    position: relative;
+}
+/* Modal image styling */
+#modal-item-photo {
+    width: 200px;  /* Set the width of the image */
+    height: 200px; /* Set the height of the image */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 5px; /* Optional: adds rounded corners */
+    margin-bottom: 10px; /* Space below the image */
+}
+
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Form styles */
+textarea {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
 
 

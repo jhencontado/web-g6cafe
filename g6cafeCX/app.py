@@ -51,6 +51,11 @@ def menu():
 def cart():
     return render_template('cart.html')
 
+@app.route('/checkout')
+def checkout():
+    return render_template('checkout.html')
+
+
 @app.route('/api/menu', methods=['GET'])
 def get_menu():
     category = request.args.get('category')
