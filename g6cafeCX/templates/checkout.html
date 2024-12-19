@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G6 Cafe - Checkout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>G6 Cafe</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('menu') }}">Menu</a>
+            <a href="#">Promotion</a>
+            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
+        </nav>
+    </header>
+
+    <section class="checkout">
+        <h2>Checkout</h2>
+        <form id="checkout-form" action="#" method="POST">
+            <!-- Pick Up & Delivery Option -->
+            <h3>Pick Up & Delivery Option</h3>
+            <label>
+                <input type="radio" name="option" value="standard" required> Pick-up (10 mins)
+            </label>
+            <label>
+                <input type="radio" name="option" value="scheduled"> Scheduled Pick up
+                <input type="date" name="pickup_date">
+            </label>
+            <label>
+                <input type="radio" name="option" value="delivery"> Delivery
+            </label>
+            <label>
+                <input type="radio" name="option" value="scheduled_delivery"> Scheduled Delivery
+                <input type="date" name="delivery_date">
+            </label>
+
+            <div id="delivery_address_section" style="display:none;">
+                <h4>Delivery Address</h4>
+                <input type="text" name="address" placeholder="Enter your address" required>
+            </div>
+
+            <!-- Personal Details -->
+            <h3>Personal Details</h3>
+            <label>Full Name: <input type="text" name="name" required></label>
+            <label>Email: <input type="email" name="email"></label>
+            <label>Contact Number: <input type="tel" name="contact" required></label>
+
+            <!-- Order Summary -->
+            <h3>Order Summary</h3>
+            <div id="order-summary"></div>
+            <p id="total-amount">Total: P0.00</p>
+
+            <!-- Payment Details -->
+            <h3>Payment</h3>
+            <label>
+                <input type="radio" name="payment" value="cash" required> Cash (Pay in store)
+            </label>
+            <label>
+                <input type="radio" name="payment" value="gcash"> GCash (Pay online)
+            </label>
+            <label>
+                <input type="radio" name="payment" value="debit/creditcard"> Debit/Credit Card (Pay online)
+            </label>
+
+            <!-- Card Details (hidden by default) -->
+            <div id="card-details" class="payment-details">
+                <h4>Card Details</h4>
+                <label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" required></label>
+                <label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" required></label>
+                <div class="expiration-container">
+                    <label>Expiration Month:
+                        <select name="expiration_month" required>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </label>
+                    <label>Expiration Year:
+                        <select name="expiration_year" required>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                            <option value="2031">2031</option>
+                            <option value="2032">2032</option>
+                        </select>
+                    </label>
+                </div>
+                <label>CVV: <input type="text" name="cvv" maxlength="3" placeholder="CVV" required></label>
+            </div>
+
+            <button type="submit">Place Order</button>
+        </form>
+    </section>
+
+    <script>
+        // JavaScript to handle loading the cart summary and processing the checkout
+        document.addEventListener('DOMContentLoaded', loadOrderSummary);
+
+        function loadOrderSummary() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const orderSummaryElement = document.getElementById('order-summary');
+            const totalAmountElement = document.getElementById('total-amount');
+            orderSummaryElement.innerHTML = '';
+
+            let total = 0;
+
+            cartItems.forEach(item => {
+                const summaryItemElement = document.createElement('p');
+                summaryItemElement.innerHTML = `${item.quantity}x ${item.itemName} - P${parseFloat(item.itemPrice * item.quantity).toFixed(2)}`;
+                orderSummaryElement.appendChild(summaryItemElement);
+                total += item.itemPrice * item.quantity;
+            });
+
+            totalAmountElement.textContent = `Total: P${total.toFixed(2)}`;
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Order placed successfully!');
+            localStorage.removeItem('cart');
+            window.location.href = 'index.html';
+        });
+
+        // JavaScript to display/hide sections based on the selected option
+        const optionRadioButtons = document.querySelectorAll('input[name="option"]');
+        const deliveryAddressSection = document.getElementById("delivery_address_section");
+
+        optionRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "delivery" || this.value === "scheduled_delivery") {
+                    deliveryAddressSection.style.display = 'block';
+                } else {
+                    deliveryAddressSection.style.display = 'none';
+                }
+            });
+        });
+
+        // Show or hide card details for debit/credit card payment
+        const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
+        const cardDetailsSection = document.getElementById("card-details");
+
+        paymentRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "debit/creditcard") {
+                    cardDetailsSection.style.display = 'block';
+                } else {
+                    cardDetailsSection.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

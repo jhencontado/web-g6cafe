@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G6 Cafe - Cart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>G6 Cafe</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('menu') }}">Menu</a>
+            <a href="#">Promotion</a>
+            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
+        </nav>
+    </header>
+
+    <section class="cart">
+        <h2>Your Cart</h2>
+        <div id="cart-items">No items in cart.</div>
+        <div id="cart-summary">
+            <h3>Order Summary</h3>
+            <p id="cart-total">Total: P0.00</p>
+            <button onclick="checkout()">Checkout</button>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G6 Cafe - Cart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>G6 Cafe</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="menu.html">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Cart Section -->
+    <section class="cart">
+        <h2>Your Cart</h2>
+        <!-- Cart Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Dynamic cart rows will go here -->
+            </tbody>
+        </table>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+            <h3>Order Summary</h3>
+            <p>Total Items: <span id="total-items">0</span></p>
+            <p>Total Price: <span id="total-price">P0.00</span></p>
+            <a href="checkout.html">
+            <button id="checkout-button" aria-label="Proceed to checkout">Proceed to Checkout</button>
+            </a>
+        </div>
+    </section>
+
+    <script>
+       // Retrieve the cart data from localStorage
+    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Populate Cart Items
+    const cartItemsContainer = document.getElementById("cart-items");
+    const totalItemsSpan = document.getElementById("total-items");
+    const totalPriceSpan = document.getElementById("total-price");
+
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    // Check if there are items in the cart
+    if (cartData.length === 0) {
+        // Show a message if the cart is empty
+        cartItemsContainer.innerHTML = "<tr><td colspan='4'>Your cart is empty.</td></tr>";
+    } else {
+        cartData.forEach(item => {
+            // Calculate subtotal for each item
+            const subtotal = item.quantity * item.price;
+
+            // Create a table row for each item
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>P${item.price.toFixed(2)}</td>
+                <td>P${subtotal.toFixed(2)}</td>
+            `;
+
+            // Append row to table
+            cartItemsContainer.appendChild(row);
+
+            // Update totals
+            totalItems += item.quantity;
+            totalPrice += subtotal;
+        });
+    }
+
+// Update totals in the cart summary
+totalItemsSpan.textContent = totalItems;
+totalPriceSpan.textContent = `P${totalPrice.toFixed(2)}`;
+
+// Checkout button functionality
+const checkoutButton = document.getElementById("checkout-button");
+checkoutButton.addEventListener("click", () => {
+    if (cartData.length > 0) {
+        alert("Proceeding to Checkout. Thank you for your order!");
+    } else {
+        alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
+    }
+});
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G6 Cafe - Checkout</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>G6 Cafe</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="menu.html">Menu</a>
+            <a href="#">Promotion</a>
+            <a href="cart.html"><img src="cart.png" height=50px></a>
+        </nav>
+    </header>
+
+    <!-- Checkout Form -->
+    <section class="checkout">
+    <h2>Checkout</h2>
+    <form action="#" method="POST">
+        <!-- Pick Up & Delivery Option -->
+        <h3>Pick Up & Delivery Option</h3>
+        <label>
+            <input type="radio" name="option" value="standard" >Pick-up (10 mins)
+        </label>
+        <label>
+            <input type="radio" name="option" value="scheduled"> Scheduled Pick up
+            <input type="date" name="pickup_date">
+        </label>
+        <label>
+            <input type="radio" name="option" value="delivery"> Delivery
+        </label>
+        <label>
+            <input type="radio" name="option" value="scheduled_delivery"> Scheduled Delivery
+            <input type="date" name="delivery_date">
+        </label>
+
+        <div id="delivery_address_section" style="display:none;">
+            <h4>Delivery Address</h4>
+            <input type="text" name="address" placeholder="Enter your address" required>
+        </div>
+
+        <!-- Personal Details -->
+        <h3>Personal Details</h3>
+        <label>Full Name: <input type="text" name="name" required></label>
+        <label>Email: <input type="email" name="email"></label> <!-- Email is now optional -->
+        <label>Contact Number: <input type="tel" name="contact" required></label>
+
+        <!-- Order Details -->
+        <h3>Order Details</h3>
+        <p>1x Double Espresso - P125.00</p>
+        <p>Total: <strong>P125.00</strong></p>
+
+        <!-- Payment Details -->
+        <h3>Payment</h3>
+        <label>
+            <input type="radio" name="payment" value="cash"> Cash (Pay in store)
+        </label>
+        <label>
+            <input type="radio" name="payment" value="gcash"> GCash (Pay online)
+        </label>
+        <label>
+            <input type="radio" name="payment" value="debit/creditcard"> Debit/Credit Card (Pay online)
+        </label>
+
+        <!-- Card Details (hidden by default) -->
+        <div id="card-details" class="payment-details">
+            <h4>Card Details</h4>
+            <label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" required></label>
+            <label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" required></label>
+            <div class="expiration-container">
+                <label>Expiration Month:
+                    <select name="expiration_month" required>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                </label>
+                <label>Expiration Year:
+                    <select name="expiration_year" required>
+                        <!-- Dynamically generate years from the current year up to 10 years ahead -->
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                        <option value="2031">2031</option>
+                        <option value="2032">2032</option>
+                    </select>
+                </label>
+            </div>
+            <label>CVV: <input type="text" name="cvv" maxlength="3" placeholder="CVV" required></label>
+        </div>
+
+        <button type="submit">Place Order</button>
+    </form>
+    </section>
+
+    <script>
+        // JavaScript to display/hide sections based on the selected option
+        const optionRadioButtons = document.querySelectorAll('input[name="option"]');
+        const deliveryAddressSection = document.getElementById("delivery_address_section");
+
+        // Show or hide the delivery address input for delivery option
+        optionRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                // Show or hide delivery address based on the selected option
+                if (this.value === "delivery" || this.value === "scheduled_delivery") {
+                    deliveryAddressSection.style.display = 'block'; // Show delivery address
+                } else {
+                    deliveryAddressSection.style.display = 'none'; // Hide delivery address
+                }
+            });
+        });
+
+        // Show or hide card details for debit/credit card payment
+        const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
+        const cardDetailsSection = document.getElementById("card-details");
+
+        paymentRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "debit/creditcard") {
+                    cardDetailsSection.style.display = 'block'; // Show card details
+                } else {
+                    cardDetailsSection.style.display = 'none'; // Hide card details
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
