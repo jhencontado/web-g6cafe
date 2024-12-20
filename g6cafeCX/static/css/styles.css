@@ -42,7 +42,8 @@ nav a {
 .hero h2 {
     width: 100%; /* Ensures that the text can take up the full width */
     text-align: justify; /* Justify the words in the text */
-    margin-left: 100px; /* Add margin to the left for the text only */
+    margin-left: 150px; /* Add margin to the left for the text only */
+    letter-spacing: 7px; /* Adjust the value to set the desired spacing */
 }
 
 .container {
@@ -94,9 +95,10 @@ nav a {
 .products, .menu-items {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 80px 20px;
     flex-wrap: wrap;
-
+    max-width: 1000px; /* Adjust the container width to fit four items */
+    margin: 0 auto; /* Center the container */
 }
 
 .product-card, .menu-item {
@@ -315,48 +317,20 @@ button:hover {
 .best-seller-navigation a {
     padding: 5px;
 }
-/* Best Sellers Title with Blinking Animation */
+
 .best-sellers-title {
     font-size: 32px; /* Larger font for visibility */
     text-align: center;
-    color: #FF5733; /* Bright, eye-catching color */
-    animation: blink 1s step-start infinite; /* Blinking effect */
+    color: #8d6e63; /* Bright, eye-catching color */
     margin-bottom: 20px; /* Space below the title */
 }
 
-/* Blinking Keyframes for the title */
-@keyframes blink {
-    0% {
-        opacity: 1; /* Fully visible */
-    }
-    50% {
-        opacity: 0; /* Invisible */
-    }
-    100% {
-        opacity: 1; /* Fully visible again */
-    }
-}
-/* Animation for the promo title */
 .promo-title {
     font-size: 32px; /* Larger font for emphasis */
     text-align: center;
-    color: #FF5733; /* Bright color for attention */
+    color: #8d6e63; /* Bright color for attention */
     animation: blink 1s step-start infinite; /* Blinking animation */
 }
-
-/* Keyframes for blinking effect */
-@keyframes blink {
-    0% {
-        opacity: 1; /* Fully visible */
-    }
-    50% {
-        opacity: 0; /* Invisible */
-    }
-    100% {
-        opacity: 1; /* Fully visible again */
-    }
-}
-
 
 /* Layout for Checkout Section */
         .checkout-container {
@@ -506,7 +480,14 @@ button[type="submit"]:hover {
     border: 1px solid #888;
     width: 80%;
 }
-
+/* Modal image styling */
+#modal-item-photo {
+    width: 100px;  /* Set the width of the image */
+    height: 100px; /* Set the height of the image */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 5px; /* Optional: adds rounded corners */
+    margin-bottom: 10px; /* Space below the image */
+}
 .close-button {
     color: #aaa;
     float: right;
@@ -518,46 +499,6 @@ button[type="submit"]:hover {
 .close-button:focus {
     color: black;
     text-decoration: none;
-    cursor: pointer;
-}
-/* Style for modal overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Modal content */
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-    position: relative;
-}
-/* Modal image styling */
-#modal-item-photo {
-    width: 200px;  /* Set the width of the image */
-    height: 200px; /* Set the height of the image */
-    object-fit: cover; /* Ensures the image covers the area without distortion */
-    border-radius: 5px; /* Optional: adds rounded corners */
-    margin-bottom: 10px; /* Space below the image */
-}
-
-
-/* Close button */
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
     cursor: pointer;
 }
 

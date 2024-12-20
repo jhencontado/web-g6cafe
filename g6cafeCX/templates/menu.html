@@ -48,48 +48,5 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-<script>
-        // This script will be used to open and close the modal for adding to cart
-        function openModal(item) {
-            const modal = document.getElementById('cart-modal');
-            const itemName = document.getElementById('modal-item-name');
-            const itemPrice = document.getElementById('modal-item-price');
-            const itemPhoto = document.getElementById('modal-item-photo');
-
-            itemName.textContent = item.name;
-            itemPrice.textContent = `Price: ${item.price}`;
-            itemPhoto.src = item.photo;
-
-            modal.style.display = 'block'; // Show the modal
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('cart-modal');
-            modal.style.display = 'none'; // Hide the modal
-        }
-
-        // Function to generate menu items and attach the modal trigger
-        const menuItems = [
-            { name: 'Double Espresso', price: 'P125.00', photo: '/static/images/double espresso.png' },
-            { name: 'Matcha Cream', price: 'P135.00', photo: '/static/images/matcha cream.png' },
-            { name: 'Latte', price: 'P175.00', photo: '/static/images/latte.png' },
-            { name: 'Lasagna', price: 'P160.00', photo: '/static/images/lasagna.jpg' },
-            { name: 'Ravioli', price: 'P200.00', photo: '/static/images/ravioli.jpg' }
-        ];
-
-        const menuItemsContainer = document.getElementById('menu-items');
-
-        menuItems.forEach(item => {
-            const productCard = document.createElement('div');
-            productCard.classList.add('product-card');
-            productCard.innerHTML = `
-                <img src="${item.photo}" alt="${item.name}">
-                <h4>${item.name}</h4>
-                <p>${item.price}</p>
-                <button onclick="openModal(${JSON.stringify(item)})">Add to Cart</button>
-            `;
-            menuItemsContainer.appendChild(productCard);
-        });
-    </script>
 </body>
 </html>
