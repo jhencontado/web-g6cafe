@@ -205,6 +205,52 @@ nav a {
     align-items: center;     /* Centers vertically (optional) */
     flex-direction: column;  /* Align children vertically */
 }
+.cart-summary {
+    width: 100%;
+    max-width: 600px; /* Set a maximum width */
+    min-width: 300px; /* Set a minimum width */
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+.cart-summary h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cart-summary p {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.cart-summary p span {
+    font-weight: bold;
+    color: #000;
+}
+
+.cart-summary button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #45a049;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cart-summary button:hover {
+    background-color: #6d4c41;
+}
 
 /* Add some basic styles for the modal */
         .modal {
@@ -227,7 +273,16 @@ nav a {
             width: 80%;
             max-width: 500px;
         }
+        /* Resize the photo inside the modal */
+            .modal-content img {
+            display: block;
+            height: auto;
+            max-width: 50%; /* Prevents the image from being wider than the modal */
+            max-height: 70vh; /* Prevents the image from being taller than the viewport */
+            margin: 0 auto; /* Center the image horizontally */
+            object-fit: cover;
 
+        }
         .close-button {
             color: #aaa;
             font-size: 28px;
@@ -242,6 +297,7 @@ nav a {
             text-decoration: none;
             cursor: pointer;
         }
+
 
 h2, h3 {
     text-align: center;
@@ -264,15 +320,6 @@ th {
     color: white;
 }
 
-.cart-summary {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.cart-summary p {
-    font-size: 18px;
-    margin: 5px 0;
-}
 
 button {
     background-color: #8d6e63;
@@ -519,6 +566,32 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    margin: 15% auto;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+}
+
+.modal button {
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
 }
 
 

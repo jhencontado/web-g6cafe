@@ -45,60 +45,7 @@
         </div>
     </section>
 
-    <script>
-       // Retrieve the cart data from localStorage
-    const cartData = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // Populate Cart Items
-    const cartItemsContainer = document.getElementById("cart-items");
-    const totalItemsSpan = document.getElementById("total-items");
-    const totalPriceSpan = document.getElementById("total-price");
-
-    let totalItems = 0;
-    let totalPrice = 0;
-
-    // Check if there are items in the cart
-    if (cartData.length === 0) {
-        // Show a message if the cart is empty
-        cartItemsContainer.innerHTML = "<tr><td colspan='4'>Your cart is empty.</td></tr>";
-    } else {
-        cartData.forEach(item => {
-            // Calculate subtotal for each item
-            const subtotal = item.quantity * item.price;
-
-            // Create a table row for each item
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>P${item.price.toFixed(2)}</td>
-                <td>P${subtotal.toFixed(2)}</td>
-            `;
-
-            // Append row to table
-            cartItemsContainer.appendChild(row);
-
-            // Update totals
-            totalItems += item.quantity;
-            totalPrice += subtotal;
-        });
-    }
-
-// Update totals in the cart summary
-totalItemsSpan.textContent = totalItems;
-totalPriceSpan.textContent = `P${totalPrice.toFixed(2)}`;
-
-// Checkout button functionality
-const checkoutButton = document.getElementById("checkout-button");
-checkoutButton.addEventListener("click", () => {
-    if (cartData.length > 0) {
-        alert("Proceeding to Checkout. Thank you for your order!");
-    } else {
-        alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
-    }
-});
-
-    </script>
 
 </body>
 </html>

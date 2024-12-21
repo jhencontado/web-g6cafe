@@ -11,10 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
         event.preventDefault();
+
         const itemName = document.getElementById('modal-item-name').textContent;
         const itemPhoto = document.getElementById('modal-item-photo').src;
-        const itemPrice = document.getElementById('modal-item-price').textContent.split(' ')[1];
-        const quantity = document.getElementById('quantity').value;
+        const itemPrice = parseFloat(document.getElementById('modal-item-price').textContent.split(' ')[1]);
+        const quantity = parseInt(document.getElementById('quantity').value);
         const preferences = document.getElementById('preferences').value;
 
         const cartItem = {
@@ -64,7 +65,7 @@ function loadMenu(category) {
 
 function openModal(itemName, itemPhoto, itemPrice) {
     document.getElementById('modal-item-name').textContent = itemName;
-    document.getElementById('modal-item-photo').src = `/static/images/${itemPhoto}`;
+    document.getElementById('modal-item-photo').src = itemPhoto;
     document.getElementById('modal-item-price').textContent = `Price: P${parseFloat(itemPrice).toFixed(2)}`;
     document.getElementById('cart-modal').style.display = 'block';
 }
@@ -75,31 +76,57 @@ function closeModal() {
 
 function addToCart(cartItem) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.push(cartItem);
+
+    // Check if the item already exists in the cart with the same preferences
+    const existingItemIndex = cart.findIndex(
+        item => item.itemName === cartItem.itemName && item.preferences === cartItem.preferences
+    );
+
+    if (existingItemIndex !== -1) {
+        // Update quantity if item exists
+        cart[existingItemIndex].quantity += cartItem.quantity;
+    } else {
+        // Add new item to cart
+        cart.push(cartItem);
+    }
+
     localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${cartItem.quantity} x ${cartItem.itemName} added to cart!`);
     updateCartDisplay();
 }
 
 function loadCart() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const cartContainer = document.getElementById('cart-items');
+
+    if (!cartContainer) return; // Prevent errors if cart-items element does not exist
+
     cartContainer.innerHTML = '';
 
     if (cartItems.length === 0) {
-        cartContainer.textContent = 'No items in cart.';
+        cartContainer.innerHTML = '<tr><td colspan="4">Your cart is empty.</td></tr>';
     } else {
+        let totalItems = 0;
+        let totalPrice = 0;
+
         cartItems.forEach(item => {
-            const cartItemElement = document.createElement('div');
-            cartItemElement.classList.add('cart-item');
-            cartItemElement.innerHTML = `
-                <img src="${item.itemPhoto}" alt="${item.itemName}">
-                <h4>${item.itemName}</h4>
-                <p>Price: P${parseFloat(item.itemPrice).toFixed(2)}</p>
-                <p>Quantity: ${item.quantity}</p>
-                <p>Preferences: ${item.preferences}</p>
+            const subtotal = item.quantity * item.itemPrice;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${item.itemPhoto}" alt="${item.itemName}" width="50"> ${item.itemName}</td>
+                <td>${item.quantity}</td>
+                <td>P${item.itemPrice.toFixed(2)}</td>
+                <td>P${subtotal.toFixed(2)}</td>
             `;
-            cartContainer.appendChild(cartItemElement);
+            cartContainer.appendChild(row);
+
+            totalItems += item.quantity;
+            totalPrice += subtotal;
         });
+
+        document.getElementById('total-items').textContent = totalItems;
+        document.getElementById('total-price').textContent = `P${totalPrice.toFixed(2)}`;
     }
 }
 
