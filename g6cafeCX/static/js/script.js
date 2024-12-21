@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadMenu('espresso'); // Load the default category
+    // Load the default category
+    loadMenu('espresso');
 
+    // Handle category navigation
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', event => {
             event.preventDefault();
@@ -9,14 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Handle add-to-cart form submission
     document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
         event.preventDefault();
 
         const itemName = document.getElementById('modal-item-name').textContent;
         const itemPhoto = document.getElementById('modal-item-photo').src;
-        const itemPrice = parseFloat(document.getElementById('modal-item-price').textContent.split(' ')[1]);
+        const itemPriceText = document.getElementById('modal-item-price').textContent;
+        const itemPrice = parseFloat(itemPriceText.replace('Price: P', '').trim());
         const quantity = parseInt(document.getElementById('quantity').value);
         const preferences = document.getElementById('preferences').value;
+
+        console.log(`Item Price Text: ${itemPriceText}`);
+        console.log(`Parsed Item Price: ${itemPrice}`);
 
         const cartItem = {
             itemName,
@@ -30,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal();
     });
 
+    // Initial load of the cart
     loadCart();
 });
 
@@ -128,6 +136,30 @@ function loadCart() {
         document.getElementById('total-items').textContent = totalItems;
         document.getElementById('total-price').textContent = `P${totalPrice.toFixed(2)}`;
     }
+}
+
+function calculateTotal() {
+    let priceInput = document.getElementById('price').value;
+    let quantityInput = document.getElementById('quantity').value;
+
+    // Convert inputs to numbers
+    let price = parseFloat(priceInput);
+    let quantity = parseInt(quantityInput);
+
+    // Check for NaN
+    if (isNaN(price) || isNaN(quantity)) {
+        alert("Please enter valid numbers for price and quantity.");
+        return;
+    }
+
+    // Calculate subtotal and total
+    let subtotal = price * quantity;
+    let tax = subtotal * 0.1; // Example tax calculation (10%)
+    let total = subtotal + tax;
+
+    // Display the results
+    document.getElementById('subtotal').innerText = subtotal.toFixed(2);
+    document.getElementById('total').innerText = total.toFixed(2);
 }
 
 function updateCartDisplay() {

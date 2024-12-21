@@ -66,25 +66,27 @@
             } else {
                 // Populate the cart table with items from localStorage
                 cartData.forEach((item, index) => {
-                    // Calculate the subtotal for each item
-                    const subtotal = parseFloat(item.itemPrice) * parseInt(item.quantity);
+                    // Ensure itemPrice and quantity are correctly parsed
+                    const itemPrice = parseFloat(item.itemPrice);
+                    const itemQuantity = parseInt(item.quantity);
+                    const subtotal = itemPrice * itemQuantity;
 
                     // Create a table row for each cart item
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${item.itemName}</td>
                         <td>${item.preferences || 'N/A'}</td>
-                        <td>${item.quantity}</td>
-                        <td>P${parseFloat(item.itemPrice).toFixed(2)}</td>
+                        <td>${itemQuantity}</td>
+                        <td>P${itemPrice.toFixed(2)}</td>
                         <td>P${subtotal.toFixed(2)}</td>
-                        <td><button class="remove-item" data-index="${index}">Remove</button></td> <!-- Remove button -->
+                        <td><button class="remove-item" data-index="${index}">Remove</button></td>
                     `;
 
                     // Append the row to the table body
                     cartItemsContainer.appendChild(row);
 
                     // Update totals
-                    totalItems += parseInt(item.quantity);
+                    totalItems += itemQuantity;
                     totalPrice += subtotal;
                 });
 
@@ -109,24 +111,15 @@
                 }
             });
 
-
-            cartItemsContainer.addEventListener("click", (event) => {
-                if (event.target && event.target.classList.contains("remove-item")) {
-                    const itemIndex = event.target.getAttribute("data-index");
-                    cartData.splice(itemIndex, 1);
-                    localStorage.setItem('cart', JSON.stringify(cartData));
-                    window.location.reload();
-                }
-            });
-
             // Ensure you are selecting the correct button
             const checkoutButton = document.getElementById("checkout-button");
             if (checkoutButton) {
-                checkoutButton.addEventListener("click", () => {
+                checkoutButton.addEventListener("click", (event) => {
+                    event.preventDefault();
                     if (cartData.length > 0) {
                         alert("Proceeding to Checkout. Thank you for your order!");
                         localStorage.removeItem("cart");
-                        window.location.href = "/checkout";
+                        window.location.href = "{{ url_for('checkout') }}";
                     } else {
                         alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
                     }
