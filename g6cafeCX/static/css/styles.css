@@ -3,93 +3,128 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f9f3ee;
+    background-color: white;
     color: #333;
 }
+/* General styling for the header */
 header {
-    background-color: #8d6e63;
-    padding: 10px;
-    color: white;
     display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #8d6e63;
     justify-content: space-between;
+}
+
+/* Styling for the logo section */
+.g6logo {
+    display: flex;
     align-items: center;
 }
 
-nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
+.g6logo img {
+    width: 110px; /* Adjust width as needed */
+    height: auto; /* Maintains aspect ratio */
+    max-width: 80%; /* Ensures responsiveness */
+    margin-left: 80px;
 }
 
-.hero {
-    text-align: left; /* Align text to the left */
-    background-image: url('banner.png'); /* Replace with the path to your image */
-    background-color: #d7ccc8;
-    background-size: cover;
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents repeating */
-    height: 300px; /* Adjust the height */
+
+/* Styling for the navigation menu */
+nav {
     display: flex;
-    justify-content: flex-start; /* Align the content to the left */
-    align-items: center; /* Vertically center the text */
+    align-items: center;
+    gap: 2px;
+}
+
+nav a {
+    text-decoration: none;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-    font-size: 2.5rem;
-    padding: 20px 20px; /* Add padding for better spacing */
-    width: 100%; /* Ensure the section takes the full width of the container */
+    font-size: 24px;
+    font-weight: bold;
+    transition: color 0.3s, background-color 0.3s;
+    margin-right: 50px;
+    padding-right: 0;
 }
 
-.hero h2 {
-    width: 100%; /* Ensures that the text can take up the full width */
-    text-align: justify; /* Justify the words in the text */
-    margin-left: 150px; /* Add margin to the left for the text only */
-    letter-spacing: 7px; /* Adjust the value to set the desired spacing */
-}
-
-.container {
-    position: relative;
-    height: 100vh;  /* Full height container */
+nav a:hover {
+    color: #fff;
+    background-color: #c3b39a;
+    border-radius: 5px;
 
 }
 
-@keyframes animateText {
-    0% {
+    .order-now {
+        font-size: 36px;
+        font-weight: bold;
+        color: #FF5722;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-group {
+        display: flex;
+        align-items: center; /* Center elements vertically */
+        gap: 20px; /* Add space between buttons and 'or' text */
+        justify-content: center; /* Center horizontally */
+        margin-top: 20px; /* Add margin on top */
+        margin-bottom: 20px; /* Add margin at the bottom */
+    }
+
+    .or-text {
+        font-size: 30px;
+        color: #FF5722;
+        font-weight: normal;
+    }
+
+    .btn-delivery,
+    .btn-pickup {
+        width: 150px; /* Adjusted width for side-by-side layout */
+        height: 50px;
+        font-size: 24px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .btn-delivery {
+        background-color: #FF5722;
         color: white;
-        transform: translateY(0);
     }
-    50% {
-        color: #f0a500;  /* Change to a golden color at the halfway point */
-        transform: translateY(-5px);  /* Move the text up slightly */
+
+    .btn-delivery:hover {
+        background-color: #8d6e63;
+        transform: scale(1.05);
     }
-    100% {
+
+    .btn-pickup {
+        background-color: #FF5722;
         color: white;
-        transform: translateY(0);  /* Reset to original position */
     }
+
+    .btn-pickup:hover {
+        background-color: #8d6e63;
+        transform: scale(1.05);
+    }
+
+    .promo img {
+        width: 1200px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+/* Styling for the cart icon */
+nav a img {
+    vertical-align: middle;
+    border-radius: 5px;
+    transition: transform 0.3s;
 }
 
-.btn {
-    position: absolute;
-    right: 100px;  /* Adjust the right distance */
-    top: 30%;  /* Position the button at the vertical center */
-    transform: translateY(-50%);  /* Adjust to exact center */
-    width: 300px;  /* Adjust the width */
-    height: 70px;  /* Adjust the height */
-    background-color: #ad8c5c;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 30px;
-    text-align: center;
-    line-height: 50px;  /* Vertically center the text */
-    animation: animateText 2s infinite;  /* Apply animation */
-}
-
-/* Hover effect */
-.btn:hover {
-    background-color: #cfb179; /* Darker blue background on hover */
-    transform: scale(2.5rem); /* Slightly increase the size of the button */
+nav a img:hover {
+    transform: scale(1.1);
 }
 
 .products, .menu-items {
@@ -168,29 +203,7 @@ form label, form input {
     display: block;
     margin-bottom: 10px;
 }
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f3ee;
-    color: #333;
-}
 
-header {
-    background-color: #8d6e63;
-    padding: 20px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-}
 
 .cart {
     margin: 30px auto;
@@ -240,7 +253,7 @@ nav a {
     width: 100%;
     padding: 10px;
     margin-top: 20px;
-    background-color: #45a049;
+    background-color: #c3b39a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -262,7 +275,7 @@ nav a {
             width: 100%; /* Full width */
             height: 100%; /* Full height */
             overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/opacity */
+            background-color: 0 2px 10px rgba(165, 42, 42, 0.2); /* Light brown shadow */
         }
 
         .modal-content {
@@ -360,44 +373,37 @@ button:hover {
     transform: scale(1.1); /* Slightly scale up the image on hover */
 }
 
-/* Optional: Add some spacing between the navigation items */
-.best-seller-navigation a {
-    padding: 5px;
-}
 
-.best-sellers-title {
-    font-size: 32px; /* Larger font for visibility */
-    text-align: center;
-    color: #8d6e63; /* Bright, eye-catching color */
-    margin-bottom: 20px; /* Space below the title */
-}
-
-.promo-title {
-    font-size: 32px; /* Larger font for emphasis */
-    text-align: center;
-    color: #8d6e63; /* Bright color for attention */
-    animation: blink 1s step-start infinite; /* Blinking animation */
-}
 
 /* Layout for Checkout Section */
         .checkout-container {
             display: flex;
             justify-content: space-between;
+            padding:20px;
         }
 
         .checkout-form {
-            width: 60%; /* 60% for the checkout form */
+            width: 95%; /* 60% for the checkout form */
         }
 
         .order-summary {
-            width: 35%; /* 35% for the order summary */
-            border: 1px solid #ddd;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
+        width: 40%; /* 35% for the order summary */
+        border: 1px solid #ddd;
+        padding: 30px;
+        background-color: #f9f9f9;
+        box-sizing: border-box; /* Ensure padding is included in the element’s total width */
+        margin: 20px auto; /* Add more space around the form */
+        display: flex;
+        flex-direction: column; /* Arrange form elements vertically */
+        box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+        border-radius: 10px;
+
+    }
 
         .order-summary h3 {
             margin-top: 0;
+            font-size: 24px;
+            color: #8d6e63;
         }
 
         .order-summary p {
@@ -416,80 +422,99 @@ button:hover {
         .order-summary button:hover {
             background-color: #45a049;
         }
+        .order-label {
+            font-size: 24px;  /* Set font size for "Order #" */
+            font-weight: bold;  /* Make the "Order #" text bold */
+            font-style: italic;  /* Make the "Order #" text italic */
+        }
+
+        #order-number {
+            font-size: 24px;  /* Set your desired font size */
+            font-weight: normal;  /* Keep the "Order #" number in normal font weight */
+            font-style: normal;  /* Keep the "Order #" number in normal style */
+        }
+
+
 .checkout {
-    max-width: 1200px;
+    max-width: 650px;
     background: #fff;
-    margin: 40px auto;
-    padding: 20px;
+    margin: 20px auto;
+    padding: 40px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
 }
+
 
 .checkout h2 {
     margin-bottom: 20px;
     font-size: 28px;
-    color: #444;
+    color: #8d6e63;
 }
 
 .checkout h3 {
     margin-top: 20px;
     margin-bottom: 10px;
     font-size: 20px;
-    color: #555;
+    color: #8d6e63;
 }
 
 .checkout label {
-    display: block;
-    margin-bottom: 15px;
+    display: flex;
+    margin-bottom: 10px;
     font-size: 16px;
+    gap: 10px;
+}
+#tendered-amount-section {
+    margin-top: 10px; /* Space below the Cash option */
 }
 
 .checkout label input[type="text"],
 .checkout label input[type="email"],
 .checkout label input[type="tel"],
 .checkout label input[type="date"] {
-    width: 90%;
+    width: 300%;
     padding: 10px;
-    margin-top: 1px;
-    border: 1px solid #ccc;
+    margin-top: 2px;
+    border: 1px #c3b39a;
     border-radius: 4px;
     font-size: 14px;
+    margin-left: 20px;
+    box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
-.checkout label input[type="radio"] {
-    margin-right: 10px;
-}
-
-.checkout p {
-    font-size: 16px;
+.checkout label input[type="text"]:hover,
+.checkout label input[type="email"]:hover,
+.checkout label input[type="tel"]:hover,
+.checkout label input[type="date"]:hover {
+    background-color: #f9e4d4; /* Light background color on hover */
+    border-color: #a52a2a; /* Darker border color on hover */
 }
 
 .checkout strong {
     font-size: 18px;
-    color: #000;
+    color: #8d6e63;
 }
 
 button[type="submit"] {
     display: block;
-    width: 55%; /* Adjust button width */
-    background-color: #333;
-    color: #fff;
+    width: 42%; /* Adjust button width */
+    background-color: #8d6e63;
     border: none;
     padding: 15px;
-    border-radius: 4px;
+    border-radius: 30px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
     margin: 20px auto; /* Horizontally center the button and add margin on top/bottom */
 }
 
-
 button[type="submit"]:hover {
-    background-color: #444;
+    background-color: #c3b39a;
 }
 
 /* Responsive Design */
-@media (max-width: 700px) {
+@media (max-width: 600px) {
     .checkout {
         padding: 20px;
     }
@@ -516,16 +541,16 @@ button[type="submit"]:hover {
     height: 100%;
     overflow: auto;
     background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(165, 42, 42, 0.2);;
     padding-top: 60px;
 }
 
 .modal-content {
     background-color: #fefefe;
     margin: 5% auto;
-    padding: 20px;
+    padding: 30px;
     border: 1px solid #888;
-    width: 80%;
+    width: 50%;
 }
 /* Modal image styling */
 #modal-item-photo {
@@ -567,32 +592,3 @@ button {
 button:hover {
     background-color: #45a049;
 }
-/* Modal Styles */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Fixed position */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-}
-
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    margin: 15% auto;
-    border: 1px solid #888;
-    width: 300px;
-    text-align: center;
-}
-
-.modal button {
-    padding: 10px 20px;
-    margin: 10px;
-    cursor: pointer;
-}
-
-
-

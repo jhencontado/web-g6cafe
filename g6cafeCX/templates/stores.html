@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Locator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBexeMBMyn22oC-7C7uWrRN4yYdE5qTT24" async defer></script>
+</head>
+<body>
+    <header>
+        <section class="g6logo">
+            <div class="g6logo">
+                <img src="/static/images/g6logo.png" alt="g6logo">
+            </div>
+        </section>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('menu') }}">Menu</a>
+            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50"></a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="store-form">
+            <h2>Search for a Store</h2>
+            <form id="storeLocatorForm">
+                <input type="text" id="locationInput" placeholder="Enter your city or zip code" required>
+                <button type="submit">Find Store</button>
+            </form>
+        </div>
+
+        <div id="store-results">
+            <!-- Results will appear here -->
+        </div>
+
+        <div id="map" style="width: 100%; height: 400px; margin-top: 20px;"></div>
+
+        <div class="delivery-form" >
+            <h2>Delivery Details</h2>
+            <form id="deliveryDetailsForm">
+                <input type="text" id="houseNumber" placeholder="House Number" required>
+                <input type="text" id="streetName" placeholder="Street Name" required>
+                <input type="text" id="subdivisionName" placeholder="Subdivision Name">
+                <input type="text" id="barangay" placeholder="Barangay" required>
+                <input type="text" id="city" placeholder="City" required>
+                <textarea id="deliveryInstruction" placeholder="Delivery Instructions" rows="3" style="width: 100%; margin-top: 10px; padding: 10px;"></textarea>
+                <button type="submit" style="margin-top: 10px;">Submit Details</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+    let map, geocoder, userMarker;
+
+    // Initialize Google Map
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: -34.397, lng: 150.644 }, // Default center, will change after user search
+            zoom: 8
+        });
+        geocoder = new google.maps.Geocoder();
+    }
+
+    // Event listener for store locator form
+    document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const location = document.getElementById('locationInput').value;
+        const resultsDiv = document.getElementById('store-results');
+
+        // Geocode the location entered by the user
+        geocoder.geocode({ 'address': location }, function(results, status) {
+            if (status === 'OK') {
+                const locationLatLng = results[0].geometry.location;
+                map.setCenter(locationLatLng);
+                map.setZoom(12);
+
+                // If the user previously entered a location, remove the old marker
+                if (userMarker) {
+                    userMarker.setMap(null);
+                }
+
+                // Display a marker for the entered location
+                userMarker = new google.maps.Marker({
+                    map: map,
+                    position: locationLatLng,
+                    title: 'Your Location'
+                });
+
+                // Simulate fetching store data (mock stores here)
+                const mockStores = [
+                    { name: 'Store A', address: '123 Main St, Cityville', distance: '2 miles', lat: -34.397, lng: 150.644 },
+                    { name: 'Store B', address: '456 Elm St, Townsville', distance: '5 miles', lat: -34.400, lng: 150.650 }
+                ];
+
+                // Filter stores based on the location input
+                const filteredStores = mockStores.filter(store =>
+                    store.name.toLowerCase().includes(location.toLowerCase()) ||
+                    store.address.toLowerCase().includes(location.toLowerCase())
+                );
+
+                // Display store results
+                resultsDiv.innerHTML = '';
+                if (filteredStores.length > 0) {
+                    filteredStores.forEach(store => {
+                        const storeDiv = document.createElement('div');
+                        storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance}</em>`;
+                        storeDiv.style.marginBottom = '10px';
+                        resultsDiv.appendChild(storeDiv);
+
+                        // Add a marker for each store
+                        new google.maps.Marker({
+                            map: map,
+                            position: { lat: store.lat, lng: store.lng },
+                            title: store.name
+                        });
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No stores found. Try another location.</p>';
+                }
+            } else {
+                resultsDiv.innerHTML = `<p>Error: ${status}</p>`;
+            }
+        });
+    });
+</script>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBexeMBMyn22oC-7C7uWrRN4yYdE5qTT24" async defer></script>
+
+</body>
+</html>

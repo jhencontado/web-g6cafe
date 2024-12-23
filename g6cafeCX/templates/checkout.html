@@ -8,7 +8,11 @@
 </head>
 <body>
     <header>
-        <h1>G6 Cafe</h1>
+        <section class="g6logo">
+            <div class="g6logo">
+                <img src="/static/images/g6logo.png" alt="g6logo">
+            </div>
+        </section>
         <nav>
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
@@ -21,31 +25,17 @@
         <div class="checkout-container">
             <!-- Checkout Form -->
             <form id="checkout-form" class="checkout-form" action="#" method="POST">
-                <!-- Pick Up & Delivery Option -->
-                <h3>Pick Up & Delivery Option</h3>
-                <label>
-                    <input type="radio" name="option" value="standard" required> Pick-up (10 mins)
-                </label>
-                <label>
-                    <input type="radio" name="option" value="scheduled"> Scheduled Pick up
-                    <input type="date" name="pickup_date">
-                </label>
-                <label>
-                    <input type="radio" name="option" value="delivery"> Delivery
-                </label>
-                <label>
-                    <input type="radio" name="option" value="scheduled_delivery"> Scheduled Delivery
-                    <input type="date" name="delivery_date">
-                </label>
-
-                <div id="delivery_address_section" style="display:none;">
-                    <h4>Delivery Address</h4>
-                    <input type="text" name="address" placeholder="Enter your address" required>
+                <!-- Delivery Address Section (fetched from local storage) -->
+                <h3>Delivery Information</h3>
+                <div id="delivery_address_section">
+                    <label>Address: <input type="text" name="address" id="address" required></label>
+                    <label>Pick-up Date<input type="date" name="pickup_date" id="pickup_date"></label>
+                    <label>Delivery Date: <input type="date" name="delivery_date" id="delivery_date"></label>
                 </div>
 
                 <!-- Personal Details -->
                 <h3>Personal Details</h3>
-                <label>Full Name: <input type="text" name="name" required></label>
+                <label>Name: <input type="text" name="name" required></label>
                 <label>Email: <input type="email" name="email"></label>
                 <label>Contact Number: <input type="tel" name="contact" required></label>
 
@@ -60,16 +50,25 @@
                 </div>
 
                 <!-- Payment Details -->
-                <h3>Payment</h3>
+                <h3>Payment Option</h3>
                 <label>
-                    <input type="radio" name="payment" value="cash" required> Cash (Pay in store)
+                    <input type="radio" name="payment" value="cash" id="cash-payment" required>
+                    <span>Cash</span>
+                </label>
+                <!-- Tendered Amount Section (initially hidden) -->
+                <div id="tendered-amount-section" style="display: none; margin-left: 20px;">
+                    Tendered Amount: <input type="number" name="tendered_amount" id="tendered_amount" placeholder="Enter tendered amount">
+                </div>
+
+                <label>
+                    <input type="radio" name="payment" value="gcash">
+                    <span>GCash (Pay online)</span>
                 </label>
                 <label>
-                    <input type="radio" name="payment" value="gcash"> GCash (Pay online)
+                    <input type="radio" name="payment" value="debit/creditcard">
+                    <span>Debit/Credit Card (Pay online)</span>
                 </label>
-                <label>
-                    <input type="radio" name="payment" value="debit/creditcard"> Debit/Credit Card (Pay online)
-                </label>
+
 
                 <!-- Card Details (hidden by default) -->
                 <div id="card-details" class="payment-details">
@@ -110,62 +109,193 @@
                     <label>CVV: <input type="text" name="cvv" maxlength="3" placeholder="CVV" required></label>
                 </div>
 
-                <button type="submit">Place Order</button>
             </form>
-
-            <!-- Order Summary -->
-            <div class="order-summary">
-                <h3>Order Summary</h3>
-                <div id="order-summary"></div>
-                <p>Total Items: <span id="total-items">0</span></p>
-                <p>Subtotal: <span id="Subtotal">P0.00</span></p>
-                 <p>Amount Due: <span id="amount-due">P0.00</span></p>
-            </div>
         </div>
     </section>
 
-    <script>
-        // JavaScript to display/hide sections based on the selected option
-        const optionRadioButtons = document.querySelectorAll('input[name="option"]');
-        const deliveryAddressSection = document.getElementById("delivery_address_section");
+    <!-- Order Summary -->
+    <div class="order-summary">
+        <h3>Order Details</h3>
+        <p>Order # <span id="order-number">N/A</span></p>
+        <div id="order-summary"></div>
+        ____________________________________________________________________
 
-        // Show or hide the delivery address input for delivery option
-        optionRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                // Show or hide delivery address based on the selected option
-                if (this.value === "delivery" || this.value === "scheduled_delivery") {
-                    deliveryAddressSection.style.display = 'block'; // Show delivery address
-                } else {
-                    deliveryAddressSection.style.display = 'none'; // Hide delivery address
-                }
-            });
-        });
-
-        // Show or hide card details for debit/credit card payment
-        const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
-        const cardDetailsSection = document.getElementById("card-details");
-
-        paymentRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value === "debit/creditcard") {
-                    cardDetailsSection.style.display = 'block'; // Show card details
-                } else {
-                    cardDetailsSection.style.display = 'none'; // Hide card details
-                }
-            });
-        });
-
-        // Show/hide discount details
-        const discountCheckbox = document.getElementById("discount-checkbox");
-        const discountDetailsSection = document.getElementById("discount-details");
-
-        discountCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                discountDetailsSection.style.display = 'block';
-            } else {
-                discountDetailsSection.style.display = 'none';
-            }
-        });
-    </script>
+        <p>Total Items: <span id="total-items">0</span></p>
+        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
+        <p>Vat: <span id="vat">P0.00</span></p>
+        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
+        <p>Amount Due: <span id="amount-due">P0.00</span></p>
+        <p id="change-amount">Change: P0.00</p>
+    </div>
+        <button type="submit">Place Order</button>
 </body>
 </html>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+    const optionRadioButtons = document.querySelectorAll('input[name="option"]');
+    const deliveryAddressSection = document.getElementById("delivery_address_section");
+    const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
+    const cardDetailsSection = document.getElementById("card-details");
+    const discountCheckbox = document.getElementById("discount-checkbox");
+    const discountDetailsSection = document.getElementById("discount-details");
+    const cashPaymentRadio = document.getElementById("cash-payment");
+    const tenderedAmountSection = document.getElementById("tendered-amount-section");
+    const tenderedAmountInput = document.getElementById("tendered_amount");
+    const changeDisplay = document.getElementById('change-amount');
+
+    // Initialize the total amount variable globally to be used for calculating change
+    let totalAmount = 0;
+
+    // Generate a unique 6-digit order number
+    function generateOrderNumber() {
+        const randomNum = Math.floor(100000 + Math.random() * 900000);  // Generate a random 6-digit number
+        return `${randomNum}`;
+    }
+
+    // Show or hide delivery address based on the selected option
+    optionRadioButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            if (this.value === "delivery" || this.value === "scheduled_delivery") {
+                deliveryAddressSection.style.display = 'block';
+            } else {
+                deliveryAddressSection.style.display = 'none';
+            }
+        });
+    });
+
+    // Show or hide card details for debit/credit card payment
+    paymentRadioButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            if (this.value === "debit/creditcard") {
+                cardDetailsSection.style.display = 'block';
+            } else {
+                cardDetailsSection.style.display = 'none';
+            }
+
+            // Hide tendered amount section if any payment method other than Cash is selected
+            if (this.value !== "cash") {
+                tenderedAmountSection.style.display = 'none';
+                tenderedAmountInput.value = '';  // Reset the input value
+                changeDisplay.style.display = 'none';  // Hide the change display for non-cash payments
+            } else {
+                tenderedAmountSection.style.display = 'block';  // Show tendered amount section for cash
+                changeDisplay.style.display = 'block';  // Show the change display for cash
+            }
+        });
+    });
+
+    // Show/hide discount details (PWD/Senior Citizen)
+    discountCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            discountDetailsSection.style.display = 'block';
+        } else {
+            discountDetailsSection.style.display = 'none';
+        }
+        // Recalculate the cart after the checkbox state changes
+        loadCart();
+    });
+
+    // Show or hide tendered amount section when Cash is selected
+    cashPaymentRadio.addEventListener('change', function() {
+        if (this.checked) {
+            tenderedAmountSection.style.display = 'block'; // Show tendered amount section when Cash is selected
+            changeDisplay.style.display = 'block';  // Show change display when Cash is selected
+        } else {
+            tenderedAmountSection.style.display = 'none'; // Hide when any other payment method is selected
+            tenderedAmountInput.value = '';  // Reset the input value
+            changeDisplay.style.display = 'none';  // Hide change display for non-cash payments
+        }
+    });
+
+    // Function to load cart items and update order summary
+    function loadCart() {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const orderSummary = document.getElementById('order-summary');
+        let totalItems = 0;
+        let subtotal = 0;
+        let vat = 0;
+        let discount = 0;
+
+        if (cartItems.length === 0) {
+            orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+        } else {
+            let orderSummaryHtml = '';
+
+            cartItems.forEach(item => {
+                const itemSubtotal = item.quantity * item.itemPrice;
+                subtotal += itemSubtotal;
+                totalItems += item.quantity;
+
+                orderSummaryHtml += `
+                    <div>
+                        <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
+                    </div>
+                `;
+            });
+
+            // Apply VAT (12%)
+            vat = subtotal * 0.12;
+
+            // Check if PWD/Senior discount is applied
+            if (discountCheckbox.checked) {
+                discount = (subtotal + vat) * 0.20;  // 20% discount on subtotal + VAT
+            }
+
+            // Calculate total amount (Subtotal + VAT - Discount)
+            totalAmount = subtotal + vat - discount;
+
+            // Display order summary
+            orderSummary.innerHTML = orderSummaryHtml;
+            document.getElementById('total-items').innerText = totalItems;
+            document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
+            document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
+            document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
+            document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
+
+            // Generate and display the order number
+            const orderNumber = generateOrderNumber();
+            document.getElementById('order-number').innerText = orderNumber;  // Set the order number here
+        }
+
+        // Update change when tendered amount changes
+        updateChangeDisplay();
+    }
+
+    // Function to calculate and display the change
+    function updateChangeDisplay() {
+        tenderedAmountInput.addEventListener('input', function () {
+            const tenderedAmount = parseFloat(this.value); // Get tendered amount
+            const amountDue = parseFloat(totalAmount.toFixed(2)); // Use the total amount already displayed
+
+            if (!isNaN(tenderedAmount) && tenderedAmount >= amountDue) {
+                const change = tenderedAmount - amountDue; // Calculate change
+                changeDisplay.innerText = `Change: P${change.toFixed(2)}`; // Update change display
+            } else if (!isNaN(tenderedAmount)) {
+                changeDisplay.innerText = `Insufficient funds!`; // Show warning for insufficient funds
+            } else {
+                changeDisplay.innerText = `Change: P0.00`; // Reset change display if input is invalid
+            }
+        });
+    }
+
+    // Listen for changes to payment methods and clear change display if switching from cash
+    paymentRadioButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            if (this.value !== "cash") {
+                // If switching away from cash, reset change
+                tenderedAmountInput.value = '';  // Reset the input value
+                changeDisplay.style.display = 'none';  // Hide the change display
+            } else {
+                // If switching to cash, show the change display
+                changeDisplay.style.display = 'block';
+            }
+        });
+    });
+
+    // Load cart items and set up change display when the page loads
+    loadCart();
+});
+
+
+    </script>
