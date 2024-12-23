@@ -8,16 +8,10 @@
 </head>
 <body>
     <header>
-        <section class = "g6logo">
-        <div class = "g6logo">
-            <img src="/static/images/g6logo.png" alt="g6logo">
-        </div>
-        </section>
+        <h1>G6 Cafe</h1>
         <nav>
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('stores') }}">Find a Store</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
         </nav>
     </header>
@@ -124,6 +118,7 @@
                     event.preventDefault();
                     if (cartData.length > 0) {
                         alert("Proceeding to Checkout. Thank you for your order!");
+
                         window.location.href = "{{ url_for('checkout') }}";
                     } else {
                         alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
