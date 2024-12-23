@@ -51,27 +51,17 @@ def menu():
 def cart():
     return render_template('cart.html')
 
-@app.route('/checkout', methods=['GET', 'POST'])
+@app.route('/checkout')
 def checkout():
-    if request.method == 'POST':
-        # Handle the checkout form submission
-        # Retrieve form data and process it
-        pass
     return render_template('checkout.html')
-
-#@app.route('/checkout', methods=['POST'])
-#def handle_checkout():
-    # handle the form submission here
-   # pass
-
-@app.route('/tracker')
-def tracker():
-    return render_template('tracker.html')
 
 @app.route('/stores')
 def stores():
     return render_template('stores.html')
 
+@app.route('/tracker')
+def tracker():
+    return render_template('tracker.html')
 
 @app.route('/api/menu', methods=['GET'])
 def get_menu():

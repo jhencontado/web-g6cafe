@@ -111,35 +111,8 @@
     </section>
 
     <script>
-        // JavaScript to display/hide sections based on the selected option
-        const optionRadioButtons = document.querySelectorAll('input[name="option"]');
-        const deliveryAddressSection = document.getElementById("delivery_address_section");
 
-        // Show or hide the delivery address input for delivery option
-        optionRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                // Show or hide delivery address based on the selected option
-                if (this.value === "delivery" || this.value === "scheduled_delivery") {
-                    deliveryAddressSection.style.display = 'block'; // Show delivery address
-                } else {
-                    deliveryAddressSection.style.display = 'none'; // Hide delivery address
-                }
-            });
-        });
 
-        // Show or hide card details for debit/credit card payment
-        const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
-        const cardDetailsSection = document.getElementById("card-details");
-
-        paymentRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value === "debit/creditcard") {
-                    cardDetailsSection.style.display = 'block'; // Show card details
-                } else {
-                    cardDetailsSection.style.display = 'none'; // Hide card details
-                }
-            });
-        });
     </script>
 
 </body>
