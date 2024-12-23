@@ -429,7 +429,7 @@ button:hover {
         }
 
         #order-number {
-            font-size: 24px;  /* Set your desired font size */
+            font-size: 20px;  /* Set your desired font size */
             font-weight: normal;  /* Keep the "Order #" number in normal font weight */
             font-style: normal;  /* Keep the "Order #" number in normal style */
         }
