@@ -57,8 +57,7 @@ function loadMenu(category) {
                 menuItem.innerHTML = `
                     ${image}
                     <h4>${item.item_name}</h4>
-                    <p>Category: ${item.category_name}</p>
-                    <p>Price: P${parseFloat(item.unit_price).toFixed(2)}</p>
+                    <p>P${parseFloat(item.unit_price).toFixed(2)}</p>
                     <button onclick="openModal('${item.item_name}', '${item.photo}', '${item.unit_price}')">Add to Cart</button>
                 `;
 

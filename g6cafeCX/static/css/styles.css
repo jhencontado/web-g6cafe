@@ -130,7 +130,7 @@ nav a img:hover {
 .products, .menu-items {
     display: flex;
     justify-content: center;
-    gap: 80px 20px;
+    gap: 30px 20px;
     flex-wrap: wrap;
     max-width: 1000px; /* Adjust the container width to fit four items */
     margin: 0 auto; /* Center the container */
@@ -512,9 +512,9 @@ button:hover {
     font-size: 16px;
     gap: 10px;
 }
-#tendered-amount-section {
-    margin-top: 10px; /* Space below the Cash option */
-}
+    #tendered-amount-section {
+        margin-top: 10px; /* Space below the Cash option */
+    }
 
 .checkout label input[type="text"],
 .checkout label input[type="email"],
@@ -568,6 +568,22 @@ button:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+form .input-group {
+    display: flex;
+    align-items: center; /* Align label and input vertically */
+    margin-bottom: 10px;
+    justify-content: center;
+}
+form input[type="number"] {
+    width: 10%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    text-align: center;
+}
 
 button[type="submit"] {
     display: block;
