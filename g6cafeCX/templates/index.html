@@ -9,17 +9,18 @@
 </head>
 <body>
     <header>
-        <section class = "g6logo">
-        <div class = "g6logo">
+        <section class="g6logo">
+    <div class="g6logo">
+        <a href="{{ url_for('home') }}">
             <img src="/static/images/g6logo.png" alt="g6logo">
-        </div>
-        </section>
+        </a>
+    </div>
+</section>
 
         <nav>
-            <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('stores') }}">Find a Store</a>
+            <a href="{{ url_for('storespick') }}">Find a Store</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50"></a>
 
         </nav>
@@ -28,11 +29,12 @@
     <section class="promo">
         <div class="button-group">
         <span class="order-now">Order Now</span>
-            <a href="stores.html">
+            <a href="{{ url_for('stores') }}">
              <button class="btn-delivery">Delivery</button>
         </a>
             <span class="or-text">or</span>
-            <button class="btn-pickup">Pick Up</button>
+            <a href="{{ url_for('storespick') }}">
+                <button class="btn-pickup">Pick Up</button></a>
         </div>
     </div>
     <div class="promo-content">

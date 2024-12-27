@@ -59,9 +59,14 @@ def checkout():
 def stores():
     return render_template('stores.html')
 
+@app.route('/storespick')
+def storespick():
+    return render_template('storespick.html')
+
 @app.route('/tracker')
 def tracker():
     return render_template('tracker.html')
+
 
 @app.route('/api/menu', methods=['GET'])
 def get_menu():
@@ -79,6 +84,7 @@ def get_menu():
         'photo': url_for('static', filename=f'images/{item.photo}') if item.photo else None
     } for item in menu_items]
     return jsonify(menu_list)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

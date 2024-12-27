@@ -52,14 +52,14 @@ nav a:hover {
     border-radius: 5px;
 
 }
-
-    .order-now {
+.order-now {
         font-size: 36px;
         font-weight: bold;
         color: #FF5722;
         text-align: center;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }
+
 
     .button-group {
         display: flex;
@@ -285,6 +285,8 @@ form label, form input {
             border: 1px solid #888;
             width: 80%;
             max-width: 500px;
+            text-align: center;
+
         }
         /* Resize the photo inside the modal */
             .modal-content img {
@@ -319,13 +321,14 @@ h2, h3 {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 th, td {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 8px;
     text-align: center;
+
 }
 
 th {
@@ -333,17 +336,30 @@ th {
     color: white;
 }
 
-
 button {
     background-color: #8d6e63;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
+.remove-item {
+    background-color: #8d6e63;
+    color: white;
+    margin-right: 5px;
+    width: 100px; /* Set button width */
+    height: 30px; /* Set button height */
+ }
+
+ .edit-item {
+     background-color: #8d6e63;
+     color: white;
+     width: 100px; /* Set button width */
+     height: 30px; /* Set button height */
+ }
 
 button:hover {
     background-color: #6d4c41;
@@ -357,11 +373,18 @@ button:hover {
 }
 
 .nav-link {
-    display: block; /* Make each anchor tag a block-level element */
-    text-align: center; /* Center the image and text inside the anchor */
-    transition: transform 0.3s ease; /* Add transition effect on hover */
+    text-align: center;
+    display: block; /* Ensure the link behaves like a block-level element */
+    margin: 5px;
+    padding: 0; /* Remove any padding around the link */
+    text-decoration: none; /* Remove underline from links */
 }
-
+.nav-link p {
+    margin: 0; /* Remove any margin around the text */
+    font-size: 20px;
+    color: #8d6e63;
+    padding: 0; /* Remove any padding around the text */
+}
 .nav-link img {
     width: 100px; /* Set a uniform width for all images */
     height: auto; /* Keep the aspect ratio of the images */
@@ -387,28 +410,54 @@ button:hover {
         }
 
         .order-summary {
-        width: 40%; /* 35% for the order summary */
-        border: 1px solid #ddd;
-        padding: 30px;
-        background-color: #f9f9f9;
-        box-sizing: border-box; /* Ensure padding is included in the element’s total width */
-        margin: 20px auto; /* Add more space around the form */
-        display: flex;
-        flex-direction: column; /* Arrange form elements vertically */
+        max-width: 650px;
+        background: #fff;
+        margin: 20px auto;
+        padding: 40px;
+        border-radius: 8px;
         box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
-        border-radius: 10px;
 
     }
+        .order-details {
+            background-color: #fff; /* White background for the details section */
+            padding: 15px; /* Padding inside the order-details box */
+            border: 1px solid #ddd; /* Light border around the box */
+            border-radius: 8px; /* Rounded corners for the order-details box */
+            margin-top:10px;
+        }
+        #order-summary{
+            background-color: #fff; /* White background for the details section */
+            padding: 15px; /* Padding inside the order-details box */
+            border: 1px solid #ddd; /* Light border around the box */
+            border-radius: 8px; /* Rounded corners for the order-details box */
+        }
 
         .order-summary h3 {
             margin-top: 0;
-            font-size: 24px;
+            font-size: 30px;
             color: #8d6e63;
+        }
+        .order-summary h2 {
+            margin-top: 0;
+            font-size: 25px;
+            color: #8d6e63;
+            text-align: left;
         }
 
         .order-summary p {
             margin: 5px 0;
+            display: block; /* Keeps the default block behavior */
+            text-align: left; /* Aligns the text to the left */
+            margin-left: 80px;
+            font-size: 18px;
         }
+
+        .order-summary p span {
+            float: right; /* Aligns the amount to the right side */
+            margin-left: 0px; /* Adds some space between the text and the amount */
+            margin-right: 150px;
+        }
+
 
         .order-summary button {
             margin-top: 10px;
@@ -422,18 +471,17 @@ button:hover {
         .order-summary button:hover {
             background-color: #45a049;
         }
-        .order-label {
-            font-size: 24px;  /* Set font size for "Order #" */
-            font-weight: bold;  /* Make the "Order #" text bold */
-            font-style: italic;  /* Make the "Order #" text italic */
-        }
 
         #order-number {
-            font-size: 20px;  /* Set your desired font size */
-            font-weight: normal;  /* Keep the "Order #" number in normal font weight */
+            font-size: 25px;  /* Set your desired font size */
+            font-weight: bold;  /* Keep the "Order #" number in normal font weight */
             font-style: normal;  /* Keep the "Order #" number in normal style */
+            color: #8d6e63;
         }
-
+        #change-amount {
+        margin-top: 0px; /* Adds space before the change amount */
+        font-weight: bold; /* Bold font to highlight the change amount */
+        }
 
 .checkout {
     max-width: 650px;
@@ -495,6 +543,31 @@ button:hover {
     font-size: 18px;
     color: #8d6e63;
 }
+/* Modal container */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000; /* On top of other elements */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto; /* Center vertically and horizontally */
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 button[type="submit"] {
     display: block;
@@ -592,3 +665,4 @@ button {
 button:hover {
     background-color: #45a049;
 }
+

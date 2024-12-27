@@ -9,12 +9,15 @@
 <body>
     <header>
         <section class="g6logo">
-            <div class="g6logo">
-                <img src="/static/images/g6logo.png" alt="g6logo">
-            </div>
+    <div class="g6logo">
+        <a href="{{ url_for('home') }}">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+        </a>
+    </div>
+</section>
+
         </section>
         <nav>
-            <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50"></a>
         </nav>

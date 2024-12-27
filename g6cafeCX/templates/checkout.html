@@ -9,12 +9,14 @@
 <body>
     <header>
         <section class="g6logo">
-            <div class="g6logo">
-                <img src="/static/images/g6logo.png" alt="g6logo">
-            </div>
-        </section>
+    <div class="g6logo">
+        <a href="{{ url_for('home') }}">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+        </a>
+    </div>
+</section>
+
         <nav>
-            <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
         </nav>
@@ -115,19 +117,38 @@
 
     <!-- Order Summary -->
     <div class="order-summary">
+    <div class="order-info">
         <h3>Order Details</h3>
-        <p>Order # <span id="order-number">N/A</span></p>
-        <div id="order-summary"></div>
-        ____________________________________________________________________
+        <h2>Order # <span id="order-number">N/A</span></h2>
+    </div>
+    <div id="order-summary"></div>
 
+    <div class="order-details">
         <p>Total Items: <span id="total-items">0</span></p>
         <p>Subtotal: <span id="Subtotal">P0.00</span></p>
         <p>Vat: <span id="vat">P0.00</span></p>
         <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
         <p>Amount Due: <span id="amount-due">P0.00</span></p>
-        <p id="change-amount">Change: P0.00</p>
+        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
     </div>
+</div>
+
         <button type="submit">Place Order</button>
+        <!-- Thank You Modal -->
+<div id="thankYouModal" class="modal">
+  <div class="modal-content">
+    <!-- Add Image at the top -->
+    <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 0 auto;">
+
+    <h2>Thank you for your Order!</h2>
+    <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}</br>.</p>
+    <button onclick="redirectToOrderStatus()">OK</button>
+  </div>
+</div>
+
+
+
+
 </body>
 </html>
 
@@ -143,6 +164,7 @@
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
+
 
     // Initialize the total amount variable globally to be used for calculating change
     let totalAmount = 0;
@@ -208,42 +230,48 @@
         }
     });
 
-    // Function to load cart items and update order summary
     function loadCart() {
-        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        const orderSummary = document.getElementById('order-summary');
-        let totalItems = 0;
-        let subtotal = 0;
-        let vat = 0;
-        let discount = 0;
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const orderSummary = document.getElementById('order-summary');
+    let totalItems = 0;
+    let subtotal = 0;
+    let vat = 0;
+    let discount = 0;
 
-        if (cartItems.length === 0) {
-            orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+    if (cartItems.length === 0) {
+        orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+    } else {
+        let orderSummaryHtml = '';
+
+        cartItems.forEach(item => {
+            const itemSubtotal = item.quantity * item.itemPrice;
+            subtotal += itemSubtotal;
+            totalItems += item.quantity;
+
+            orderSummaryHtml += `
+                <div>
+                    <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
+                </div>
+            `;
+        });
+
+        // Determine discount and VAT
+        if (discountCheckbox.checked) {
+            // Apply discount (20% of subtotal)
+            discount = subtotal * 0.20;
+
+            // VAT is not applied when a discount is present
+            vat = 0;
         } else {
-            let orderSummaryHtml = '';
-
-            cartItems.forEach(item => {
-                const itemSubtotal = item.quantity * item.itemPrice;
-                subtotal += itemSubtotal;
-                totalItems += item.quantity;
-
-                orderSummaryHtml += `
-                    <div>
-                        <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
-                    </div>
-                `;
-            });
-
-            // Apply VAT (12%)
+            // Apply VAT (12% of subtotal)
             vat = subtotal * 0.12;
 
-            // Check if PWD/Senior discount is applied
-            if (discountCheckbox.checked) {
-                discount = (subtotal + vat) * 0.20;  // 20% discount on subtotal + VAT
-            }
+            // No discount applied
+            discount = 0;
+        }
 
-            // Calculate total amount (Subtotal + VAT - Discount)
-            totalAmount = subtotal + vat - discount;
+        // Calculate the total amount
+        totalAmount = subtotal + vat - discount;
 
             // Display order summary
             orderSummary.innerHTML = orderSummaryHtml;
@@ -278,23 +306,54 @@
             }
         });
     }
-
-    // Listen for changes to payment methods and clear change display if switching from cash
-    paymentRadioButtons.forEach(button => {
-        button.addEventListener('change', function() {
-            if (this.value !== "cash") {
-                // If switching away from cash, reset change
-                tenderedAmountInput.value = '';  // Reset the input value
-                changeDisplay.style.display = 'none';  // Hide the change display
-            } else {
-                // If switching to cash, show the change display
-                changeDisplay.style.display = 'block';
-            }
+        // Listen for changes to payment methods
+        paymentRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value !== "cash") {
+                    // If switching away from cash, reset change
+                    tenderedAmountInput.value = '';  // Reset the input value
+                    changeDisplay.innerText = `Change: P0.00`;  // Reset change display to 0
+                    changeDisplay.style.display = 'none';  // Hide the change display
+                } else {
+                    // If switching to cash, show the change display
+                    changeDisplay.style.display = 'block';
+                    changeDisplay.innerText = `Change: P0.00`;  // Reset change display to 0
+                }
+            });
         });
-    });
+                function showThankYouModal() {
+  const modal = document.getElementById("thankYouModal");
+  modal.style.display = "block";
+}
+
+function showThankYouModal() {
+  const modal = document.getElementById("thankYouModal");
+  modal.style.display = "block";
+}
+
+function closeThankYouModal() {
+  const modal = document.getElementById("thankYouModal");
+  modal.style.display = "none";
+}
+
+function redirectToOrderStatus() {
+  // Close the Thank You modal
+  closeThankYouModal();
+
+  // Get the order number from the page (this would be dynamically generated or retrieved)
+  const orderNumber = document.getElementById('order-number').innerText;
+
+  // Redirect to the order status page with the order number
+  window.location.href = `/order-status/${orderNumber}`; // Route to order status page
+}
+
+// Trigger the Thank You modal when the "Place Order" button is clicked
+document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+  event.preventDefault(); // Prevent the default form submission
+  showThankYouModal();
+});
 
     // Load cart items and set up change display when the page loads
     loadCart();
 });
-
     </script>

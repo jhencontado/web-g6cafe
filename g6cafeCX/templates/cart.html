@@ -9,12 +9,14 @@
 <body>
     <header>
         <section class="g6logo">
-            <div class="g6logo">
-                <img src="/static/images/g6logo.png" alt="g6logo">
-            </div>
-        </section>
+    <div class="g6logo">
+        <a href="{{ url_for('home') }}">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+        </a>
+    </div>
+</section>
+
         <nav>
-            <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
         </nav>
@@ -49,89 +51,259 @@
                 <button id="checkout-button">Checkout</button>
             </a>
         </div>
+        <!-- Modal Content -->
+<div id="edit-item-modal" class="modal">
+    <div class="modal-content">
+        <!-- Close Button -->
+        <span class="close-button" id="close-modal">&times;</span>
+        <h4>Edit Item</h4>
+        <form id="edit-item-form">
+            <label for="edit-item-name">Item Name</label>
+            <input type="text" id="edit-item-name" disabled>
+
+            <div class="input-group">
+        <label for="edit-item-quantity">Quantity</label>
+        <input type="number" id="edit-item-quantity" min="1" required>
+    </div>
+
+            <label for="edit-item-preferences">Preferences</label>
+            <input type="text" id="edit-item-preferences">
+
+            <button type="submit" id="edit-item-submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+
     </section>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Retrieve the cart data from localStorage
-            const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+       document.addEventListener('DOMContentLoaded', () => {
+    // Retrieve the cart data from localStorage
+    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Get references to the table body and summary elements
-            const cartItemsContainer = document.getElementById("cart-items");
-            const totalItemsSpan = document.getElementById("total-items");
-            const totalPriceSpan = document.getElementById("total-price");
+    // Get references to the table body and summary elements
+    const cartItemsContainer = document.getElementById("cart-items");
+    const totalItemsSpan = document.getElementById("total-items");
+    const totalPriceSpan = document.getElementById("total-price");
 
-            let totalItems = 0;
-            let totalPrice = 0;
+    let totalItems = 0;
+    let totalPrice = 0;
 
-            // Check if the cart is empty
-            if (cartData.length === 0) {
-                cartItemsContainer.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+    // Edit item modal and form elements
+    const modal = document.getElementById("edit-item-modal");
+    const closeModalButton = document.getElementById("close-modal");
+    const editItemForm = document.getElementById("edit-item-form");
+    const editItemNameInput = document.getElementById("edit-item-name");
+    const editItemQuantityInput = document.getElementById("edit-item-quantity");
+    const editItemPreferencesInput = document.getElementById("edit-item-preferences");
+    let editingItemIndex = -1; // To track which item is being edited
+
+    // Check if the cart is empty
+    if (cartData.length === 0) {
+        cartItemsContainer.innerHTML = "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+    } else {
+        // Populate the cart table with items from localStorage
+        cartData.forEach((item, index) => {
+            const itemPrice = parseFloat(item.itemPrice);
+            const itemQuantity = parseInt(item.quantity);
+            const subtotal = itemPrice * itemQuantity;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.itemName}</td>
+                <td>${item.preferences || 'N/A'}</td>
+                <td>${itemQuantity}</td>
+                <td>P${itemPrice.toFixed(2)}</td>
+                <td>P${subtotal.toFixed(2)}</td>
+                <td>
+                <button class="remove-item" data-index="${index}">Remove</button>
+                <button class="edit-item" data-index="${index}">Edit</button>
+                </td>
+            `;
+
+            cartItemsContainer.appendChild(row);
+
+            totalItems += itemQuantity;
+            totalPrice += subtotal;
+        });
+
+        totalItemsSpan.textContent = totalItems;
+        totalPriceSpan.textContent = `P${totalPrice.toFixed(2)}`;
+    }
+
+    // Handle the remove item button click
+    cartItemsContainer.addEventListener("click", (event) => {
+        if (event.target && event.target.classList.contains("remove-item")) {
+            const itemIndex = event.target.getAttribute("data-index");
+
+            cartData.splice(itemIndex, 1);
+            localStorage.setItem('cart', JSON.stringify(cartData));
+
+            window.location.reload();
+        }
+    });
+
+    // Handle the edit item button click
+    cartItemsContainer.addEventListener("click", (event) => {
+        if (event.target && event.target.classList.contains("edit-item")) {
+            const itemIndex = event.target.getAttribute("data-index");
+            const item = cartData[itemIndex];
+
+            // Populate the modal with the current item data
+            editItemNameInput.value = item.itemName;
+            editItemQuantityInput.value = item.quantity;
+            editItemPreferencesInput.value = item.preferences || '';
+
+            editingItemIndex = itemIndex;
+
+            // Open the modal
+            modal.style.display = "block";
+        }
+    });
+
+    // Handle modal close
+    closeModalButton.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    // Handle form submission to save changes
+    editItemForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const updatedItemName = editItemNameInput.value;
+        const updatedItemQuantity = parseInt(editItemQuantityInput.value);
+        const updatedItemPreferences = editItemPreferencesInput.value;
+
+        if (updatedItemQuantity > 0) {
+            // Update the item in cartData
+            cartData[editingItemIndex] = {
+                ...cartData[editingItemIndex],
+                itemName: updatedItemName,
+                quantity: updatedItemQuantity,
+                preferences: updatedItemPreferences
+            };
+
+            // Save the updated cart data
+            localStorage.setItem('cart', JSON.stringify(cartData));
+
+            // Close the modal
+            modal.style.display = "none";
+
+            // Reload the page to reflect changes
+            window.location.reload();
+        } else {
+            alert("Quantity must be greater than 0.");
+        }
+    });
+
+    // Checkout button handling
+    const checkoutButton = document.getElementById("checkout-button");
+    if (checkoutButton) {
+        checkoutButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (cartData.length > 0) {
+                alert("Proceeding to Checkout. Thank you for your order!");
+                window.location.href = "{{ url_for('checkout') }}";
             } else {
-                // Populate the cart table with items from localStorage
-                cartData.forEach((item, index) => {
-                    // Ensure itemPrice and quantity are correctly parsed
-                    const itemPrice = parseFloat(item.itemPrice);
-                    const itemQuantity = parseInt(item.quantity);
-                    const subtotal = itemPrice * itemQuantity;
-
-                    // Create a table row for each cart item
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${item.itemName}</td>
-                        <td>${item.preferences || 'N/A'}</td>
-                        <td>${itemQuantity}</td>
-                        <td>P${itemPrice.toFixed(2)}</td>
-                        <td>P${subtotal.toFixed(2)}</td>
-                        <td><button class="remove-item" data-index="${index}">Remove</button></td>
-                    `;
-
-                    // Append the row to the table body
-                    cartItemsContainer.appendChild(row);
-
-                    // Update totals
-                    totalItems += itemQuantity;
-                    totalPrice += subtotal;
-                });
-
-                // Update the cart summary with totals
-                totalItemsSpan.textContent = totalItems;
-                totalPriceSpan.textContent = `P${totalPrice.toFixed(2)}`;
-            }
-
-            // Handle the remove item button click
-            cartItemsContainer.addEventListener("click", (event) => {
-                if (event.target && event.target.classList.contains("remove-item")) {
-                    const itemIndex = event.target.getAttribute("data-index");
-
-                    // Remove the item from cartData
-                    cartData.splice(itemIndex, 1);
-
-                    // Save the updated cart back to localStorage
-                    localStorage.setItem('cart', JSON.stringify(cartData));
-
-                    // Reload the page to reflect the changes
-                    window.location.reload();
-                }
-            });
-
-            // Ensure you are selecting the correct button
-            const checkoutButton = document.getElementById("checkout-button");
-            if (checkoutButton) {
-                checkoutButton.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    if (cartData.length > 0) {
-                        alert("Proceeding to Checkout. Thank you for your order!");
-
-                        window.location.href = "{{ url_for('checkout') }}";
-                    } else {
-                        alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
-                    }
-                });
-            } else {
-                console.error("Checkout button not found!");
+                alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
             }
         });
+    } else {
+        console.error("Checkout button not found!");
+    }
+});
+
+
     </script>
+<style>
+/* Modal Background */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background: #fff;
+    padding: 50px;
+    margin: 5% auto;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Form Elements */
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content horizontally */
+    justify-content: center; /* Centers the content vertically */
+}
+form .input-group {
+    display: flex;
+    align-items: center; /* Align label and input vertically */
+    margin-bottom: 10px;
+}
+form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+form input[type="number"] {
+    width: 10%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    text-align: center;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #c3b39a;
+}
+
+</style>
 </body>
 </html>
