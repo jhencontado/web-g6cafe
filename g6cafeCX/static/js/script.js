@@ -12,26 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle add-to-cart form submission
-    document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
-        event.preventDefault();
+    document.getElementById('add-to-cart-form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-        const itemName = document.getElementById('modal-item-name').textContent;
-        const itemPhoto = document.getElementById('modal-item-photo').src;
-        const itemPriceText = document.getElementById('modal-item-price').textContent;
-        const itemPrice = parseFloat(itemPriceText.replace('Price: P', '').trim());
-        const quantity = parseInt(document.getElementById('quantity').value);
-        const preferences = document.getElementById('preferences').value;
+    const itemName = document.getElementById('modal-item-name').textContent;
+    const itemPhoto = document.getElementById('modal-item-photo').src;
+    const itemPriceText = document.getElementById('modal-item-price').textContent;
+    const itemPrice = parseFloat(itemPriceText.replace('Price: P', '').trim());
+    const quantity = parseInt(document.getElementById('edit-item-quantity').value);
+    const preferences = document.getElementById('preferences').value;
 
-        console.log(`Item Price Text: ${itemPriceText}`);
-        console.log(`Parsed Item Price: ${itemPrice}`);
+    console.log("Debugging Values:");
+    console.log({ itemName, itemPhoto, itemPriceText, itemPrice, quantity, preferences });
 
-        const cartItem = {
-            itemName,
-            itemPhoto,
-            itemPrice,
-            quantity,
-            preferences
-        };
+    if (isNaN(itemPrice) || isNaN(quantity)) {
+        alert('Error: Invalid price or quantity. Please check your input.');
+        return;
+    }
+
+    const cartItem = {
+        itemName,
+        itemPhoto,
+        itemPrice,
+        quantity,
+        preferences,
+    };
 
         addToCart(cartItem);
         closeModal();

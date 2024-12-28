@@ -1,6 +1,6 @@
-/* General Styles */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 body {
-    font-family: Arial, sans-serif;
+    font-family: poppins, san-serif;
     margin: 0;
     padding: 0;
     background-color: white;
@@ -137,17 +137,18 @@ nav a img:hover {
 }
 
 .product-card, .menu-item {
-    border: 1px solid #ccc;
+    border: 0px solid #ccc;
     padding: 10px;
     text-align: center;
-    background-color: white;
+    background-color:#f4f4f4;
     width: 200px;
-    height: 300px; /* Set a fixed height for consistency */
+    height: 310px; /* Set a fixed height for consistency */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s ease; /* Add a smooth transition effect */
+    border-radius: 5px;
 }
 
 .product-card:hover, .menu-item:hover {
@@ -166,24 +167,7 @@ nav a img:hover {
     border-radius: 5px; /* Optional rounded corners */
 
 }
-.menu-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .menu-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            width: 200px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .menu-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
+
 button {
     background-color: #8d6e63;
     color: white;
@@ -227,7 +211,7 @@ form label, form input {
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
+    font-family: poppins, sans-serif;
     box-sizing: border-box; /* Ensure padding is included in width calculation */
 }
 
@@ -284,7 +268,7 @@ form label, form input {
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
+            max-width: 400px;
             text-align: center;
 
         }
@@ -434,12 +418,12 @@ button:hover {
 
         .order-summary h3 {
             margin-top: 0;
-            font-size: 30px;
+            font-size: 28px;
             color: #8d6e63;
         }
         .order-summary h2 {
             margin-top: 0;
-            font-size: 25px;
+            font-size: 24px;
             color: #8d6e63;
             text-align: left;
         }
@@ -449,7 +433,7 @@ button:hover {
             display: block; /* Keeps the default block behavior */
             text-align: left; /* Aligns the text to the left */
             margin-left: 80px;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .order-summary p span {
@@ -681,4 +665,5 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
 

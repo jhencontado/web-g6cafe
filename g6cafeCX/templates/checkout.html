@@ -30,9 +30,7 @@
                 <!-- Delivery Address Section (fetched from local storage) -->
                 <h3>Delivery Information</h3>
                 <div id="delivery_address_section">
-                    <label>Address: <input type="text" name="address" id="address" required></label>
-                    <label>Pick-up Date<input type="date" name="pickup_date" id="pickup_date"></label>
-                    <label>Delivery Date: <input type="date" name="delivery_date" id="delivery_date"></label>
+                     <span id="address">Loading address...</span>
                 </div>
 
                 <!-- Personal Details -->
@@ -142,7 +140,8 @@
 
     <h2>Thank you for your Order!</h2>
     <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}</br>.</p>
-    <button onclick="redirectToOrderStatus()">OK</button>
+      <a href="{{ url_for('home') }}">
+          <button onclick="redirectToOrderStatus()">OK </button></a>
   </div>
 </div>
 
@@ -164,6 +163,29 @@
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
+
+       document.addEventListener("DOMContentLoaded", function() {
+    initialize();
+});
+
+function initialize() {
+    // All the event listeners and functions go here
+
+    // Example of displaying saved address
+    displaySavedAddress();
+}
+
+function displaySavedAddress() {
+    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+    console.log(storedDetails);  // Check if data is in localStorage
+
+    if (storedDetails) {
+        const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName}, ${storedDetails.barangay}, ${storedDetails.city}`;
+        document.getElementById('address').textContent = address;
+    } else {
+        document.getElementById('address').textContent = 'No address saved';
+    }
+}
 
 
     // Initialize the total amount variable globally to be used for calculating change
@@ -347,11 +369,12 @@ function redirectToOrderStatus() {
   window.location.href = `/order-status/${orderNumber}`; // Route to order status page
 }
 
-// Trigger the Thank You modal when the "Place Order" button is clicked
-document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-  event.preventDefault(); // Prevent the default form submission
-  showThankYouModal();
-});
+        // Trigger the Thank You modal when the "Place Order" button is clicked
+        document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+          event.preventDefault(); // Prevent the default form submission
+          showThankYouModal();
+        });
+
 
     // Load cart items and set up change display when the page loads
     loadCart();

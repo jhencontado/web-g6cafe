@@ -19,7 +19,7 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('stores') }}">Find a Store</a>
+            <a href="{{ url_for('storespick') }}">Find a Store</a>
             <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
         </nav>
     </header>
@@ -46,8 +46,10 @@
             <img id="modal-item-photo" src="" alt="Item Photo">
             <p id="modal-item-price">Price: </p>
             <form id="add-to-cart-form">
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity" min="1" value="1">
+                <div class="input-group">
+            <label for="edit-item-quantity">Quantity</label>
+            <input type="number" id="edit-item-quantity" min="1" value="1">
+            </div>
                 <label for="preferences">Preferences:</label>
                 <textarea id="preferences" name="preferences" rows="4" cols="50"></textarea>
                 <button type="submit">Add to Cart</button>
