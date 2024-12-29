@@ -12,35 +12,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle add-to-cart form submission
-    document.getElementById('add-to-cart-form').addEventListener('submit', function (event) {
-        event.preventDefault();
+    const addToCartForm = document.getElementById('add-to-cart-form');
+    if (addToCartForm) {
+        addToCartForm.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        const itemName = document.getElementById('modal-item-name').textContent;
-        const itemPhoto = document.getElementById('modal-item-photo').src;
-        const itemPriceText = document.getElementById('modal-item-price').textContent;
-        const itemPrice = parseFloat(itemPriceText.replace('P', '').trim());
-        const quantity = parseInt(document.getElementById('edit-item-quantity').value);
-        const preferences = document.getElementById('preferences').value;
+            const itemNameEl = document.getElementById('modal-item-name');
+            const itemPhotoEl = document.getElementById('modal-item-photo');
+            const itemPriceEl = document.getElementById('modal-item-price');
+            const quantityInputEl = document.getElementById('edit-item-quantity');
+            const preferencesEl = document.getElementById('preferences');
 
-        console.log("Debugging Values:");
-        console.log({ itemName, itemPhoto, itemPriceText, itemPrice, quantity, preferences });
+            if (!itemNameEl || !itemPhotoEl || !itemPriceEl || !quantityInputEl || !preferencesEl) {
+                alert('Error: Modal elements missing.');
+                return;
+            }
 
-        if (isNaN(itemPrice) || isNaN(quantity)) {
-            alert('Error: Invalid price or quantity. Please check your input.');
-            return;
-        }
+            const itemName = itemNameEl.textContent;
+            const itemPhoto = itemPhotoEl.src;
+            const itemPrice = parseFloat(itemPriceEl.textContent.replace('P', '').trim());
+            const quantity = parseInt(quantityInputEl.value);
+            const preferences = preferencesEl.value;
 
-        const cartItem = {
-            itemName,
-            itemPhoto,
-            itemPrice,
-            quantity,
-            preferences,
-        };
+            if (isNaN(itemPrice) || isNaN(quantity) || quantity <= 0) {
+                alert('Error: Invalid price or quantity. Please check your input.');
+                return;
+            }
 
-        addToCart(cartItem);
-        closeModal();
-    });
+            const cartItem = {
+                itemName,
+                itemPhoto,
+                itemPrice,
+                quantity,
+                preferences,
+            };
+
+            addToCart(cartItem);
+            closeModal();
+        });
+    }
 
     // Initial load of the cart
     loadCart();
@@ -52,20 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let a = 1;
 
-    // Check if all the elements exist before adding event listeners
     if (plus && minus && num) {
+        num.innerText = a.toString().padStart(2, '0'); // Initial display
+
         plus.addEventListener("click", () => {
             a++;
-            a = a < 10 ? "0" + a : a;
-            num.innerText = a;
+            num.innerText = a.toString().padStart(2, '0'); // Update display
             document.getElementById('edit-item-quantity').value = a; // Sync quantity input
         });
 
         minus.addEventListener("click", () => {
             if (a > 1) {
                 a--;
-                a = a < 10 ? "0" + a : a;
-                num.innerText = a;
+                num.innerText = a.toString().padStart(2, '0'); // Update display
                 document.getElementById('edit-item-quantity').value = a; // Sync quantity input
             }
         });
@@ -74,10 +83,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadMenu(category) {
     fetch(`/api/menu?category=${category}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             const menuContainer = document.getElementById('menu-items');
             menuContainer.innerHTML = ''; // Clear existing menu items
+
+            if (!data || data.length === 0) {
+                menuContainer.innerHTML = '<p>No menu items found.</p>';
+                return;
+            }
 
             data.forEach(item => {
                 const menuItem = document.createElement('div');
@@ -106,6 +125,16 @@ function openModal(itemName, itemPhoto, itemPrice) {
     document.getElementById('modal-item-photo').src = itemPhoto;
     document.getElementById('modal-item-price').textContent = `P${parseFloat(itemPrice).toFixed(2)}`;
     document.getElementById('cart-modal').style.display = 'block';
+
+    // Reset quantity in modal
+    const quantityInput = document.getElementById('edit-item-quantity');
+    if (quantityInput) {
+        quantityInput.value = 1;
+        const num = document.querySelector(".num");
+        if (num) {
+            num.innerText = '01';
+        }
+    }
 }
 
 function closeModal() {
@@ -166,30 +195,6 @@ function loadCart() {
         document.getElementById('total-items').textContent = totalItems;
         document.getElementById('total-price').textContent = `P${totalPrice.toFixed(2)}`;
     }
-}
-
-function calculateTotal() {
-    let priceInput = document.getElementById('price').value;
-    let quantityInput = document.getElementById('quantity').value;
-
-    // Convert inputs to numbers
-    let price = parseFloat(priceInput);
-    let quantity = parseInt(quantityInput);
-
-    // Check for NaN
-    if (isNaN(price) || isNaN(quantity)) {
-        alert("Please enter valid numbers for price and quantity.");
-        return;
-    }
-
-    // Calculate subtotal and total
-    let subtotal = price * quantity;
-    let tax = subtotal * 0.1; // Example tax calculation (10%)
-    let total = subtotal + tax;
-
-    // Display the results
-    document.getElementById('subtotal').innerText = subtotal.toFixed(2);
-    document.getElementById('total').innerText = total.toFixed(2);
 }
 
 function updateCartDisplay() {
