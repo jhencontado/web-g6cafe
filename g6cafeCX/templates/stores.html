@@ -60,95 +60,104 @@
     </main>
 
     <script>
-        <script>
     let map, geocoder, userMarker;
 
-    // Initialize Google Map
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: -34.397, lng: 150.644 }, // Default center
-            zoom: 8
-        });
-        geocoder = new google.maps.Geocoder();
-    }
-
-    // Event listener for store locator form
-    document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const location = document.getElementById('locationInput').value;
-        const resultsDiv = document.getElementById('store-results');
-
-        // Geocode the location entered by the user
-        geocoder.geocode({ 'address': location }, function(results, status) {
-            if (status === 'OK') {
-                const locationLatLng = results[0].geometry.location;
-                map.setCenter(locationLatLng);
-                map.setZoom(12);
-
-                // Remove old user marker if exists
-                if (userMarker) {
-                    userMarker.setMap(null);
-                }
-
-                // Display marker for entered location
-                userMarker = new google.maps.Marker({
-                    map: map,
-                    position: locationLatLng,
-                    title: 'Your Location'
-                });
-
-                // Simulate fetching store data
-                const mockStores = [
-                    { name: 'Store A', address: '123 Main St, Cityville', distance: '2 miles', lat: -34.397, lng: 150.644 },
-                    { name: 'Store B', address: '456 Elm St, Townsville', distance: '5 miles', lat: -34.400, lng: 150.650 }
-                ];
-
-                // Display mock store results
-                resultsDiv.innerHTML = '';
-                mockStores.forEach(store => {
-                    const storeDiv = document.createElement('div');
-                    storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance}</em>`;
-                    storeDiv.style.marginBottom = '10px';
-                    resultsDiv.appendChild(storeDiv);
-
-                    // Add marker for each store
-                    new google.maps.Marker({
-                        map: map,
-                        position: { lat: store.lat, lng: store.lng },
-                        title: store.name
-                    });
-                });
-            } else {
-                resultsDiv.innerHTML = `<p>Error: ${status}</p>`;
-            }
-        });
+// Initialize Google Map
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: -34.397, lng: 150.644 }, // Default center
+        zoom: 8
     });
+    geocoder = new google.maps.Geocoder();
+}
 
-    // Function to save delivery details to localStorage
-    function submitDeliveryDetails() {
-        // Get the values from the input fields
-        const houseNumber = document.getElementById("houseNumber").value;
-        const streetName = document.getElementById("streetName").value;
-        const subdivisionName = document.getElementById("subdivisionName").value;
-        const barangay = document.getElementById("barangay").value;
-        const city = document.getElementById("city").value;
+// Event listener for store locator form
+document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const location = document.getElementById('locationInput').value;
+    const resultsDiv = document.getElementById('store-results');
 
-        // Create an object with the delivery details
-        const deliveryDetails = {
-            houseNumber,
-            streetName,
-            subdivisionName,
-            barangay,
-            city
-        };
+    // Geocode the location entered by the user
+    geocoder.geocode({ 'address': location }, function(results, status) {
+        if (status === 'OK') {
+            const locationLatLng = results[0].geometry.location;
+            map.setCenter(locationLatLng);
+            map.setZoom(12);
 
-        // Save the delivery details in localStorage
-        localStorage.setItem("deliveryDetails", JSON.stringify(deliveryDetails));
+            // Remove old user marker if exists
+            if (userMarker) {
+                userMarker.setMap(null);
+            }
 
-        // Optionally, show the saved address immediately
-        displaySavedAddress();
+            // Display marker for entered location
+            userMarker = new google.maps.Marker({
+                map: map,
+                position: locationLatLng,
+                title: 'Your Location'
+            });
+
+            // Simulate fetching store data
+            const mockStores = [
+                { name: 'Store A', address: '123 Main St, Cityville', distance: '2 miles', lat: -34.397, lng: 150.644 },
+                { name: 'Store B', address: '456 Elm St, Townsville', distance: '5 miles', lat: -34.400, lng: 150.650 }
+            ];
+
+            // Display mock store results
+            resultsDiv.innerHTML = '';
+            mockStores.forEach(store => {
+                const storeDiv = document.createElement('div');
+                storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance}</em>`;
+                storeDiv.style.marginBottom = '10px';
+                resultsDiv.appendChild(storeDiv);
+
+                // Add marker for each store
+                new google.maps.Marker({
+                    map: map,
+                    position: { lat: store.lat, lng: store.lng },
+                    title: store.name
+                });
+            });
+        } else {
+            resultsDiv.innerHTML = `<p>Error: ${status}</p>`;
         }
-    }
+    });
+});
+
+// Submit delivery details
+function submitDeliveryDetails() {
+    // Get the values from the input fields
+    const houseNumber = document.getElementById("houseNumber").value;
+    const streetName = document.getElementById("streetName").value;
+    const subdivisionName = document.getElementById("subdivisionName").value;
+    const barangay = document.getElementById("barangay").value;
+    const city = document.getElementById("city").value;
+    const deliveryInstruction = document.getElementById("deliveryInstruction").value;
+
+    // Create an object with the delivery details
+    const deliveryDetails = {
+        houseNumber,
+        streetName,
+        subdivisionName,
+        barangay,
+        city,
+        deliveryInstruction
+    };
+
+    // Save the delivery details to localStorage
+    localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+
+    // Optionally, show a message or update the UI to reflect the saved details
+    alert("Delivery details saved successfully!");
+}
+
+// Add event listener to the button to trigger the submitDeliveryDetails function
+document.getElementById('submitDetailsButton').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent form submission
+    submitDeliveryDetails(); // Call the function to save delivery details
+});
+
+
+
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>

@@ -13,30 +13,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle add-to-cart form submission
     document.getElementById('add-to-cart-form').addEventListener('submit', function (event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const itemName = document.getElementById('modal-item-name').textContent;
-    const itemPhoto = document.getElementById('modal-item-photo').src;
-    const itemPriceText = document.getElementById('modal-item-price').textContent;
-    const itemPrice = parseFloat(itemPriceText.replace('Price: P', '').trim());
-    const quantity = parseInt(document.getElementById('edit-item-quantity').value);
-    const preferences = document.getElementById('preferences').value;
+        const itemName = document.getElementById('modal-item-name').textContent;
+        const itemPhoto = document.getElementById('modal-item-photo').src;
+        const itemPriceText = document.getElementById('modal-item-price').textContent;
+        const itemPrice = parseFloat(itemPriceText.replace('P', '').trim());
+        const quantity = parseInt(document.getElementById('edit-item-quantity').value);
+        const preferences = document.getElementById('preferences').value;
 
-    console.log("Debugging Values:");
-    console.log({ itemName, itemPhoto, itemPriceText, itemPrice, quantity, preferences });
+        console.log("Debugging Values:");
+        console.log({ itemName, itemPhoto, itemPriceText, itemPrice, quantity, preferences });
 
-    if (isNaN(itemPrice) || isNaN(quantity)) {
-        alert('Error: Invalid price or quantity. Please check your input.');
-        return;
-    }
+        if (isNaN(itemPrice) || isNaN(quantity)) {
+            alert('Error: Invalid price or quantity. Please check your input.');
+            return;
+        }
 
-    const cartItem = {
-        itemName,
-        itemPhoto,
-        itemPrice,
-        quantity,
-        preferences,
-    };
+        const cartItem = {
+            itemName,
+            itemPhoto,
+            itemPrice,
+            quantity,
+            preferences,
+        };
 
         addToCart(cartItem);
         closeModal();
@@ -44,6 +44,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load of the cart
     loadCart();
+
+    // Handle increment/decrement functionality
+    const plus = document.querySelector(".plus");
+    const minus = document.querySelector(".minus");
+    const num = document.querySelector(".num");
+
+    let a = 1;
+
+    // Check if all the elements exist before adding event listeners
+    if (plus && minus && num) {
+        plus.addEventListener("click", () => {
+            a++;
+            a = a < 10 ? "0" + a : a;
+            num.innerText = a;
+            document.getElementById('edit-item-quantity').value = a; // Sync quantity input
+        });
+
+        minus.addEventListener("click", () => {
+            if (a > 1) {
+                a--;
+                a = a < 10 ? "0" + a : a;
+                num.innerText = a;
+                document.getElementById('edit-item-quantity').value = a; // Sync quantity input
+            }
+        });
+    }
 });
 
 function loadMenu(category) {
@@ -78,7 +104,7 @@ function loadMenu(category) {
 function openModal(itemName, itemPhoto, itemPrice) {
     document.getElementById('modal-item-name').textContent = itemName;
     document.getElementById('modal-item-photo').src = itemPhoto;
-    document.getElementById('modal-item-price').textContent = `Price: P${parseFloat(itemPrice).toFixed(2)}`;
+    document.getElementById('modal-item-price').textContent = `P${parseFloat(itemPrice).toFixed(2)}`;
     document.getElementById('cart-modal').style.display = 'block';
 }
 
@@ -171,4 +197,3 @@ function updateCartDisplay() {
         loadCart();
     }
 }
-

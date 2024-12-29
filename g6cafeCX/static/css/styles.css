@@ -42,7 +42,7 @@ nav a {
     font-size: 24px;
     font-weight: bold;
     transition: color 0.3s, background-color 0.3s;
-    margin-right: 50px;
+    margin-right: 60px;
     padding-right: 0;
 }
 
@@ -154,7 +154,7 @@ nav a img:hover {
 .product-card:hover, .menu-item:hover {
     transform: scale(1.05); /* Slightly scale up the item */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow effect */
-    background-color: #f4f4f4; /* Change the background color on hover */
+    background-color: #c3b39a; /* Change the background color on hover */
 }
 
 
@@ -543,31 +543,42 @@ button:hover {
 /* Modal content */
 .modal-content {
   background-color: #fff;
-  margin: 15% auto; /* Center vertically and horizontally */
-  padding: 20px;
+  margin: 10% auto; /* Center vertically and horizontally */
+  padding: 5px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
+  width: 100%;
+  max-width: 500px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-form .input-group {
-    display: flex;
-    align-items: center; /* Align label and input vertically */
-    margin-bottom: 10px;
-    justify-content: center;
-}
-form input[type="number"] {
-    width: 10%;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
+    .items-group {
+    height: 40px;
+    width: 200px; /* Adjust width as needed */
+    background: #FFF;
     border-radius: 5px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    text-align: center;
+    display: flex;
+    align-items: center; /* Vertically center the content */
+    justify-content: space-between; /* Space out the elements evenly */
+    box-shadow: 0.5px 3px rgba(0, 0, 0, 0.2);
+    padding: 0 10px; /* Optional: padding to give space on the sides */
+    margin-left: 28%;
 }
+
+    .items-group span {
+        width: 33%; /* Adjust this to control the width of the individual items inside */
+        text-align: center;
+        font-size: 20px;
+        font-weight: 300;
+        cursor: pointer;
+    }
+
+    .items-group span.num {
+        font-size: 20px;
+        border-right: 2px solid rgba(0, 0, 0, 0.2);
+        border-left: 2px solid rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+    }
 
 button[type="submit"] {
     display: block;

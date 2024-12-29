@@ -29,7 +29,7 @@
             <form id="checkout-form" class="checkout-form" action="#" method="POST">
                 <!-- Delivery Address Section (fetched from local storage) -->
                 <h3>Delivery Information</h3>
-                <div id="delivery_address_section">
+                <div id="deliveryDetails">
                      <span id="address">Loading address...</span>
                 </div>
 
@@ -146,15 +146,13 @@
 </div>
 
 
-
-
 </body>
 </html>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
-    const deliveryAddressSection = document.getElementById("delivery_address_section");
+    const deliveryAddressSection = document.getElementById("deliveryDetails");
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
     const discountCheckbox = document.getElementById("discount-checkbox");
@@ -164,97 +162,78 @@
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
 
-       document.addEventListener("DOMContentLoaded", function() {
+    // Initialize the page and load data
     initialize();
-});
 
-function initialize() {
-    // All the event listeners and functions go here
-
-    // Example of displaying saved address
-    displaySavedAddress();
-}
-
-function displaySavedAddress() {
-    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
-    console.log(storedDetails);  // Check if data is in localStorage
-
-    if (storedDetails) {
-        const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName}, ${storedDetails.barangay}, ${storedDetails.city}`;
-        document.getElementById('address').textContent = address;
-    } else {
-        document.getElementById('address').textContent = 'No address saved';
+    function initialize() {
+        displaySavedAddress();  // Display saved delivery details
+        setupEventListeners();  // Set up event listeners for radio buttons, etc.
+        loadCart();  // Load the cart and order summary on page load
     }
-}
+
+    // Function to fetch and display saved delivery details
+    function displaySavedAddress() {
+        const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+        if (storedDetails) {
+            const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName ? storedDetails.subdivisionName + ', ' : ''}${storedDetails.barangay}, ${storedDetails.city}`;
+            document.getElementById('address').textContent = address;
+        } else {
+            document.getElementById('address').textContent = 'No address saved';
+        }
+    }
 
 
-    // Initialize the total amount variable globally to be used for calculating change
-    let totalAmount = 0;
+    // Set up event listeners
+    function setupEventListeners() {
+        optionRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "delivery" || this.value === "scheduled_delivery") {
+                    deliveryAddressSection.style.display = 'block';
+                } else {
+                    deliveryAddressSection.style.display = 'none';
+                }
+            });
+        });
 
-    // Generate a unique 6-digit order number
+        paymentRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "debit/creditcard") {
+                    cardDetailsSection.style.display = 'block';
+                } else {
+                    cardDetailsSection.style.display = 'none';
+                }
+
+                if (this.value !== "cash") {
+                    tenderedAmountSection.style.display = 'none';
+                    tenderedAmountInput.value = '';
+                    changeDisplay.style.display = 'none';
+                } else {
+                    tenderedAmountSection.style.display = 'block';
+                    changeDisplay.style.display = 'block';
+                }
+            });
+        });
+
+        discountCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                discountDetailsSection.style.display = 'block';
+            } else {
+                discountDetailsSection.style.display = 'none';
+            }
+            loadCart();
+        });
+    }
+
     function generateOrderNumber() {
-        const randomNum = Math.floor(100000 + Math.random() * 900000);  // Generate a random 6-digit number
-        return `${randomNum}`;
-    }
+    const randomNum = Math.floor(100000 + Math.random() * 900000);  // Generate a random 6-digit number
+    return randomNum;  // Return the number without template literals
+}
 
-    // Show or hide delivery address based on the selected option
-    optionRadioButtons.forEach(button => {
-        button.addEventListener('change', function() {
-            if (this.value === "delivery" || this.value === "scheduled_delivery") {
-                deliveryAddressSection.style.display = 'block';
-            } else {
-                deliveryAddressSection.style.display = 'none';
-            }
-        });
-    });
-
-    // Show or hide card details for debit/credit card payment
-    paymentRadioButtons.forEach(button => {
-        button.addEventListener('change', function() {
-            if (this.value === "debit/creditcard") {
-                cardDetailsSection.style.display = 'block';
-            } else {
-                cardDetailsSection.style.display = 'none';
-            }
-
-            // Hide tendered amount section if any payment method other than Cash is selected
-            if (this.value !== "cash") {
-                tenderedAmountSection.style.display = 'none';
-                tenderedAmountInput.value = '';  // Reset the input value
-                changeDisplay.style.display = 'none';  // Hide the change display for non-cash payments
-            } else {
-                tenderedAmountSection.style.display = 'block';  // Show tendered amount section for cash
-                changeDisplay.style.display = 'block';  // Show the change display for cash
-            }
-        });
-    });
-
-    // Show/hide discount details (PWD/Senior Citizen)
-    discountCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            discountDetailsSection.style.display = 'block';
-        } else {
-            discountDetailsSection.style.display = 'none';
-        }
-        // Recalculate the cart after the checkbox state changes
-        loadCart();
-    });
-
-    // Show or hide tendered amount section when Cash is selected
-    cashPaymentRadio.addEventListener('change', function() {
-        if (this.checked) {
-            tenderedAmountSection.style.display = 'block'; // Show tendered amount section when Cash is selected
-            changeDisplay.style.display = 'block';  // Show change display when Cash is selected
-        } else {
-            tenderedAmountSection.style.display = 'none'; // Hide when any other payment method is selected
-            tenderedAmountInput.value = '';  // Reset the input value
-            changeDisplay.style.display = 'none';  // Hide change display for non-cash payments
-        }
-    });
-
-    function loadCart() {
+// Load cart items and update the order summary
+function loadCart() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const orderSummary = document.getElementById('order-summary');
+    const orderNumberElement = document.getElementById('order-number');
     let totalItems = 0;
     let subtotal = 0;
     let vat = 0;
@@ -262,6 +241,7 @@ function displaySavedAddress() {
 
     if (cartItems.length === 0) {
         orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+        orderNumberElement.innerText = ''; // Clear the order number if cart is empty
     } else {
         let orderSummaryHtml = '';
 
@@ -277,106 +257,64 @@ function displaySavedAddress() {
             `;
         });
 
-        // Determine discount and VAT
         if (discountCheckbox.checked) {
-            // Apply discount (20% of subtotal)
             discount = subtotal * 0.20;
-
-            // VAT is not applied when a discount is present
             vat = 0;
         } else {
-            // Apply VAT (12% of subtotal)
             vat = subtotal * 0.12;
-
-            // No discount applied
             discount = 0;
         }
 
-        // Calculate the total amount
-        totalAmount = subtotal + vat - discount;
+        const totalAmount = subtotal + vat - discount;
 
-            // Display order summary
-            orderSummary.innerHTML = orderSummaryHtml;
-            document.getElementById('total-items').innerText = totalItems;
-            document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
-            document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
-            document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
-            document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
+        orderSummary.innerHTML = orderSummaryHtml;
+        document.getElementById('total-items').innerText = totalItems;
+        document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
+        document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
+        document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
+        document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
 
-            // Generate and display the order number
-            const orderNumber = generateOrderNumber();
-            document.getElementById('order-number').innerText = orderNumber;  // Set the order number here
-        }
-
-        // Update change when tendered amount changes
-        updateChangeDisplay();
+        // Generate and display the order number
+        const orderNumber = generateOrderNumber();
+        orderNumberElement.innerText = `${orderNumber}`;  // Display the order number
     }
 
-    // Function to calculate and display the change
+    updateChangeDisplay();
+}
+
+    // Update the change display based on the tendered amount
     function updateChangeDisplay() {
-        tenderedAmountInput.addEventListener('input', function () {
-            const tenderedAmount = parseFloat(this.value); // Get tendered amount
-            const amountDue = parseFloat(totalAmount.toFixed(2)); // Use the total amount already displayed
+        tenderedAmountInput.addEventListener('input', function() {
+            const tenderedAmount = parseFloat(this.value);
+            const amountDue = parseFloat(document.getElementById('amount-due').innerText.replace('P', ''));
 
             if (!isNaN(tenderedAmount) && tenderedAmount >= amountDue) {
-                const change = tenderedAmount - amountDue; // Calculate change
-                changeDisplay.innerText = `Change: P${change.toFixed(2)}`; // Update change display
+                const change = tenderedAmount - amountDue;
+                changeDisplay.innerText = `Change: P${change.toFixed(2)}`;
             } else if (!isNaN(tenderedAmount)) {
-                changeDisplay.innerText = `Insufficient funds!`; // Show warning for insufficient funds
+                changeDisplay.innerText = `Insufficient funds!`;
             } else {
-                changeDisplay.innerText = `Change: P0.00`; // Reset change display if input is invalid
+                changeDisplay.innerText = `Change: P0.00`;
             }
         });
     }
-        // Listen for changes to payment methods
-        paymentRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value !== "cash") {
-                    // If switching away from cash, reset change
-                    tenderedAmountInput.value = '';  // Reset the input value
-                    changeDisplay.innerText = `Change: P0.00`;  // Reset change display to 0
-                    changeDisplay.style.display = 'none';  // Hide the change display
-                } else {
-                    // If switching to cash, show the change display
-                    changeDisplay.style.display = 'block';
-                    changeDisplay.innerText = `Change: P0.00`;  // Reset change display to 0
-                }
-            });
-        });
-                function showThankYouModal() {
-  const modal = document.getElementById("thankYouModal");
-  modal.style.display = "block";
-}
 
-function showThankYouModal() {
-  const modal = document.getElementById("thankYouModal");
-  modal.style.display = "block";
-}
+    // Trigger the Thank You modal when the "Place Order" button is clicked
+    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+        event.preventDefault();
+        showThankYouModal();
+    });
 
-function closeThankYouModal() {
-  const modal = document.getElementById("thankYouModal");
-  modal.style.display = "none";
-}
+    function showThankYouModal() {
+        const modal = document.getElementById("thankYouModal");
+        modal.style.display = "block";
+    }
 
-function redirectToOrderStatus() {
-  // Close the Thank You modal
-  closeThankYouModal();
-
-  // Get the order number from the page (this would be dynamically generated or retrieved)
-  const orderNumber = document.getElementById('order-number').innerText;
-
-  // Redirect to the order status page with the order number
-  window.location.href = `/order-status/${orderNumber}`; // Route to order status page
-}
-
-        // Trigger the Thank You modal when the "Place Order" button is clicked
-        document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-          event.preventDefault(); // Prevent the default form submission
-          showThankYouModal();
-        });
-
-
-    // Load cart items and set up change display when the page loads
-    loadCart();
+    function closeThankYouModal() {
+        const modal = document.getElementById("thankYouModal");
+        modal.style.display = "none";
+    }
 });
+
+
     </script>
