@@ -12,91 +12,118 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle add-to-cart form submission
-    const addToCartForm = document.getElementById('add-to-cart-form');
-    if (addToCartForm) {
-        addToCartForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+    document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-            const itemNameEl = document.getElementById('modal-item-name');
-            const itemPhotoEl = document.getElementById('modal-item-photo');
-            const itemPriceEl = document.getElementById('modal-item-price');
-            const quantityInputEl = document.getElementById('edit-item-quantity');
-            const preferencesEl = document.getElementById('preferences');
+        const itemName = document.getElementById('modal-item-name').textContent;
+        const itemPhoto = document.getElementById('modal-item-photo').src;
+        const itemPriceText = document.getElementById('modal-item-price').textContent;
+        const itemPrice = parseFloat(itemPriceText.replace('Price: P', '').trim());
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const preferences = document.getElementById('preferences').value;
 
-            if (!itemNameEl || !itemPhotoEl || !itemPriceEl || !quantityInputEl || !preferencesEl) {
-                alert('Error: Modal elements missing.');
-                return;
-            }
+        const cartItem = {
+            itemName,
+            itemPhoto,
+            itemPrice,
+            quantity,
+            preferences
+        };
 
-            const itemName = itemNameEl.textContent;
-            const itemPhoto = itemPhotoEl.src;
-            const itemPrice = parseFloat(itemPriceEl.textContent.replace('P', '').trim());
-            const quantity = parseInt(quantityInputEl.value);
-            const preferences = preferencesEl.value;
-
-            if (isNaN(itemPrice) || isNaN(quantity) || quantity <= 0) {
-                alert('Error: Invalid price or quantity. Please check your input.');
-                return;
-            }
-
-            const cartItem = {
-                itemName,
-                itemPhoto,
-                itemPrice,
-                quantity,
-                preferences,
-            };
-
-            addToCart(cartItem);
-            closeModal();
-        });
-    }
+        addToCart(cartItem);
+        closeModal();
+    });
 
     // Initial load of the cart
     loadCart();
 
-    // Handle increment/decrement functionality
-    const plus = document.querySelector(".plus");
-    const minus = document.querySelector(".minus");
-    const num = document.querySelector(".num");
+    // Event listener for store locator form
+    document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const location = document.getElementById('locationInput').value;
+        const resultsDiv = document.getElementById('store-results');
 
-    let a = 1;
+        // Use geocoding service to find coordinates
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const locationLatLng = [data[0].lat, data[0].lon];
+                    map.setView(locationLatLng, 12);
 
-    if (plus && minus && num) {
-        num.innerText = a.toString().padStart(2, '0'); // Initial display
+                    // Remove old user marker if exists
+                    if (userMarker) {
+                        userMarker.remove();
+                    }
 
-        plus.addEventListener("click", () => {
-            a++;
-            num.innerText = a.toString().padStart(2, '0'); // Update display
-            document.getElementById('edit-item-quantity').value = a; // Sync quantity input
-        });
+                    // Display marker for entered location
+                    userMarker = L.marker(locationLatLng).addTo(map)
+                        .bindPopup("Your Location")
+                        .openPopup();
 
-        minus.addEventListener("click", () => {
-            if (a > 1) {
-                a--;
-                num.innerText = a.toString().padStart(2, '0'); // Update display
-                document.getElementById('edit-item-quantity').value = a; // Sync quantity input
-            }
-        });
-    }
+                    // Fetch nearest store from Flask API
+                    fetch(`/find_nearest_store`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ address: location })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const stores = data.nearestStore ? [data.nearestStore] : [];
+
+                        resultsDiv.innerHTML = '';
+                        if (stores.length > 0) {
+                            stores.forEach(store => {
+                                const storeDiv = document.createElement('div');
+                                storeDiv.classList.add('store-info');
+                                storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance} km</em>`;
+                                resultsDiv.appendChild(storeDiv);
+
+                                // Add marker for each store
+                                L.marker([store.lat, store.lng]).addTo(map)
+                                    .bindPopup(`<strong>${store.name}</strong><br>${store.address}`)
+                                    .openPopup();
+                            });
+                        } else {
+                            resultsDiv.innerHTML = '<p>No nearby stores found.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Error fetching stores:', error);
+                        resultsDiv.innerHTML = `<p>Error fetching nearby stores.</p>`;
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>Location not found.</p>';
+                }
+            })
+            .catch(error => {
+                console.log('Error with geocoding:', error);
+            });
+    });
+
+    // Initialize map on page load
+    initMap();
 });
+
+// Initialize OpenStreetMap with Leaflet
+let map, userMarker;
+function initMap() {
+    map = L.map('map').setView([14.565111, 121.029889], 12); // Default center (replace with your desired location)
+
+    // Tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+}
 
 function loadMenu(category) {
     fetch(`/api/menu?category=${category}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             const menuContainer = document.getElementById('menu-items');
             menuContainer.innerHTML = ''; // Clear existing menu items
-
-            if (!data || data.length === 0) {
-                menuContainer.innerHTML = '<p>No menu items found.</p>';
-                return;
-            }
 
             data.forEach(item => {
                 const menuItem = document.createElement('div');
@@ -107,7 +134,8 @@ function loadMenu(category) {
                 menuItem.innerHTML = `
                     ${image}
                     <h4>${item.item_name}</h4>
-                    <p>P${parseFloat(item.unit_price).toFixed(2)}</p>
+                    <p>Category: ${item.category_name}</p>
+                    <p>Price: P${parseFloat(item.unit_price).toFixed(2)}</p>
                     <button onclick="openModal('${item.item_name}', '${item.photo}', '${item.unit_price}')">Add to Cart</button>
                 `;
 
@@ -123,18 +151,8 @@ function loadMenu(category) {
 function openModal(itemName, itemPhoto, itemPrice) {
     document.getElementById('modal-item-name').textContent = itemName;
     document.getElementById('modal-item-photo').src = itemPhoto;
-    document.getElementById('modal-item-price').textContent = `P${parseFloat(itemPrice).toFixed(2)}`;
+    document.getElementById('modal-item-price').textContent = `Price: P${parseFloat(itemPrice).toFixed(2)}`;
     document.getElementById('cart-modal').style.display = 'block';
-
-    // Reset quantity in modal
-    const quantityInput = document.getElementById('edit-item-quantity');
-    if (quantityInput) {
-        quantityInput.value = 1;
-        const num = document.querySelector(".num");
-        if (num) {
-            num.innerText = '01';
-        }
-    }
 }
 
 function closeModal() {
@@ -197,8 +215,15 @@ function loadCart() {
     }
 }
 
+
 function updateCartDisplay() {
     if (document.getElementById('cart-items')) {
         loadCart();
     }
+}
+
+
+function selectStore(storeName) {
+    alert(`You selected: ${storeName}`);
+    // Optionally, you could redirect the user to the next step or perform other actions here
 }

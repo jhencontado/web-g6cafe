@@ -5,11 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Locator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+                .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        main h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #storeLocatorForm {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        #locationInput {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        #store-results {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .store-info {
+            background-color: #fafafa;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            text-align: center;
+        }
+        .delivery-form {
+            margin-top: 40px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .delivery-form input, .delivery-form textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .delivery-form button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .delivery-form button:hover {
+            background-color: #45a049;
+        }
         #map {
             width: 100%;
             height: 400px;
             margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            #locationInput {
+                width: 70%;
+            }
+            .store-info {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -25,208 +121,146 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}">
-                <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50">
+                <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
             </a>
         </nav>
     </header>
 
-    <main>
-        <h2>SELECT YOUR LOCAL STORE</h2>
-        <form id="storeLocatorForm">
-            <input type="text" id="locationInput" placeholder="Enter your location" required>
-            <button type="submit">Search</button>
-        </form>
-
-        <div id="store-results">
-            <!-- Store results will appear here -->
-        </div>
-
-        <div id="map"></div>
-
-        <div class="delivery-form">
-            <h2>Delivery Details</h2>
-            <form id="deliveryDetailsForm">
-                <input type="text" id="houseNumber" placeholder="House Number" required>
-                <input type="text" id="streetName" placeholder="Street Name" required>
-                <input type="text" id="subdivisionName" placeholder="Subdivision Name">
-                <input type="text" id="barangay" placeholder="Barangay" required>
-                <input type="text" id="city" placeholder="City" required>
-                <textarea id="deliveryInstruction" placeholder="Delivery Instructions" rows="3" style="width: 100%; margin-top: 10px; padding: 10px;"></textarea>
-                <a href="{{ url_for('menu') }}">
-                    <button type="button" onclick="submitDeliveryDetails()">Submit Details</button></a>
+    <div class="container">
+        <main>
+            <h2>SELECT YOUR LOCAL STORE</h2>
+            <form id="storeLocatorForm">
+                <input type="text" id="locationInput" placeholder="Enter your location" required>
+                <button type="submit">Search</button>
             </form>
-            <p id="deliveryCharge" style="margin-top: 10px;"></p>
-        </div>
-    </main>
 
+            <div id="store-results">
+                <!-- Store results will appear here -->
+            </div>
+
+            <div id="map"></div>
+
+            <div class="delivery-form">
+                <h2>Delivery Details</h2>
+                <form id="deliveryDetailsForm">
+                    <input type="text" id="houseNumber" placeholder="House Number" required>
+                    <input type="text" id="streetName" placeholder="Street Name" required>
+                    <input type="text" id="subdivisionName" placeholder="Subdivision Name">
+                    <input type="text" id="barangay" placeholder="Barangay" required>
+                    <input type="text" id="city" placeholder="City" required>
+                    <textarea id="deliveryInstruction" placeholder="Delivery Instructions" rows="3"></textarea>
+                    <a href="{{ url_for('menu') }}">
+                        <button type="button" onclick="submitDeliveryDetails()">Submit Details</button>
+                    </a>
+                </form>
+                <p id="deliveryCharge" style="margin-top: 10px;"></p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-    let map, geocoder, userMarker;
+        let map, userMarker;
 
-// Initialize Google Map
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: -34.397, lng: 150.644 }, // Default center
-        zoom: 8
-    });
-    geocoder = new google.maps.Geocoder();
-}
+        // Initialize OpenStreetMap with Leaflet
+        function initMap() {
+            map = L.map('map').setView([14.565111, 121.029889], 12); // Default center
 
-// Event listener for store locator form
-document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const location = document.getElementById('locationInput').value;
-    const resultsDiv = document.getElementById('store-results');
-
-    // Geocode the location entered by the user
-    geocoder.geocode({ 'address': location }, function(results, status) {
-        if (status === 'OK') {
-            const locationLatLng = results[0].geometry.location;
-            map.setCenter(locationLatLng);
-            map.setZoom(12);
-
-            // Remove old user marker if exists
-            if (userMarker) {
-                userMarker.setMap(null);
-            }
-
-            // Display marker for entered location
-            userMarker = new google.maps.Marker({
-                map: map,
-                position: locationLatLng,
-                title: 'Your Location'
-            });
-
-            // Simulate fetching store data
-            const mockStores = [
-                { name: 'Store A', address: '123 Main St, Cityville', distance: '2 miles', lat: -34.397, lng: 150.644 },
-                { name: 'Store B', address: '456 Elm St, Townsville', distance: '5 miles', lat: -34.400, lng: 150.650 }
-            ];
-
-            // Display mock store results
-            resultsDiv.innerHTML = '';
-            mockStores.forEach(store => {
-                const storeDiv = document.createElement('div');
-                storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance}</em>`;
-                storeDiv.style.marginBottom = '10px';
-                resultsDiv.appendChild(storeDiv);
-
-                // Add marker for each store
-                new google.maps.Marker({
-                    map: map,
-                    position: { lat: store.lat, lng: store.lng },
-                    title: store.name
-                });
-            });
-        } else {
-            resultsDiv.innerHTML = `<p>Error: ${status}</p>`;
+            // Tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
         }
-    });
-});
 
-// Submit delivery details
-function submitDeliveryDetails() {
-    // Get the values from the input fields
-    const houseNumber = document.getElementById("houseNumber").value;
-    const streetName = document.getElementById("streetName").value;
-    const subdivisionName = document.getElementById("subdivisionName").value;
-    const barangay = document.getElementById("barangay").value;
-    const city = document.getElementById("city").value;
-    const deliveryInstruction = document.getElementById("deliveryInstruction").value;
+        // Event listener for store locator form
+        document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const location = document.getElementById('locationInput').value;
+            const resultsDiv = document.getElementById('store-results');
 
-    // Create an object with the delivery details
-    const deliveryDetails = {
-        houseNumber,
-        streetName,
-        subdivisionName,
-        barangay,
-        city,
-        deliveryInstruction
-    };
+            // Use geocoding service to find coordinates
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const locationLatLng = [data[0].lat, data[0].lon];
+                        map.setView(locationLatLng, 12);
 
-    // Save the delivery details to localStorage
-    localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+                        // Remove old user marker if exists
+                        if (userMarker) {
+                            userMarker.remove();
+                        }
 
-    // Optionally, show a message or update the UI to reflect the saved details
-    alert("Delivery details saved successfully!");
-}
+                        // Display marker for entered location
+                        userMarker = L.marker(locationLatLng).addTo(map)
+                            .bindPopup("Your Location")
+                            .openPopup();
 
-// Add event listener to the button to trigger the submitDeliveryDetails function
-document.getElementById('submitDetailsButton').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent form submission
-    submitDeliveryDetails(); // Call the function to save delivery details
-});
+                        // Fetch nearby stores from Flask API
+                        fetch(`/api/nearby-stores?lat=${locationLatLng[0]}&lng=${locationLatLng[1]}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const stores = data.stores;
+                                resultsDiv.innerHTML = '';
 
+                                if (stores.length > 0) {
+                                    stores.forEach(store => {
+                                        const storeDiv = document.createElement('div');
+                                        storeDiv.classList.add('store-info');
+                                        storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance} km</em>`;
+                                        resultsDiv.appendChild(storeDiv);
 
+                                        // Add marker for each store
+                                        L.marker([store.lat, store.lng]).addTo(map)
+                                            .bindPopup(`<strong>${store.name}</strong><br>${store.address}`)
+                                            .openPopup();
+                                    });
+                                } else {
+                                    resultsDiv.innerHTML = '<p>No nearby stores found.</p>';
+                                }
+                            })
+                            .catch(error => {
+                                console.log('Error fetching stores:', error);
+                                resultsDiv.innerHTML = `<p>Error fetching nearby stores.</p>`;
+                            });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Location not found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.log('Error with geocoding:', error);
+                });
+        });
 
-</script>
+        // Submit delivery details
+        function submitDeliveryDetails() {
+            // Get the values from the input fields
+            const houseNumber = document.getElementById("houseNumber").value;
+            const streetName = document.getElementById("streetName").value;
+            const subdivisionName = document.getElementById("subdivisionName").value;
+            const barangay = document.getElementById("barangay").value;
+            const city = document.getElementById("city").value;
+            const deliveryInstruction = document.getElementById("deliveryInstruction").value;
 
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+            // Create an object with the delivery details
+            const deliveryDetails = {
+                houseNumber,
+                streetName,
+                subdivisionName,
+                barangay,
+                city,
+                deliveryInstruction
+            };
 
+            // Save the delivery details to localStorage
+            localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+
+            // Optionally, show a message or update the UI to reflect the saved details
+            alert("Delivery details saved successfully!");
+        }
+
+        // Initialize map on page load
+        window.onload = initMap;
+    </script>
 </body>
 </html>
-
-<style>
-
-.delivery-form {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-}
-
-.delivery-form h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-/* Input Fields Styling */
-.delivery-form input[type="text"],
-.delivery-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.delivery-form input[type="text"]:focus,
-.delivery-form textarea:focus {
-    border-color: #4caf50;
-    outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
-
-/* Button Styling */
-.delivery-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #8d6e63;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.delivery-form button:hover {
-    background-color: #c3b39a;
-}
-
-/* Anchor Tag Styling */
-.delivery-form a {
-    text-decoration: none;
-}
-
-.delivery-form a button {
-    display: block;
-}
-
-</style>

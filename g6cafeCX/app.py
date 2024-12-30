@@ -1,12 +1,14 @@
 from flask import Flask, render_template, jsonify, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from geopy.distance import geodesic
+import math
 
 app = Flask(__name__)
 CORS(app)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Mysql.admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -39,6 +41,15 @@ class OrderDetails(db.Model):
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
     order_preference = db.Column(db.Text)
 
+class Store(db.Model):
+    __tablename__ = 'stores'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    lat = db.Column(db.Float, nullable=False)
+    lng = db.Column(db.Float, nullable=False)
+    business_hours = db.Column(db.String(255), nullable=False)
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -59,9 +70,21 @@ def checkout():
 def stores():
     return render_template('stores.html')
 
+
 @app.route('/storespick')
 def storespick():
-    return render_template('storespick.html')
+    # Fetch all stores from the database
+    stores = Store.query.all()
+
+    # Prepare a list of stores with relevant data (name, address, business_hours)
+    store_list = [{
+        'name': store.name,
+        'address': store.address,
+        'business_hours': store.business_hours
+    } for store in stores]
+
+    # Pass store_list to the template
+    return render_template('storespick.html', stores=store_list)
 
 @app.route('/tracker')
 def tracker():
@@ -85,6 +108,52 @@ def get_menu():
     } for item in menu_items]
     return jsonify(menu_list)
 
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371  # Radius of Earth in km
+    dlat = math.radians(lat2 - lat1)
+    dlng = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlng / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c  # Distance in km
+
+# API to fetch nearby stores
+@app.route('/api/nearby-stores', methods=['GET'])
+def get_nearby_stores():
+    user_lat = float(request.args.get('lat'))
+    user_lng = float(request.args.get('lng'))
+
+    stores = Store.query.all()
+
+    # Calculate distance between user location and store
+    nearby_stores = []
+    for store in stores:
+        store_location = (store.lat, store.lng)
+        user_location = (user_lat, user_lng)
+        distance = geodesic(user_location, store_location).km  # In kilometers
+
+        # Only add stores within the 5-7 km range
+        if 5 <= distance <= 7:
+            nearby_stores.append({
+                'name': store.name,
+                'address': store.address,
+                'distance': round(distance, 2),
+                'lat': store.lat,
+                'lng': store.lng,
+                'business_hours': store.business_hours
+            })
+
+    return jsonify({'stores': nearby_stores})
+
+@app.route('/stores')
+def get_stores():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT name, address, business_hours FROM STORE')
+    stores = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(stores)  # return the stores data as JSON
 
 if __name__ == '__main__':
     app.run(debug=True)
