@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find a Store - G6 Cafe</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .store-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+        .store-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .store-details {
+            font-size: 14px;
+            margin: 8px 0;
+        }
+        .btn-select-store {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-select-store:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -29,15 +61,16 @@
     <section class="store-selection">
         <h1>Select a Pickup Location</h1>
 
-        <!-- Loop through the stores passed from the backend -->
         <div class="store-list">
             {% for store in stores %}
-                <div class="store-card">
-                    <h2>{{ store.name }}</h2>
-                    <p><strong>Address:</strong> {{ store.address }}</p>
-                    <p><strong>Business Hours:</strong> {{ store.business_hours }}</p>
-                    <a href="#" onclick="selectStore('{{ store.name }}')" class="btn-select-store">Select this store</a>
-                </div>
+            <div class="store-card">
+                <h2>{{ store.name }}</h2>
+                <p class="store-details">
+                    <span><strong>Address:</strong> {{ store.address }}</span><br>
+                    <span><strong>Hours:</strong> {{ store.business_hours }}</span>
+                </p>
+                <button onclick="selectStore('{{ store.name }}')" class="btn-select-store">Select</button>
+            </div>
             {% endfor %}
         </div>
     </section>
