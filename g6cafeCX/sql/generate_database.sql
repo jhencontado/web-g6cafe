@@ -207,3 +207,31 @@ select * from orders;
 select * from order_details;
 select distinct pwdsenior_details;
 select distinct pwd_senior_id from pwdsenior_details;
+
+
+/*-----------------store list---------------------*/
+CREATE TABLE stores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    lat DECIMAL(10, 8) NOT NULL,
+    lng DECIMAL(11, 8) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    business_hours VARCHAR(50) NOT NULL);
+    
+INSERT INTO stores (name, lat, lng, address, business_hours) VALUES
+('G6 Cafe Hotel Sogo - EDSA Guadalupe', 14.564667, 121.045167, '17B Epifanio de los Santos Ave, Makati, 1554 Metro Manila', '8am-10pm'),
+('G6 Cafe Makati Ave.', 14.565111, 121.029889, '7850 Makati Ave, Makati, Metro Manila', '10am-10pm'),
+('G6 Cafe Timog Ave., Quezon City', 14.634907, 121.037490, 'J2MQ+W2J, Ushio building, Scout Torillo, corner Timog Avenue, Brgy, Quezon City', '8am-10pm'),
+('G6 Cafe UST', 14.611944, 120.988250, 'Unit 102 1211 Don Jose Building V. Concepcion St, Dapitan St, Sampaloc, Manila, 1015 Metro Manila', '6am-11pm'),
+('G6 Cafe Caloocan', 14.651833, 120.977083, '94 10th Ave, Grace Park West, Manila, Metro Manila', '8am-10pm'),
+('G6 Cafe Karuhatan Valenzuela City', 14.683806, 120.977361, 'MacArthur Hwy, Valenzuela, 1440 Metro Manila', '8am-10pm'),
+('G6 Cafe Valenzuela', 14.705417, 120.989417, '104 Paso de Blas Rd, Valenzuela, Metro Manila', '10am-10pm'),
+('G6 Cafe Tondo, Manila', 14.607000, 120.966861, '560 Lakandula St, Tondo, Manila, 1013 Metro Manila', '10am-10pm'),
+('G6 Cafe Malabon', 14.660417, 120.951389, '59 Gen. Luna St, Malabon, 1470 Metro Manila', '8am-10pm'),
+('G6 Cafe Marilao', 14.765313, 120.963039, '9013 (Stall, 2 MacArthur Hwy, Marilao, 3019 Bulacan', '6am-11pm'),
+('G6 Cafe Maginhawa', 14.646462, 121.059941, '101 Maginhawa, Diliman, Lungsod Quezon, 1101 Kalakhang Maynila', '8am-10pm'),
+('G6 Cafe Eastwood, Quezon City', 14.610477, 121.081375, 'GF Unit 3E, Eastwood, Citywalk 2, Quezon City, 1110 Metro Manila', '10am-10pm'),
+('G6 Cafe Tomas Morato Ave., Quezon City', 14.637358, 121.035747, 'Scout Borromeo, corner Tomas Morato Ave, Quezon City, 1103 Metro Manila', '10am-10pm'),
+('G6 Cafe East Kapitolyo, Pasig City', 14.569904, 121.060237, 'No. 46 E Capitol Dr, Pasig, 1603 Metro Manila', '8am-10pm'),
+('G6 Cafe Fairview Terraces, Quezon City', 14.735938, 121.060000, 'Upper Ground Central Garden Ayala Fairview Terraces Maligaya corn, Quirino Hwy, Quezon City, 1118 Metro Manila', '10am-10pm');
+
