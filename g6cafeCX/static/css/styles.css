@@ -349,6 +349,53 @@ button:hover {
     background-color: #6d4c41;
 }
 
+/* Container for cart icon and count */
+.cart-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Cart icon */
+.cart-container img {
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+
+/* Cart count badge */
+#cart-count {
+    position: absolute;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 5px 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Hover effect on cart icon */
+.cart-container:hover #cart-count {
+    transform: scale(1.1);
+}
+
+/* Optional: Add responsiveness for smaller screens */
+@media (max-width: 600px) {
+    .cart-container img {
+        height: 40px;
+        width: 40px;
+    }
+
+    #cart-count {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+}
+
+
 .best-seller-navigation {
     display: flex; /* Use Flexbox for layout */
     justify-content: space-evenly; /* Distribute the items evenly */
@@ -527,6 +574,19 @@ button:hover {
     font-size: 18px;
     color: #8d6e63;
 }
+/* Styling for the pencil icon */
+.edit-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    margin-left: 15px;
+}
+
+.edit-icon:hover {
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+}
+
 /* Modal container */
 .modal {
   display: none; /* Hidden by default */

@@ -21,7 +21,11 @@
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
             <a href="{{ url_for('storespick') }}">Find a Store</a>
-            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" weight="50"></a>
+            <a href="{{ url_for('cart') }}">
+    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <span id="cart-count">0</span>
+    </a>
+
 
         </nav>
     </header>
@@ -47,6 +51,7 @@
 <footer>
         <p>&copy; 2024 G6 Cafe. All rights reserved.</p>
     </footer>
-
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+

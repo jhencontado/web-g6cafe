@@ -75,7 +75,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .delivery-form input, .delivery-form textarea {
-            width: 100%;
+            width: 98%;
             padding: 12px;
             font-size: 16px;
             margin-bottom: 10px;
@@ -85,14 +85,14 @@
         .delivery-form button {
             width: 100%;
             padding: 15px;
-            background-color: #4CAF50;
+            background-color: #8d6e63;
             color: white;
             border-radius: 5px;
             cursor: pointer;
             font-size: 18px;
         }
         .delivery-form button:hover {
-            background-color: #45a049;
+            background-color: #c3b39a;
         }
         #map {
             width: 100%;
@@ -261,6 +261,8 @@
 
         // Initialize map on page load
         window.onload = initMap;
+
     </script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -141,27 +141,49 @@ function closeModal() {
     document.getElementById('cart-modal').style.display = 'none';
 }
 
-function addToCart(cartItem) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+document.addEventListener('DOMContentLoaded', () => {
+            // Update cart count when the page loads
+            updateCartCount();
+        });
 
-    // Check if the item already exists in the cart with the same preferences
-    const existingItemIndex = cart.findIndex(
-        item => item.itemName === cartItem.itemName && item.preferences === cartItem.preferences
-    );
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) {
+                const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+                cartCountEl.textContent = cartCount;
+            }
+        }
 
-    if (existingItemIndex !== -1) {
-        // Update quantity if item exists
-        cart[existingItemIndex].quantity += cartItem.quantity;
-    } else {
-        // Add new item to cart
-        cart.push(cartItem);
-    }
+        function addToCart(cartItem) {
+            if (!cartItem || !cartItem.itemName || !cartItem.quantity || cartItem.quantity <= 0) {
+                alert("Error: Invalid item or quantity.");
+                return;
+            }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert(`${cartItem.quantity} x ${cartItem.itemName} added to cart!`);
-    updateCartDisplay();
-}
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItemIndex = cart.findIndex(
+                item => item.itemName === cartItem.itemName && item.preferences === cartItem.preferences
+            );
 
+            if (existingItemIndex !== -1) {
+                cart[existingItemIndex].quantity += cartItem.quantity;
+            } else {
+                cart.push(cartItem);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Update cart count in UI
+            updateCartCount();
+
+            alert(`${cartItem.quantity} x ${cartItem.itemName} added to cart!`);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            // Your code for updating the cart display (e.g., showing cart items, total price)
+        }
 function loadCart() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const cartContainer = document.getElementById('cart-items');
@@ -212,4 +234,19 @@ function initMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+}
+// Function to handle store selection
+function selectStore(storeName, storeLocation) {
+    // Store the selected store's name and location in localStorage
+    const selectedStore = {
+        name: storeName,
+        location: storeLocation
+    };
+
+    localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+
+    // Optionally, you can show a message or redirect the user to the checkout page
+    alert("Store selected: " + storeName);
+    // Redirect to checkout page if needed (uncomment the next line if desired)
+    // window.location.href = "/checkout";
 }

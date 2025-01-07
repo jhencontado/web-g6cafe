@@ -20,10 +20,14 @@
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
             <a href="{{ url_for('storespick') }}">Find a Store</a>
-            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
+            <a href="{{ url_for('cart') }}">
+    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <span id="cart-count">0</span>
+    </a>
         </nav>
     </header>
 
+    </section>
     <div class="menu-container">
         <aside class="best-seller-navigation">
             <a href="#espresso" class="nav-link"><img src="{{ url_for('static', filename='images/coffee.png') }}" alt="coffee"><p>Coffee</p></a>

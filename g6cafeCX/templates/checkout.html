@@ -18,7 +18,10 @@
 
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50"></a>
+            <a href="{{ url_for('cart') }}">
+    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <span id="cart-count">0</span>
+    </a>
         </nav>
     </header>
 
@@ -31,7 +34,18 @@
                 <h3>Delivery Information</h3>
                 <div id="deliveryDetails">
                      <span id="address">Loading address...</span>
+                    <p id="delivery-instructions">No instructions provided</p>
+                      <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 </div>
+                <div id="pickupDetails" style="display: none;">
+                <h3>Pick-Up Location</h3>
+                <p id="pickup-location">Pick up your order from the selected store.</p>
+                <a href="{{ url_for('storespick') }}" class="change-store-link">
+                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
+                </a>
+                </div>
+
+
 
                 <!-- Personal Details -->
                 <h3>Personal Details</h3>
@@ -153,6 +167,8 @@
       document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
     const deliveryAddressSection = document.getElementById("deliveryDetails");
+    const pickupLocationSection = document.getElementById("pickupDetails");
+    const storeDisplay = document.getElementById("selected-store-details");
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
     const discountCheckbox = document.getElementById("discount-checkbox");
@@ -166,31 +182,59 @@
     initialize();
 
     function initialize() {
-        displaySavedAddress();  // Display saved delivery details
-        setupEventListeners();  // Set up event listeners for radio buttons, etc.
-        loadCart();  // Load the cart and order summary on page load
-    }
+    setupEventListeners();  // Set up event listeners for radio buttons, etc.
+    loadCart();  // Load the cart and order summary on page load
+    displaySavedAddress();  // Display saved delivery details (if any)
+    displaySelectedStore();  // Display selected store information
+    displaySavedDeliveryInstructions();  // Display saved delivery instructions (if any)
+}
 
-    // Function to fetch and display saved delivery details
-    function displaySavedAddress() {
-        const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
-        if (storedDetails) {
-            const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName ? storedDetails.subdivisionName + ', ' : ''}${storedDetails.barangay}, ${storedDetails.city}`;
-            document.getElementById('address').textContent = address;
+// Function to display saved address
+function displaySavedAddress() {
+    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+    if (storedDetails) {
+        const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName ? storedDetails.subdivisionName + ', ' : ''}${storedDetails.barangay}, ${storedDetails.city}`;
+        document.getElementById('address').textContent = address;
+    } else {
+        document.getElementById('address').textContent = 'No address saved';
+    }
+}
+
+// Function to display saved delivery instructions
+function displaySavedDeliveryInstructions() {
+    const storedInstructions = localStorage.getItem('deliveryInstructions');
+    if (storedInstructions) {
+        document.getElementById('delivery-instructions').textContent = storedInstructions;
+    } else {
+        document.getElementById('delivery-instructions').textContent = 'No instructions provided';
+    }
+}
+    // Function to display selected store details in the Pick-Up Location section
+    function displaySelectedStore() {
+        const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
+
+        if (selectedStore) {
+            const storeDetails = `${selectedStore.name}, ${selectedStore.location}`;
+            // Show the pickup details section and update with the selected store
+            pickupLocationSection.style.display = 'block';
+            document.getElementById('pickup-location').textContent = `Pick up your order from: ${storeDetails}`;
         } else {
-            document.getElementById('address').textContent = 'No address saved';
+            pickupLocationSection.style.display = 'none';  // Hide if no store is selected
         }
     }
 
-
-    // Set up event listeners
+    // Setup event listeners for option buttons (delivery or pickup)
     function setupEventListeners() {
         optionRadioButtons.forEach(button => {
             button.addEventListener('change', function() {
                 if (this.value === "delivery" || this.value === "scheduled_delivery") {
+                    // Show delivery address section, hide pickup section
                     deliveryAddressSection.style.display = 'block';
-                } else {
+                    pickupLocationSection.style.display = 'none';
+                } else if (this.value === "pickup") {
+                    // Show pickup section, hide delivery address section
                     deliveryAddressSection.style.display = 'none';
+                    pickupLocationSection.style.display = 'block';
                 }
             });
         });
@@ -315,6 +359,58 @@ function loadCart() {
         modal.style.display = "none";
     }
 });
+// Function to edit address
+function editAddress() {
+    // Get the current address value
+    let currentAddress = document.getElementById('address').innerText;
+
+    // Prompt user for new address
+    let newAddress = prompt('Edit your address:', currentAddress);
+
+    // If a new address is provided, update the address on the page
+    if (newAddress) {
+        document.getElementById('address').innerText = newAddress;
+
+        // Optionally, save the updated address to localStorage (if you're using it)
+        localStorage.setItem('address', newAddress);
+    }
+}
+function editPickUpLocation() {
+    // Get the current pick-up location value
+    let currentLocation = document.getElementById('pickup-location').innerText;
+
+    // Prompt user for new pick-up location
+    let newLocation = prompt('Edit your pick-up location:', currentLocation);
+
+    // If a new location is provided, update the location on the page
+    if (newLocation) {
+        document.getElementById('pickup-location').innerText = newLocation;
+
+        // Optionally, save the updated pick-up location to localStorage
+        localStorage.setItem('pickupLocation', newLocation);
+
+        // First redirect to store pick-up location page to choose a new store
+        window.location.href = storePickUpUrl;  // Redirect to store pick-up page
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const storeDisplay = document.getElementById("selected-store-details");
+
+    const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
+
+    if (selectedStore) {
+        storeDisplay.innerHTML = `
+            <h3>Selected Store</h3>
+            <p>Name: ${selectedStore.name}</p>
+            <p>Location: ${selectedStore.location}</p>
+        `;
+    } else {
+        storeDisplay.innerHTML = "<p>No store selected</p>";
+    }
+});
 
 
     </script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>

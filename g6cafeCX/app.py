@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
 from geopy.distance import geodesic
 import math
@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Mysql.admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -154,6 +154,26 @@ def get_stores():
     cursor.close()
     conn.close()
     return jsonify(stores)  # return the stores data as JSON
+
+@app.route ( '/add-to-cart',methods=['POST'] )
+def add_to_cart ():
+    item = request.json  # assuming you send the item data as JSON
+    cart = session.get ( 'cart',[] )
+
+    # Add the item to the cart
+    cart.append ( item )
+
+    # Save the updated cart back to the session
+    session['cart'] = cart
+
+    return jsonify ( {'message': 'Item added to cart','cart_count': len ( cart )} )
+
+@app.route('/cart-count', methods=['GET'])
+def cart_count():
+    # Example: Fetch the cart from the session or database
+    cart = session.get('cart', [])
+    return jsonify({'count': len(cart)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

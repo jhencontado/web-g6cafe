@@ -7,35 +7,44 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
         .store-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-        }
-        .store-card {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 16px;
-            width: 300px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .store-details {
-            font-size: 14px;
-            margin: 8px 0;
-        }
-        .btn-select-store {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-select-store:hover {
-            background-color: #0056b3;
-        }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center; /* Ensures the cards are centered horizontally */
+    padding: 5px;
+    max-width: 1500px;
+    margin: 0 auto; /* Centers the container within the page */
+}
+
+.store-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 16px; /* Adds space between rows of cards */
+}
+
+.store-details {
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.btn-select-store {
+    background-color: #8d6e63;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-select-store:hover {
+    background-color: #c3b39a;
+}
+
     </style>
 </head>
 <body>
@@ -53,8 +62,9 @@
             <a href="{{ url_for('tracker') }}">Tracker</a>
             <a href="{{ url_for('storespick') }}">Find a Store</a>
             <a href="{{ url_for('cart') }}">
-                <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50px" alt="Cart">
-            </a>
+    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <span id="cart-count">0</span>
+    </a>
         </nav>
     </header>
 
@@ -69,7 +79,8 @@
                     <span><strong>Address:</strong> {{ store.address }}</span><br>
                     <span><strong>Hours:</strong> {{ store.business_hours }}</span>
                 </p>
-                <button onclick="selectStore('{{ store.name }}')" class="btn-select-store">Select</button>
+                <a href="{{ url_for('menu') }}">
+                    <button onclick="selectStore('{{ store.name }}')" class="btn-select-store">Select</button></a>
             </div>
             {% endfor %}
         </div>
