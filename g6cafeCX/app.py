@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
 from geopy.distance import geodesic
 import math
+from flask import session
+
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +21,10 @@ class MenuDetails(db.Model):
     item_name = db.Column(db.String(100), nullable=False)
     photo = db.Column(db.String(255))
     unit_price = db.Column(db.Numeric(10, 2), nullable=False)
+
+    # Relationship with OrderDetails
+    order_items = db.relationship('OrderDetails', back_populates='menu_item', cascade='all, delete-orphan')
+
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -40,6 +46,20 @@ class OrderDetails(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
     order_preference = db.Column(db.Text)
+
+    # Relationship with MenuDetails
+    menu_item = db.relationship('MenuDetails', back_populates='order_items')
+
+class OrderAddress(db.Model):
+    __tablename__ = 'order_address'
+    order_address_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'), nullable=False)
+    address = db.Column(db.Text)
+    pickup_date = db.Column(db.DateTime)
+    delivery_date = db.Column(db.DateTime)
+    contact_name = db.Column(db.String(100), nullable=False)
+    contact_email = db.Column(db.String(50))
+    contact_number = db.Column(db.String(15), nullable=False)
 
 class Store(db.Model):
     __tablename__ = 'stores'
@@ -173,6 +193,39 @@ def cart_count():
     # Example: Fetch the cart from the session or database
     cart = session.get('cart', [])
     return jsonify({'count': len(cart)})
+
+@app.route('/search_invoice', methods=['GET', 'POST'])
+@app.route('/search_invoice', methods=['GET', 'POST'])
+def search_invoice():
+    if request.method == 'POST':
+        order_id = request.form.get('order_id')
+        if not order_id:
+            return jsonify({'error': 'Order ID is required'}), 400
+
+        # Fetch the order
+        order = Order.query.filter_by(order_id=order_id).first()
+        if not order:
+            return jsonify({'error': 'Order not found'}), 404
+
+
+        # Fetch associated order details with menu items
+        order_items = OrderDetails.query.filter_by(order_id=order_id).all()
+
+        # Structure the order details for rendering
+        items_data = [{
+            'item_name': item.menu_item.item_name,  # From MenuDetails
+            'quantity': item.quantity,
+            'subtotal': float(item.subtotal),
+            'unit_price': float(item.menu_item.unit_price),
+            'order_preference': item.order_preference
+        } for item in order_items]
+        # Fetch associated order address
+        order_address = OrderAddress.query.filter_by(order_id=order_id).first()
+
+        return render_template('receipt.html', order=order, items=order_items, address=order_address)
+
+    # Render the search page
+    return render_template('search_invoice.html')
 
 
 if __name__ == '__main__':

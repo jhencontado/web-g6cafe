@@ -737,4 +737,82 @@ button:hover {
     background-color: #45a049;
 }
 
+/* Receipt container */
+.receipt {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
 
+h2 {
+    font-family: 'Playfair Display', serif;
+    color: #6f4f1f;
+    border-bottom: 2px solid #6f4f1f;
+    padding-bottom: 5px;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #f4f4f4;
+}
+
+/* Item row */
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #6f4f1f;
+}
+
+/* Button for print */
+button {
+    background-color: #6f4f1f;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #4e3b2e;
+}
+
+@media print {
+    /* Hide unnecessary sections during printing */
+    header, footer, nav, button {
+        display: none;
+    }
+
+    /* Style the receipt for printing */
+    .receipt {
+        width: 100%;
+        border: none;
+        box-shadow: none;
+    }
+
+    body {
+        background-color: #fff;
+        color: #000;
+    }
+}

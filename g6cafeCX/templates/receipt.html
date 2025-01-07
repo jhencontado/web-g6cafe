@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Receipt</h1>
+    </header>
+    <section class="receipt">
+        <h2>Order Details</h2>
+        <p><strong>Receipt Number:</strong> {{ order['receipt_number'] }}</p>
+        <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
+        <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
+        <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
+        <p><strong>Address:</strong> {{ order['address'] }}</p>
+
+        <h2>Items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item['item_name'] }}</td>
+                    <td>{{ item['quantity'] }}</td>
+                    <td>{{ item['subtotal'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Summary</h2>
+        <p><strong>Subtotal:</strong> {{ order['subtotal'] }}</p>
+        <p><strong>VAT:</strong> {{ order['vat_amount'] }}</p>
+        <p><strong>Discount:</strong> {{ order['discount_amount'] }}</p>
+        <p><strong>Net Amount:</strong> {{ order['net_amount'] }}</p>
+        <p><strong>Tender Amount:</strong> {{ order['tender_amount'] }}</p>
+        <p><strong>Change Amount:</strong> {{ order['change_amount'] }}</p>
+    </section>
+    <footer>
+        <p>Thank you for your purchase!</p>
+        <button onclick="printReceipt()">Generate Receipt</button>
+    </footer>
+</body>
+</html>
+
+<script>
+    function printReceipt() {
+        window.print();
+    }
+</script>
