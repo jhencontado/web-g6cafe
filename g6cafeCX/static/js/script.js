@@ -225,16 +225,108 @@ function updateCartDisplay() {
     }
 }
 
-// Initialize OpenStreetMap with Leaflet
 let map, userMarker;
-function initMap() {
-    map = L.map('map').setView([14.565111, 121.029889], 12); // Default center (replace with your desired location)
 
-    // Tile layer (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-}
+        // Initialize OpenStreetMap with Leaflet
+        function initMap() {
+            map = L.map('map').setView([14.565111, 121.029889], 12); // Default center
+
+            // Tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        // Event listener for store locator form
+        document.getElementById('storeLocatorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const location = document.getElementById('locationInput').value;
+            const resultsDiv = document.getElementById('store-results');
+
+            // Use geocoding service to find coordinates
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const locationLatLng = [data[0].lat, data[0].lon];
+                        map.setView(locationLatLng, 12);
+
+                        // Remove old user marker if exists
+                        if (userMarker) {
+                            userMarker.remove();
+                        }
+
+                        // Display marker for entered location
+                        userMarker = L.marker(locationLatLng).addTo(map)
+                            .bindPopup("Your Location")
+                            .openPopup();
+
+                        // Fetch nearby stores from Flask API
+                        fetch(`/api/nearby-stores?lat=${locationLatLng[0]}&lng=${locationLatLng[1]}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const stores = data.stores;
+                                resultsDiv.innerHTML = '';
+
+                                if (stores.length > 0) {
+                                    stores.forEach(store => {
+                                        const storeDiv = document.createElement('div');
+                                        storeDiv.classList.add('store-info');
+                                        storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance} km<button onclick="selectStore(${store.Name})">Select</button></em>`;
+                                        resultsDiv.appendChild(storeDiv);
+
+                                        // Add marker for each store
+                                        L.marker([store.lat, store.lng]).addTo(map)
+                                            .bindPopup(`<strong>${store.name}</strong><br>${store.address}`)
+                                            .openPopup();
+                                    });
+                                } else {
+                                    resultsDiv.innerHTML = '<p>No nearby stores found.</p>';
+                                }
+                            })
+                            .catch(error => {
+                                console.log('Error fetching stores:', error);
+                                resultsDiv.innerHTML = `<p>Error fetching nearby stores.</p>`;
+                            });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Location not found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.log('Error with geocoding:', error);
+                });
+        });
+
+        // Submit delivery details
+        function submitDeliveryDetails() {
+            // Get the values from the input fields
+            const houseNumber = document.getElementById("houseNumber").value;
+            const streetName = document.getElementById("streetName").value;
+            const subdivisionName = document.getElementById("subdivisionName").value;
+            const barangay = document.getElementById("barangay").value;
+            const city = document.getElementById("city").value;
+            const deliveryInstruction = document.getElementById("deliveryInstruction").value;
+
+            // Create an object with the delivery details
+            const deliveryDetails = {
+                houseNumber,
+                streetName,
+                subdivisionName,
+                barangay,
+                city,
+                deliveryInstruction
+            };
+
+            // Save the delivery details to localStorage
+            localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+
+            // Optionally, show a message or update the UI to reflect the saved details
+            alert("Delivery details saved successfully!");
+        }
+
+        // Initialize map on page load
+        window.onload = initMap;
+
 // Function to handle store selection
 function selectStore(storeName, storeLocation) {
     // Store the selected store's name and location in localStorage
