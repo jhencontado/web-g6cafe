@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
