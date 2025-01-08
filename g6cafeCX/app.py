@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, url_for
+from flask import Flask, render_template, jsonify, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
 from geopy.distance import geodesic
@@ -49,6 +49,16 @@ class OrderDetails(db.Model):
 
     # Relationship with MenuDetails
     menu_item = db.relationship('MenuDetails', back_populates='order_items')
+
+
+class PwdSeniorDetails(db.Model):
+    __tablename__ = 'pwdsenior_details'
+    pwdsenior_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'))
+    discount_type = db.Column(db.String(50), nullable=False)
+    customer_name = db.Column(db.String(100), nullable=False)
+    id_number = db.Column(db.String(100), nullable=False)
+    discount_amount = db.Column(db.Numeric(10, 2), nullable=False)
 
 class OrderAddress(db.Model):
     __tablename__ = 'order_address'
@@ -194,39 +204,75 @@ def cart_count():
     cart = session.get('cart', [])
     return jsonify({'count': len(cart)})
 
-@app.route('/search_invoice', methods=['GET', 'POST'])
-@app.route('/search_invoice', methods=['GET', 'POST'])
-def search_invoice():
-    if request.method == 'POST':
-        order_id = request.form.get('order_id')
-        if not order_id:
-            return jsonify({'error': 'Order ID is required'}), 400
+@app.route('/search-receipt', methods=['POST'])
+def search_receipt():
+    order_id = request.form.get('order_id')
+    if not order_id:
+        return "Order ID is required", 400
 
-        # Fetch the order
-        order = Order.query.filter_by(order_id=order_id).first()
-        if not order:
-            return jsonify({'error': 'Order not found'}), 404
+    # Redirect to the receipt page with the order_id
+    return redirect(url_for('receipt', order_id=order_id))
 
 
-        # Fetch associated order details with menu items
-        order_items = OrderDetails.query.filter_by(order_id=order_id).all()
+@app.route('/receipt/<int:order_id>')
+def receipt(order_id):
+    # Fetch order details
+    order = Order.query.filter_by(order_id=order_id).first()
 
-        # Structure the order details for rendering
-        items_data = [{
-            'item_name': item.menu_item.item_name,  # From MenuDetails
-            'quantity': item.quantity,
-            'subtotal': float(item.subtotal),
-            'unit_price': float(item.menu_item.unit_price),
-            'order_preference': item.order_preference
-        } for item in order_items]
-        # Fetch associated order address
-        order_address = OrderAddress.query.filter_by(order_id=order_id).first()
+    if not order:
+        return "Order not found", 404
 
-        return render_template('receipt.html', order=order, items=order_items, address=order_address)
+    # Fetch related address
+    address = OrderAddress.query.filter_by(order_id=order_id).first()
 
-    # Render the search page
-    return render_template('search_invoice.html')
+    # Fetch order items
+    order_items = (
+        db.session.query(OrderDetails, MenuDetails)
+        .join(MenuDetails, MenuDetails.item_id == OrderDetails.item_id)
+        .filter(OrderDetails.order_id == order_id)
+        .all()
+    )
 
+    # Fetch PWD details
+    pwd_details = PwdSeniorDetails.query.filter_by(order_id=order_id).first()
+
+    # Prepare items for display
+    items = [
+        {
+            'item_name': item.MenuDetails.item_name,
+            'quantity': item.OrderDetails.quantity,
+            'subtotal': item.OrderDetails.subtotal,
+            'preference': item.OrderDetails.order_preference
+
+        }
+        for item in order_items
+    ]
+
+    # Prepare order dictionary for template
+    order_data = {
+        'receipt_number': order.receipt_number,
+        'date_time': order.date_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'subtotal': float(order.subtotal),
+        'vat_amount': float(order.vat_amount),
+        'discount_amount': float(order.discount_amount or 0),
+        'net_amount': float(order.net_amount),
+        'tender_amount': float(order.tender_amount),
+        'change_amount': float(order.change_amount),
+        'contact_name': address.contact_name if address else "N/A",
+        'contact_number': address.contact_number if address else "N/A",
+        'address': address.address if address else "N/A",
+    }
+
+    # Add PWD details if available
+    if pwd_details:
+        order_data.update({
+            'pwd_name': pwd_details.customer_name,
+            'pwd_id_number': pwd_details.id_number,
+            'pwd_discount_type': pwd_details.discount_type,
+
+        })
+
+    return render_template('receipt.html', order=order_data, items=items)
 
 if __name__ == '__main__':
     app.run(debug=True)

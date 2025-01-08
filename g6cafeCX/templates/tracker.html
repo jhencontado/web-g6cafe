@@ -26,11 +26,11 @@
         </nav>
     </header>
         <main>
-        <form action="{{ url_for('search_invoice') }}" method="POST">
+       <form action="{{ url_for('search_receipt') }}" method="POST">
             <label for="order_id">Enter Order ID:</label>
             <input type="text" id="order_id" name="order_id" required>
             <button type="submit">Search</button>
-        </form>
+      </form>
     </main>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

@@ -4,19 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f7f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .invoice {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .header img {
+            max-width: 100px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #6b4e16;
+        }
+
+        .contact-info, .invoice-info {
+            margin-bottom: 20px;
+        }
+
+        .contact-info p, .invoice-info p {
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f4e3d0;
+            font-size: 14px;
+        }
+
+        .summary {
+            margin-top: 20px;
+        }
+
+        .summary p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .total {
+            font-weight: bold;
+            color: #6b4e16;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .footer .social-icons img {
+            width: 24px;
+            margin: 0 5px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Receipt</h1>
-    </header>
-    <section class="receipt">
-        <h2>Order Details</h2>
-        <p><strong>Receipt Number:</strong> {{ order['receipt_number'] }}</p>
-        <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
-        <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
-        <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
-        <p><strong>Address:</strong> {{ order['address'] }}</p>
+    <div class="receipt">
+        <div class="header">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+            <h1>G6 Cafe</h1>
+        </div>
+        <div class="invoice-info">
+            <h2>Order Details</h2>
+            <p><strong>Receipt Number:</strong> {{ order['receipt_number'] }}</p>
+            <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
+        </div>
+        <div class="contact-info">
+            <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
+            <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
+            <p><strong>Address:</strong> {{ order['address'] }}</p>
+
+            {% if 'pwd_name' in order %}
+            <h2>PWD Details</h2>
+            <p><strong>PWD Name:</strong> {{ order['pwd_name'] }}</p>
+            <p><strong>PWD ID Number:</strong> {{ order['pwd_id_number'] }}</p>
+            <p><strong>Discount Type:</strong> {{ order['pwd_discount_type'] }}</p>
+            {% endif %}
+        </div>
 
         <h2>Items</h2>
         <table>
@@ -25,6 +124,7 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Subtotal</th>
+                    <th>Preference</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,29 +132,38 @@
                 <tr>
                     <td>{{ item['item_name'] }}</td>
                     <td>{{ item['quantity'] }}</td>
-                    <td>{{ item['subtotal'] }}</td>
+                    <td>{{ "%.2f"|format(item['subtotal']) }}</td>
+                    <td>{{ item['preference'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <h2>Summary</h2>
-        <p><strong>Subtotal:</strong> {{ order['subtotal'] }}</p>
-        <p><strong>VAT:</strong> {{ order['vat_amount'] }}</p>
-        <p><strong>Discount:</strong> {{ order['discount_amount'] }}</p>
-        <p><strong>Net Amount:</strong> {{ order['net_amount'] }}</p>
-        <p><strong>Tender Amount:</strong> {{ order['tender_amount'] }}</p>
-        <p><strong>Change Amount:</strong> {{ order['change_amount'] }}</p>
-    </section>
-    <footer>
-        <p>Thank you for your purchase!</p>
-        <button onclick="printReceipt()">Generate Receipt</button>
-    </footer>
+        <div class="summary">
+            <h2>Summary</h2>
+            <p><strong>Subtotal:</strong> {{ "%.2f"|format(order['subtotal']) }}</p>
+            <p><strong>VAT:</strong> {{ "%.2f"|format(order['vat_amount']) }}</p>
+            <p><strong>Discount:</strong> {{ "%.2f"|format(order['discount_amount']) }}</p>
+            {% if 'pwd_discount_amount' in order %}
+            <p><strong>PWD Discount:</strong> {{ "%.2f"|format(order['pwd_discount_amount']) }}</p>
+            {% endif %}
+            <p><strong>Net Amount:</strong> {{ "%.2f"|format(order['net_amount']) }}</p>
+            <p><strong>Tender Amount:</strong> {{ "%.2f"|format(order['tender_amount']) }}</p>
+            <p><strong>Change Amount:</strong> {{ "%.2f"|format(order['change_amount']) }}</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for visiting G6 Cafe!</p>
+            <p>Visit again for a freshly brewed experience!</p>
+            <button onclick="printReceipt()">Generate Receipt</button>
+        </div>
+
+    </div>
+
+    <script>
+        function printReceipt() {
+            window.print();
+        }
+    </script>
 </body>
 </html>
-
-<script>
-    function printReceipt() {
-        window.print();
-    }
-</script>
