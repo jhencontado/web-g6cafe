@@ -144,7 +144,6 @@
     <div class="order-summary">
     <div class="order-info">
         <h3>Order Details</h3>
-        <h2>Order # <span id="order-number">N/A</span></h2>
     </div>
     <div id="order-summary"></div>
 
@@ -177,7 +176,7 @@
 </html>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+     document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
     const deliveryDetailsSection = document.getElementById('deliveryDetails');
     console.log(localStorage.getItem('deliveryInstructions'));
@@ -312,11 +311,6 @@ function displaySelectedStore() {
     });
 }
 
-    function generateOrderNumber() {
-    const randomNum = Math.floor(100000 + Math.random() * 900000);  // Generate a random 6-digit number
-    return randomNum;  // Return the number without template literals
-}
-
 // Load cart items and update the order summary
 function loadCart() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -361,10 +355,6 @@ function loadCart() {
         document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
         document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
         document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
-
-        // Generate and display the order number
-        const orderNumber = generateOrderNumber();
-        orderNumberElement.innerText = `${orderNumber}`;  // Display the order number
     }
 
     updateChangeDisplay();
@@ -386,6 +376,7 @@ function loadCart() {
             }
         });
     }
+
 
     // Trigger the Thank You modal when the "Place Order" button is clicked
 document.querySelector("button[type='submit']").addEventListener("click", function(event) {

@@ -370,7 +370,6 @@ let map, userMarker;
         // Initialize map on page load
         window.onload = initMap;
 
-// Function to handle store selection
 function selectStore(storeName, storeLocation) {
     // Store the selected store's name and location in localStorage
     const selectedStore = {
@@ -378,10 +377,34 @@ function selectStore(storeName, storeLocation) {
         location: storeLocation
     };
 
-    localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+    // Set the modal message
+    const modalMessage = document.getElementById("modal-message");
+    modalMessage.innerHTML = `Store selected: ${storeName}. Do you want to proceed?`;
 
-    // Optionally, you can show a message or redirect the user to the checkout page
-    alert("Store selected: " + storeName);
-    // Redirect to checkout page if needed (uncomment the next line if desired)
-    // window.location.href = "/checkout";
+    // Get the modal and buttons
+    const modal = document.getElementById("storeModal");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    // Show the modal
+    modal.style.display = "block";
+
+    // When the user clicks "OK", save the store and redirect
+    confirmBtn.onclick = function() {
+        localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+        window.location.href = "/menu";  // Replace "/menu" with the correct URL for your menu page
+    };
+
+    // When the user clicks "Cancel", hide the modal
+    cancelBtn.onclick = function() {
+        modal.style.display = "none";
+        console.log('Store selection cancelled');
+    };
+
+    // When the user clicks outside the modal, close it
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
 }
