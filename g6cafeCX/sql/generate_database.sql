@@ -235,3 +235,15 @@ INSERT INTO stores (name, lat, lng, address, business_hours) VALUES
 ('G6 Cafe East Kapitolyo, Pasig City', 14.569904, 121.060237, 'No. 46 E Capitol Dr, Pasig, 1603 Metro Manila', '8am-10pm'),
 ('G6 Cafe Fairview Terraces, Quezon City', 14.735938, 121.060000, 'Upper Ground Central Garden Ayala Fairview Terraces Maligaya corn, Quirino Hwy, Quezon City, 1118 Metro Manila', '10am-10pm');
 
+use g6cafe;
+
+INSERT INTO menu_details (category_name, item_name, photo, unit_price)
+VALUES ('Promo', 'Macha + Carbonara', 'promo1.jpg', 265),
+('Promo', 'Macchiato + Bagels', 'promo2.jpg', 245),
+('Promo', 'Van Bean + Mac Cheese ', 'promo3.jpg', 305),
+('Promo', 'Macchiato + Lasagne', 'promo4.jpg', 345),
+('Promo', 'Latte + Muffins', 'promo5.jpg', 230),
+('Promo', 'Macha Cream + Ravioli', 'promo6.jpg', 315),
+('Promo', 'G6 Thumbler White', 'white.jpg', 450),
+('Promo', 'G6 Thumbler Pink', 'pink.jpg', 450),
+('Promo', 'G6 Thumbler Black', 'black.jpg', 450);
