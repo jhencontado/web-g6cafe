@@ -234,41 +234,7 @@
     }
 });
 
-        document.addEventListener('DOMContentLoaded', function () {
-        // Function to fetch and update cart count
-        function updateCartCount() {
-            fetch('/cart-count')
-                .then(response => response.json())
-                .then(data => {
-                    const cartCount = document.getElementById('cart-count');
-                    cartCount.textContent = data.count;
-                })
-                .catch(error => console.error('Error fetching cart count:', error));
-        }
-
-        // Update cart count on page load
-        updateCartCount();
-
-        // Example: Update cart count dynamically after an item is added
-        document.getElementById('add-to-cart-btn').addEventListener('click', function () {
-            // Simulate adding an item to the cart
-            // Add your actual add-to-cart logic here
-
-            // After adding the item, update the cart count
-            updateCartCount();
-        });
-    });
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve cart count from sessionStorage
-    const cartCount = sessionStorage.getItem('cartCount') || 0;
-    const cartCountEl = document.getElementById('cart-count');
-
-    if (cartCountEl) {
-        cartCountEl.textContent = cartCount;
-    }
-});
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
             // Update cart count when the page loads
             updateCartCount();
         });
@@ -281,6 +247,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartCountEl.textContent = cartCount;
             }
         }
+
+        function addToCart(cartItem) {
+            if (!cartItem || !cartItem.itemName || !cartItem.quantity || cartItem.quantity <= 0) {
+                alert("Error: Invalid item or quantity.");
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItemIndex = cart.findIndex(
+                item => item.itemName === cartItem.itemName && item.preferences === cartItem.preferences
+            );
+
+            if (existingItemIndex !== -1) {
+                cart[existingItemIndex].quantity += cartItem.quantity;
+            } else {
+                cart.push(cartItem);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Update cart count in UI
+            updateCartCount();
+
+            alert(`${cartItem.quantity} x ${cartItem.itemName} added to cart!`);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            // Your code for updating the cart display (e.g., showing cart items, total price)
+        }
+function loadCart() {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContainer = document.getElementById('cart-items');
+
+    if (!cartContainer) return; // Prevent errors if cart-items element does not exist
+
+    cartContainer.innerHTML = '';
+
+    if (cartItems.length === 0) {
+        cartContainer.innerHTML = '<tr><td colspan="4">Your cart is empty.</td></tr>';
+    } else {
+        let totalItems = 0;
+        let totalPrice = 0;
+
+        cartItems.forEach(item => {
+            const subtotal = item.quantity * item.itemPrice;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${item.itemPhoto}" alt="${item.itemName}" width="50"> ${item.itemName}</td>
+                <td>${item.quantity}</td>
+                <td>P${item.itemPrice.toFixed(2)}</td>
+                <td>P${subtotal.toFixed(2)}</td>
+            `;
+            cartContainer.appendChild(row);
+
+            totalItems += item.quantity;
+            totalPrice += subtotal;
+        });
+
+        document.getElementById('total-items').textContent = totalItems;
+        document.getElementById('total-price').textContent = `P${totalPrice.toFixed(2)}`;
+    }
+}
 
     </script>
 <style>

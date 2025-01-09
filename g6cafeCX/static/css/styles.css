@@ -52,6 +52,7 @@ nav a:hover {
     border-radius: 5px;
 
 }
+
 .order-now {
         font-size: 36px;
         font-weight: bold;
@@ -188,6 +189,119 @@ form label, form input {
     margin-bottom: 10px;
 }
 
+.search-invoice-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.search-invoice-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.search-invoice-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.search-invoice-form button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-invoice-form button:hover {
+    background-color: #0056b3;
+}
+
+.search-invoice-form button:focus {
+    outline: none;
+}
+.search-invoice-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.search-invoice-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.search-invoice-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.search-invoice-form button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-invoice-form button:hover {
+    background-color: #0056b3;
+}
+
+.search-invoice-form button:focus {
+    outline: none;
+}
+.search-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+.search-button:focus {
+    outline: none;
+}
 
 .cart {
     margin: 30px auto;
@@ -574,15 +688,62 @@ button:hover {
     font-size: 18px;
     color: #8d6e63;
 }
+#editAddressModal, #editInstructionsModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        width: 500px; /* Set the desired width */
+        max-width: 100%; /* Optional: allows the modal to be responsive */
+    }
+
+    /* Textarea styles inside modals */
+    #editAddressText, #editInstructionsText {
+        width: 96%;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    /* Modal Buttons */
+    #editAddressModal button, #editInstructionsModal button {
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px 5px;
+    }
+
+    /* Button hover effect */
+    #editAddressModal button:hover, #editInstructionsModal button:hover {
+        background-color: #555;
+    }
+#deliveryDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.delivery-info-container {
+    display: flex;
+    display: flex;
+    align-items: center;  /* Ensures the icon is vertically aligned with the text */
+}
 /* Styling for the pencil icon */
 .edit-icon {
     width: 20px;
     height: 20px;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
-    margin-left: 15px;
+    float: right;
 }
-
 .edit-icon:hover {
     transform: scale(1.2); /* Slightly enlarge the icon on hover */
 }
@@ -628,7 +789,7 @@ button:hover {
     .items-group span {
         width: 33%; /* Adjust this to control the width of the individual items inside */
         text-align: center;
-        font-size: 20px;
+        font-size: 24px;
         font-weight: 300;
         cursor: pointer;
     }
@@ -735,6 +896,51 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+
+/* Receipt container */
+.receipt {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h2 {
+    font-family: 'Playfair Display', serif;
+    color: #6f4f1f;
+    border-bottom: 2px solid #6f4f1f;
+    padding-bottom: 5px;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #f4f4f4;
+}
+
+/* Item row */
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #6f4f1f;
 }
 
 /* Button for print */

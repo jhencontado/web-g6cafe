@@ -32,16 +32,29 @@
             <form id="checkout-form" class="checkout-form" action="#" method="POST">
                 <!-- Delivery Address Section (fetched from local storage) -->
                 <h3>Delivery Information</h3>
+                <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 <div id="deliveryDetails">
-                     <span id="address">Loading address...</span>
+                    <span id="address">Loading address...</span>
                     <p id="delivery-instructions">No instructions provided</p>
-                      <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
+                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstructions()">
                 </div>
+                <div id="editAddressModal" style="display:none;">
+                <textarea id="editAddressText" rows="4" placeholder="Enter your address"></textarea>
+                <button onclick="saveAddress()">Save</button>
+                <button onclick="closeEditAddressModal()">Cancel</button>
+            </div>
+
+                <div id="editInstructionsModal" style="display:none;">
+                    <textarea id="editInstructionsText" rows="4" placeholder="Enter your delivery instructions"></textarea>
+                    <button onclick="saveDeliveryInstructions()">Save</button>
+                    <button onclick="closeEditInstructionsModal()">Cancel</button>
+                </div>
+
                 <div id="pickupDetails" style="display: none;">
-                <h3>Pick-Up Location</h3>
+                <h3>Selected Branch</h3>
+                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
                 <p id="pickup-location">Pick up your order from the selected store.</p>
                 <a href="{{ url_for('storespick') }}" class="change-store-link">
-                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
                 </a>
                 </div>
 
@@ -150,7 +163,7 @@
 <div id="thankYouModal" class="modal">
   <div class="modal-content">
     <!-- Add Image at the top -->
-    <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 0 auto;">
+    <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
 
     <h2>Thank you for your Order!</h2>
     <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}</br>.</p>
@@ -166,9 +179,9 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
-    const deliveryAddressSection = document.getElementById("deliveryDetails");
-    const pickupLocationSection = document.getElementById("pickupDetails");
-    const storeDisplay = document.getElementById("selected-store-details");
+    const deliveryDetailsSection = document.getElementById('deliveryDetails');
+    console.log(localStorage.getItem('deliveryInstructions'));
+    const pickupDetailsSection = document.getElementById('pickupDetails');
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
     const discountCheckbox = document.getElementById("discount-checkbox");
@@ -180,6 +193,7 @@
 
     // Initialize the page and load data
     initialize();
+
 
     function initialize() {
     setupEventListeners();  // Set up event listeners for radio buttons, etc.
@@ -202,71 +216,101 @@ function displaySavedAddress() {
 
 // Function to display saved delivery instructions
 function displaySavedDeliveryInstructions() {
+    const deliveryInstructionsElement = document.getElementById('delivery-instructions');
+    if (!deliveryInstructionsElement) {
+        console.error("Element with ID 'delivery-instructions' not found.");
+        return;
+    }
+
     const storedInstructions = localStorage.getItem('deliveryInstructions');
     if (storedInstructions) {
-        document.getElementById('delivery-instructions').textContent = storedInstructions;
+        deliveryInstructionsElement.textContent = storedInstructions;
     } else {
-        document.getElementById('delivery-instructions').textContent = 'No instructions provided';
+        deliveryInstructionsElement.textContent = 'No instructions provided';
     }
 }
-    // Function to display selected store details in the Pick-Up Location section
-    function displaySelectedStore() {
-        const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
 
-        if (selectedStore) {
-            const storeDetails = `${selectedStore.name}, ${selectedStore.location}`;
-            // Show the pickup details section and update with the selected store
-            pickupLocationSection.style.display = 'block';
-            document.getElementById('pickup-location').textContent = `Pick up your order from: ${storeDetails}`;
-        } else {
-            pickupLocationSection.style.display = 'none';  // Hide if no store is selected
-        }
+// Function to display selected store details in the Pick-Up Location section
+function displaySelectedStore() {
+    // Ensure the variable `pickupLocationSection` is defined
+    const pickupLocationSection = document.getElementById('pickupDetails');
+    if (!pickupLocationSection) {
+        console.error("Element with ID 'pickupDetails' not found.");
+        return;
     }
 
-    // Setup event listeners for option buttons (delivery or pickup)
+    const selectedStore = localStorage.getItem('selectedStore');
+    if (selectedStore) {
+        try {
+            const storeDetails = JSON.parse(selectedStore);
+            const storeDetailsText = `${storeDetails.name}, ${storeDetails.location}`;
+
+            // Show the pickup details section and update with the selected store
+            pickupLocationSection.style.display = 'block';
+            const pickupLocationElement = document.getElementById('pickup-location');
+            if (pickupLocationElement) {
+                pickupLocationElement.textContent = `${storeDetailsText}`;
+            } else {
+                console.error("Element with ID 'pickup-location' not found.");
+            }
+        } catch (error) {
+            console.error("Error parsing selectedStore from localStorage:", error);
+        }
+    } else {
+        // Hide if no store is selected
+        pickupLocationSection.style.display = 'none';
+    }
+}
+
     function setupEventListeners() {
         optionRadioButtons.forEach(button => {
             button.addEventListener('change', function() {
-                if (this.value === "delivery" || this.value === "scheduled_delivery") {
-                    // Show delivery address section, hide pickup section
-                    deliveryAddressSection.style.display = 'block';
-                    pickupLocationSection.style.display = 'none';
-                } else if (this.value === "pickup") {
-                    // Show pickup section, hide delivery address section
-                    deliveryAddressSection.style.display = 'none';
-                    pickupLocationSection.style.display = 'block';
+                if (this.value === "delivery") {
+                console.log("Delivery selected");
+                // Show delivery address section, hide pickup section
+                deliveryAddressSection.style.display = 'block'; // Show delivery details
+                pickupLocationSection.style.display = 'none';  // Hide pick-up details
+                storeDisplay.style.display = 'none';          // Hide selected store details
+            } else if (this.value === "pickup") {
+                console.log("Pick-Up selected");
+                // Show pickup section, hide delivery address section
+                deliveryAddressSection.style.display = 'none'; // Hide delivery details
+                pickupLocationSection.style.display = 'block'; // Show pick-up details
+                storeDisplay.style.display = 'block';
                 }
             });
         });
 
-        paymentRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value === "debit/creditcard") {
-                    cardDetailsSection.style.display = 'block';
-                } else {
-                    cardDetailsSection.style.display = 'none';
-                }
-
-                if (this.value !== "cash") {
-                    tenderedAmountSection.style.display = 'none';
-                    tenderedAmountInput.value = '';
-                    changeDisplay.style.display = 'none';
-                } else {
-                    tenderedAmountSection.style.display = 'block';
-                    changeDisplay.style.display = 'block';
-                }
-            });
-        });
-
-        discountCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                discountDetailsSection.style.display = 'block';
+    paymentRadioButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            if (this.value === "debit/creditcard") {
+                cardDetailsSection.style.display = 'block';
             } else {
-                discountDetailsSection.style.display = 'none';
+                cardDetailsSection.style.display = 'none';
             }
-            loadCart();
+
+            if (this.value !== "cash") {
+                tenderedAmountSection.style.display = 'none';
+                tenderedAmountInput.value = '';
+                changeDisplay.style.display = 'none';
+                changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
+            } else {
+                tenderedAmountSection.style.display = 'block';
+                changeDisplay.style.display = 'block';
+                changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
+            }
         });
-    }
+    });
+
+    discountCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            discountDetailsSection.style.display = 'block';
+        } else {
+            discountDetailsSection.style.display = 'none';
+        }
+        loadCart();
+    });
+}
 
     function generateOrderNumber() {
     const randomNum = Math.floor(100000 + Math.random() * 900000);  // Generate a random 6-digit number
@@ -344,72 +388,112 @@ function loadCart() {
     }
 
     // Trigger the Thank You modal when the "Place Order" button is clicked
-    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-        event.preventDefault();
-        showThankYouModal();
-    });
+document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+    event.preventDefault();  // Prevent the default form submission action
 
-    function showThankYouModal() {
-        const modal = document.getElementById("thankYouModal");
-        modal.style.display = "block";
-    }
+    // Clear the cart
+    clearCart();
 
-    function closeThankYouModal() {
-        const modal = document.getElementById("thankYouModal");
-        modal.style.display = "none";
-    }
+    // Show the Thank You modal
+    showThankYouModal();
 });
-// Function to edit address
-function editAddress() {
-    // Get the current address value
-    let currentAddress = document.getElementById('address').innerText;
 
-    // Prompt user for new address
-    let newAddress = prompt('Edit your address:', currentAddress);
+function showThankYouModal() {
+    const modal = document.getElementById("thankYouModal");
+    if (modal) {
+        modal.style.display = "block";  // Show the modal
+    }
+}
 
-    // If a new address is provided, update the address on the page
-    if (newAddress) {
+function closeThankYouModal() {
+    const modal = document.getElementById("thankYouModal");
+    if (modal) {
+        modal.style.display = "none";  // Hide the modal
+    }
+}
+
+// Function to clear the cart
+function clearCart() {
+    // If the cart is stored in localStorage, remove it
+    localStorage.removeItem('cart');  // Clears the cart data from localStorage
+
+    // Optionally, clear the cart display in the HTML (e.g., an element with ID 'cartContainer')
+    const cartContainer = document.getElementById('cartContainer');
+    if (cartContainer) {
+        cartContainer.innerHTML = '';  // Clear the cart display in HTML
+    }
+}
+
+});
+    function editAddress() {
+        const currentAddress = document.getElementById('address').innerText;
+        document.getElementById('editAddressText').value = currentAddress;
+        document.getElementById('editAddressModal').style.display = 'block';
+    }
+
+    // Function to save the new address
+    function saveAddress() {
+        const newAddress = document.getElementById('editAddressText').value;
         document.getElementById('address').innerText = newAddress;
 
-        // Optionally, save the updated address to localStorage (if you're using it)
+        // Save the new address to local storage
         localStorage.setItem('address', newAddress);
+
+        closeEditAddressModal();
     }
-}
-function editPickUpLocation() {
-    // Get the current pick-up location value
-    let currentLocation = document.getElementById('pickup-location').innerText;
 
-    // Prompt user for new pick-up location
-    let newLocation = prompt('Edit your pick-up location:', currentLocation);
-
-    // If a new location is provided, update the location on the page
-    if (newLocation) {
-        document.getElementById('pickup-location').innerText = newLocation;
-
-        // Optionally, save the updated pick-up location to localStorage
-        localStorage.setItem('pickupLocation', newLocation);
-
-        // First redirect to store pick-up location page to choose a new store
-        window.location.href = storePickUpUrl;  // Redirect to store pick-up page
+    // Function to close the address edit modal
+    function closeEditAddressModal() {
+        document.getElementById('editAddressModal').style.display = 'none';
     }
-}
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    const storeDisplay = document.getElementById("selected-store-details");
-
-    const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
-
-    if (selectedStore) {
-        storeDisplay.innerHTML = `
-            <h3>Selected Store</h3>
-            <p>Name: ${selectedStore.name}</p>
-            <p>Location: ${selectedStore.location}</p>
-        `;
-    } else {
-        storeDisplay.innerHTML = "<p>No store selected</p>";
+    // Function to edit the delivery instructions
+    function editDeliveryInstructions() {
+        const currentInstructions = document.getElementById('delivery-instructions').innerText;
+        document.getElementById('editInstructionsText').value = currentInstructions;
+        document.getElementById('editInstructionsModal').style.display = 'block';
     }
-});
+
+    // Function to save the new delivery instructions
+    function saveDeliveryInstructions() {
+        const newInstructions = document.getElementById('editInstructionsText').value;
+        document.getElementById('delivery-instructions').innerText = newInstructions;
+
+        // Save the new delivery instructions to local storage
+        localStorage.setItem('delivery-instructions', newInstructions);
+
+        closeEditInstructionsModal();
+    }
+    function closeEditInstructionsModal() {
+        document.getElementById('editInstructionsModal').style.display = 'none';
+    }
+
+    function editPickUpLocation() {
+        // Get the current pick-up location value
+        let currentLocation = document.getElementById('pickup-location').innerText;
+
+        // Prompt user with a confirmation dialog (OK/Cancel)
+        let changeLocation = confirm('Do you want to change the pick-up location?');
+
+        // If the user clicked OK, allow them to select a new location or handle this logic
+        if (changeLocation) {
+            // Example: Directly update the location with a predefined value
+            let newLocation = "New Location"; // Replace this with actual logic for selecting a new location
+
+            // Update the pick-up location on the page
+            document.getElementById('pickup-location').innerText = newLocation;
+
+            // Optionally, save the updated pick-up location to localStorage
+            localStorage.setItem('pickupLocation', newLocation);
+
+            // Define the URL for the store pick-up page
+            const storePickUpUrl = "/storespick";  // Adjust the URL as needed
+
+            // Redirect to store pick-up location page to choose a new store
+            window.location.href = storePickUpUrl;  // Redirect to the store pick-up page
+        }
+    }
+
 
 
     </script>

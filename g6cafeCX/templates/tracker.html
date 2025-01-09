@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store Locator</title>
+    <title>G6 Cafe - Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -16,7 +16,6 @@
     </div>
 </section>
 
-        </section>
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}">
@@ -26,11 +25,12 @@
         </nav>
     </header>
         <main>
-       <form action="{{ url_for('search_receipt') }}" method="POST">
-            <label for="order_id">Enter Order ID:</label>
-            <input type="text" id="order_id" name="order_id" required>
-            <button type="submit">Search</button>
-      </form>
+        <form action="{{ url_for('search_receipt') }}" method="POST" class="search-invoice-form">
+    <label for="order_id">Enter Order ID:</label>
+    <input type="text" id="order_id" name="order_id" required>
+    <button type="submit" class="search-button">Search</button>
+</form>
+
     </main>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

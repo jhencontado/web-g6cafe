@@ -121,21 +121,64 @@ function loadMenu(category) {
 }
 
 function openModal(itemName, itemPhoto, itemPrice) {
+    // Set modal item details
     document.getElementById('modal-item-name').textContent = itemName;
     document.getElementById('modal-item-photo').src = itemPhoto;
     document.getElementById('modal-item-price').textContent = `P${parseFloat(itemPrice).toFixed(2)}`;
     document.getElementById('cart-modal').style.display = 'block';
 
-    // Reset quantity in modal
     const quantityInput = document.getElementById('edit-item-quantity');
-    if (quantityInput) {
-        quantityInput.value = 1;
-        const num = document.querySelector(".num");
-        if (num) {
-            num.innerText = '01';
-        }
+    const totalEl = document.getElementById('modal-total-amount');
+    const num = document.querySelector(".num");
+    const plus = document.querySelector(".plus");
+    const minus = document.querySelector(".minus");
+    const price = parseFloat(itemPrice); // Parse the price as a number
+
+    if (!quantityInput || !totalEl || !num || !plus || !minus) {
+        console.error("Missing required elements in the modal.");
+        return;
     }
+
+    // Reset quantity and total amount
+    let quantity = 1; // Use this as the source of truth
+    quantityInput.value = quantity;
+    num.innerText = quantity.toString().padStart(2, '0');
+    totalEl.textContent = `P${price.toFixed(2)}`;
+
+    // Update total amount and quantity display
+    const updateDisplay = () => {
+        num.innerText = quantity.toString().padStart(2, '0');
+        totalEl.textContent = `P${(price * quantity).toFixed(2)}`;
+        quantityInput.value = quantity; // Sync with input
+    };
+
+    // Remove existing event listeners to avoid duplication
+    plus.replaceWith(plus.cloneNode(true));
+    minus.replaceWith(minus.cloneNode(true));
+
+    // Reassign event listeners
+    document.querySelector(".plus").addEventListener("click", () => {
+        quantity++;
+        updateDisplay();
+    });
+
+    document.querySelector(".minus").addEventListener("click", () => {
+        if (quantity > 1) {
+            quantity--;
+            updateDisplay();
+        }
+    });
+
+    // Handle direct input changes
+    quantityInput.addEventListener("input", () => {
+        let inputVal = parseInt(quantityInput.value);
+        if (isNaN(inputVal) || inputVal < 1) inputVal = 1; // Default to 1 if invalid
+        quantity = inputVal; // Update the quantity variable
+        updateDisplay();
+    });
 }
+
+
 
 function closeModal() {
     document.getElementById('cart-modal').style.display = 'none';

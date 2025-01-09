@@ -19,7 +19,8 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('storespick') }}">Find a Store</a>
+            <a href="{{ url_for('storespick') }}">
+            <img src="static/images/pin.png" alt="Find a Store" style="width: 50px; height: auto;">Find A Store</a>
             <a href="{{ url_for('cart') }}">
     <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
     <span id="cart-count">0</span>
@@ -35,6 +36,7 @@
             <a href="#ice blended" class="nav-link"><img src="{{ url_for('static', filename='images/ice blended.png') }}" alt="ice blended"><p>Ice Blended</p></a>
             <a href="#pasta" class="nav-link"><img src="{{ url_for('static', filename='images/pasta.png') }}" alt="pasta"><p>Pasta</p></a>
             <a href="#pastries" class="nav-link"><img src="{{ url_for('static', filename='images/pastries.png') }}" alt="pastries"><p>Pastries</p></a>
+            <a href="#promo" class="nav-link"><img src="{{ url_for('static', filename='images/promo.png') }}" alt="pastries"><p>Promo Deals</p></a>
         </aside>
 
         <section class="best-sellers">
@@ -55,6 +57,7 @@
             <span class="num">01</span>
             <span class="plus">+</span>
                 </div>
+                <p>Total Amount: <span id="modal-total-amount">P0.00</span></p>
                 <br><label for="preferences">Preferences:</label>
                 <textarea id="preferences" name="preferences" rows="4" cols="50"></textarea>
                 <button type="submit">Add to Cart</button>

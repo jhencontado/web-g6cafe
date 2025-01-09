@@ -20,7 +20,8 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('storespick') }}">Find a Store</a>
+            <a href="{{ url_for('storespick') }}">
+            <img src="static/images/pin.png" alt="Find a Store" style="width: 50px; height: auto;">Find A Store</a>
             <a href="{{ url_for('cart') }}">
     <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
     <span id="cart-count">0</span>
@@ -31,16 +32,31 @@
     </header>
 
     <section class="promo">
-        <div class="button-group">
+    <div class="button-group">
         <span class="order-now">Order Now</span>
-            <a href="{{ url_for('stores') }}">
-             <button class="btn-delivery">Delivery</button>
+        <a href="{{ url_for('stores') }}" id="deliveryLink">
+            <button class="btn-delivery">Delivery</button>
         </a>
-            <span class="or-text">or</span>
-            <a href="{{ url_for('storespick') }}">
-                <button class="btn-pickup">Pick Up</button></a>
-        </div>
+        <span class="or-text">or</span>
+        <a href="{{ url_for('storespick') }}" id="pickupLink">
+            <button class="btn-pickup">Pick Up</button>
+        </a>
     </div>
+</section>
+
+<!-- Delivery Details Section -->
+<section id="deliveryDetails" style="display: none;">
+    <h3>Delivery Details</h3>
+    <p id="address">No address saved</p>
+    <button onclick="editAddress()">Edit Address</button>
+</section>
+
+<!-- Pick-Up Details Section -->
+<section id="pickupDetails" style="display: none;">
+    <h3>Pick-Up Location</h3>
+    <p id="pickup-location">No store selected</p>
+    <button onclick="editPickUpLocation()">Edit Pick-Up Location</button>
+</section>
     <div class="promo-content">
         <div class="promo">
             <img src="/static/css/home.png" alt="Promo Image">
