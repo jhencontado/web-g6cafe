@@ -52,33 +52,49 @@ nav a:hover {
     border-radius: 5px;
 
 }
+.promo {
+    position: relative;
+    background-image: url("/static/images/order.jpg");
+    background-size: cover;
+    background-position: center;
+    margin: 0 auto; /* Center the section horizontally */
+    padding: 50px;
+    text-align: center;
+    height: 200px;
+    width: 80%;
+    max-width: 1000px;
+    color: #fff;
+    border-radius: 10px; /* Optional: Adds rounded corners for a polished look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow for depth */
+    margin-bottom: 20px;
+}
+
+.promo-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
 .order-now {
-        font-size: 36px;
-        font-weight: bold;
-        color: #FF5722;
-        text-align: center;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
+    font-size: 36px;
+    font-weight: bold;
+    color: #FF5722;
+}
 
-
-    .button-group {
-        display: flex;
-        align-items: center; /* Center elements vertically */
-        gap: 20px; /* Add space between buttons and 'or' text */
-        justify-content: center; /* Center horizontally */
-        margin-top: 20px; /* Add margin on top */
-        margin-bottom: 20px; /* Add margin at the bottom */
-    }
-
+.button-group {
+    margin-top: 20px;
+    text-align: right;
+}
     .or-text {
-        font-size: 30px;
+        font-size: 24px;
         color: #FF5722;
         font-weight: normal;
     }
 
-    .btn-delivery,
-    .btn-pickup {
+    .deliveryBtn,
+    .pickupBtn {
         width: 150px; /* Adjusted width for side-by-side layout */
         height: 50px;
         font-size: 24px;
@@ -90,32 +106,348 @@ nav a:hover {
         transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
-    .btn-delivery {
+    .deliveryBtn {
         background-color: #FF5722;
         color: white;
     }
 
-    .btn-delivery:hover {
+    .deliveryBtn:hover {
         background-color: #8d6e63;
         transform: scale(1.05);
     }
 
-    .btn-pickup {
+    .pickupBtn {
         background-color: #FF5722;
         color: white;
     }
 
-    .btn-pickup:hover {
+    .pickupBtn:hover {
         background-color: #8d6e63;
         transform: scale(1.05);
     }
+/* Basic styling for the menu section */
+#menuCategory {
+    text-align: center;
+    padding: 20px 15px;
+    background-color: #f5f5f5;
+}
 
-    .promo img {
-        width: 1200px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
+#menuCategory h3 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: left;
+    margin-left: 20%;
+    margin-top: 5px;
+}
+#menuCategory p{
+    font-size: 16px;
+    margin-bottom: 0px;
+    color: #333;
+    text-align: left;
+    margin-left: 20%;
+    margin-top:0px;
+}
+
+/* Styling for the container of menu items */
+.menu-category-container {
+    display: flex; /* Aligns items horizontally */
+    justify-content: center;
+    gap: 15px; /* Adds space between the items */
+    padding: 20px;
+    flex-wrap: wrap; /* Allows wrapping of items if there's not enough space */
+    text-align: center;
+}
+
+/* Styling for each individual menu item (card) */
+.menu-category-navigation {
+    display: flex;
+    flex-direction: row; /* Align items inside the container horizontally */
+    gap: 15px;
+}
+
+.menu-category-navigation .menu-category-link {
+    display: block;
+    width: 150px; /* Adjust width as needed */
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    color: #333;
+}
+
+.menu-category-navigation .menu-category-link img {
+    width: 80%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+}
+
+.menu-category-navigation .menu-category-link p {
+    padding: 2px;
+    font-size: 10px;
+    font-weight: bold;
+    margin: 0;
+    border-radius: 0 0 8px 8px;
+    text-align: center;
+}
+
+/* Hover effects for cards */
+.menu-category-navigation .menu-category-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    background-color:#c3b39a;
+}
+
+.menu-category-navigation .menu-category-link:hover p {
+    color: #007BFF;
+}
+
+        .carousel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 20px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            display: block;
+            border-radius: 15px;
+        }
+
+        .carousel-prev, .carousel-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-prev:hover, .carousel-next:hover {
+            background-color: transparent;
+        }
+
+        .carousel-prev {
+            text-align: left;
+        }
+
+        .carousel-next {
+            text-align: right;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .carousel-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 0 6px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: white;
+        }
+
+        /* Basic reset and box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Footer container */
+.footer {
+    background-color: #e5e5e5;
+    color: #000000;
+    padding: 10px 10px;
+    text-align: left;
+    min-height: 80px;
+    margin-top: 20px;
+}
+
+/* Footer content */
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;  /* Adjusted gap for minimal spacing */
+    padding: 20px;
+}
+
+/* Logo section */
+.footer-logo {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;  /* Limit the size of the logo */
+}
+
+.footer-logo img {
+    width: 100%;  /* Make the logo responsive */
+    max-width: 150px;  /* Limit maximum width for a minimal logo size */
+    height: auto;
+    margin-left: 50px;
+}
+
+.footer-logo p {
+    font-size: 0.9rem;  /* Smaller font size for minimal text */
+    color: #000000;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+/* Links section */
+.footer-links {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-links h3 {
+    font-size: 1rem;  /* Smaller heading font size */
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.footer-links ul {
+    list-style-type: none;
+}
+
+.footer-links ul li {
+    margin-bottom: 5px;
+}
+
+.footer-links a {
+    color: #000000;
+    text-decoration: none;
+    font-size: 0.9rem;  /* Smaller font size for links */
+    margin-left: 180px;
+}
+
+.footer-links a:hover {
+    color: #f39c12;
+    text-decoration: underline;
+}
+
+/* Contact section */
+.footer-contact {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-contact h3 {
+    font-size: 1rem;  /* Smaller heading font size */
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.footer-contact p {
+    font-size: 0.9rem;  /* Smaller font size for contact details */
+    color: #000000;
+    margin-bottom: 5px;
+    margin-left: 80px;
+}
+
+.footer-contact a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.footer-contact a:hover {
+    color: #f39c12;
+    text-decoration: underline;
+}
+
+/* Social Media section */
+.footer-social {
+    flex: 1;
+    min-width: 100px;
+}
+
+.footer-social h3 {
+    font-size: 1rem;  /* Smaller heading font size */
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.footer-social p {
+    margin-left: 140px;
+}
+
+.footer-social a {
+    text-decoration: none;
+    margin-right: 8px;
+}
+
+/* Resize the images */
+.footer-social img {
+    width: 40px;  /* Adjust the width of the images */
+    height: auto;  /* Maintain aspect ratio */
+    margin-right: 5px;  /* Space between icons */
+}
+
+.footer-social img:hover {
+    transform: scale(1.1);  /* Optional hover effect to slightly enlarge the icons */
+}
+
+
+/* Footer bottom section */
+.footer-bottom {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.8rem;  /* Smaller font size for footer text */
+    color: #000000;
+}
+
+.footer-bottom p {
+    margin: 5px 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
     }
+
+    .footer-logo,
+    .footer-links,
+    .footer-contact,
+    .footer-social {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .footer-logo img {
+        max-width: 120px;
+    }
+}
 
 /* Styling for the cart icon */
 nav a img {
@@ -316,6 +648,7 @@ form label, form input {
     align-items: center;     /* Centers vertically (optional) */
     flex-direction: column;  /* Align children vertically */
 }
+
 .cart-summary {
     width: 100%;
     max-width: 600px; /* Set a maximum width */
@@ -379,7 +712,7 @@ form label, form input {
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
-            padding: 20px;
+            padding: 30px;
             border: 1px solid #888;
             width: 80%;
             max-width: 400px;
@@ -394,7 +727,8 @@ form label, form input {
             max-height: 70vh; /* Prevents the image from being taller than the viewport */
             margin: 0 auto; /* Center the image horizontally */
             object-fit: cover;
-
+            margin-bottom: 10px;
+            margin-top: 10px;
         }
         .close-button {
             color: #aaa;
@@ -617,12 +951,6 @@ button:hover {
             background-color: #45a049;
         }
 
-        #order-number {
-            font-size: 25px;  /* Set your desired font size */
-            font-weight: bold;  /* Keep the "Order #" number in normal font weight */
-            font-style: normal;  /* Keep the "Order #" number in normal style */
-            color: #8d6e63;
-        }
         #change-amount {
         margin-top: 0px; /* Adds space before the change amount */
         font-weight: bold; /* Bold font to highlight the change amount */
@@ -688,7 +1016,7 @@ button:hover {
     font-size: 18px;
     color: #8d6e63;
 }
-#editAddressModal, #editInstructionsModal {
+#editAddressModal, #editInstructionModal {
         display: none;
         position: fixed;
         top: 50%;
@@ -703,7 +1031,7 @@ button:hover {
     }
 
     /* Textarea styles inside modals */
-    #editAddressText, #editInstructionsText {
+    #editAddressText, #editInstructionText {
         width: 96%;
         padding: 10px;
         font-size: 16px;
@@ -712,7 +1040,7 @@ button:hover {
     }
 
     /* Modal Buttons */
-    #editAddressModal button, #editInstructionsModal button {
+    #editAddressModal button, #editInstructionModal button {
         padding: 10px 20px;
         background-color: #333;
         color: white;
@@ -723,7 +1051,7 @@ button:hover {
     }
 
     /* Button hover effect */
-    #editAddressModal button:hover, #editInstructionsModal button:hover {
+    #editAddressModal button:hover, #editInstructionModal button:hover {
         background-color: #555;
     }
 #deliveryDetails {
@@ -765,7 +1093,7 @@ button:hover {
 .modal-content {
   background-color: #fff;
   margin: 10% auto; /* Center vertically and horizontally */
-  padding: 5px;
+  padding: 10px;
   border-radius: 8px;
   width: 100%;
   max-width: 500px;
@@ -784,6 +1112,8 @@ button:hover {
     box-shadow: 0.5px 3px rgba(0, 0, 0, 0.2);
     padding: 0 10px; /* Optional: padding to give space on the sides */
     margin-left: 28%;
+    margin-bottom: 15px;
+    font-size: 24;
 }
 
     .items-group span {
@@ -799,16 +1129,17 @@ button:hover {
         border-right: 2px solid rgba(0, 0, 0, 0.2);
         border-left: 2px solid rgba(0, 0, 0, 0.2);
         pointer-events: none;
+        margin-top: 10px;
     }
 
 button[type="submit"] {
     display: block;
-    width: 42%; /* Adjust button width */
+    width: 35%; /* Adjust button width */
     background-color: #8d6e63;
     border: none;
     padding: 15px;
     border-radius: 30px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     transition: background-color 0.3s;
     margin: 20px auto; /* Horizontally center the button and add margin on top/bottom */
@@ -836,48 +1167,6 @@ button[type="submit"]:hover {
         font-size: 14px;
         padding: 12px;
     }
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(165, 42, 42, 0.2);;
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 30px;
-    border: 1px solid #888;
-    width: 70%;
-}
-/* Modal image styling */
-#modal-item-photo {
-    width: 100px;  /* Set the width of the image */
-    height: 100px; /* Set the height of the image */
-    object-fit: cover; /* Ensures the image covers the area without distortion */
-    border-radius: 5px; /* Optional: adds rounded corners */
-    margin-bottom: 10px; /* Space below the image */
-}
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 
 /* Form styles */
 textarea {

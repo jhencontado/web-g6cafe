@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Load the default category
-    loadMenu('espresso');
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category') || 'promo'; // Default to 'espresso' if no category in URL
 
-    // Handle category navigation
+    // Ensure that the category element exists before trying to load it
+    if (category) {
+        loadMenu(category);
+    }
+
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', event => {
             event.preventDefault();
@@ -119,6 +123,7 @@ function loadMenu(category) {
             document.getElementById('menu-items').innerHTML = '<p>Error loading menu.</p>';
         });
 }
+
 
 function openModal(itemName, itemPhoto, itemPrice) {
     // Set modal item details
@@ -340,32 +345,43 @@ let map, userMarker;
                 });
         });
 
-        // Submit delivery details
-        function submitDeliveryDetails() {
-            // Get the values from the input fields
-            const houseNumber = document.getElementById("houseNumber").value;
-            const streetName = document.getElementById("streetName").value;
-            const subdivisionName = document.getElementById("subdivisionName").value;
-            const barangay = document.getElementById("barangay").value;
-            const city = document.getElementById("city").value;
-            const deliveryInstruction = document.getElementById("deliveryInstruction").value;
+// Function to submit the delivery details form
+function submitDeliveryDetails(event) {
+    event.preventDefault();  // Prevent form from submitting traditionally
 
-            // Create an object with the delivery details
-            const deliveryDetails = {
-                houseNumber,
-                streetName,
-                subdivisionName,
-                barangay,
-                city,
-                deliveryInstruction
-            };
+    // Get the values from the input fields
+    const houseNumber = document.getElementById("houseNumber").value;
+    const streetName = document.getElementById("streetName").value;
+    const subdivisionName = document.getElementById("subdivisionName").value;
+    const barangay = document.getElementById("barangay").value;
+    const city = document.getElementById("city").value;
+    const deliveryInstruction = document.getElementById("deliveryInstruction").value;
 
-            // Save the delivery details to localStorage
-            localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+    // Validate that all required fields are filled
+    if (!houseNumber || !streetName || !barangay || !city) {
+        alert("Please fill in all required fields.");
+        return;  // Prevent saving if fields are missing
+    }
 
-            // Optionally, show a message or update the UI to reflect the saved details
-            alert("Delivery details saved successfully!");
-        }
+    // Create an object with the delivery details
+    const deliveryDetails = {
+        houseNumber,
+        streetName,
+        subdivisionName,
+        barangay,
+        city,
+        deliveryInstruction
+    };
+
+    // Save the delivery details to localStorage
+    localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
+
+    // Optionally, show a message or update the UI to reflect the saved details
+    alert("Delivery details saved successfully!");
+
+    // Redirect to the menu page
+    window.location.href = "/menu";  // Change "/menu" to the actual URL of your menu page
+}
 
         // Initialize map on page load
         window.onload = initMap;
@@ -379,7 +395,7 @@ function selectStore(storeName, storeLocation) {
 
     // Set the modal message
     const modalMessage = document.getElementById("modal-message");
-    modalMessage.innerHTML = `Store selected: ${storeName}. Do you want to proceed?`;
+    modalMessage.innerHTML = `${storeName}. Do you want to proceed?`;
 
     // Get the modal and buttons
     const modal = document.getElementById("storeModal");

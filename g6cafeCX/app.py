@@ -84,9 +84,16 @@ class Store(db.Model):
 def home():
     return render_template('index.html')
 
-@app.route('/menu')
-def menu():
-    return render_template('menu.html')
+
+@app.route ( '/menu' )
+def menu ():
+    category = request.args.get ( 'category' )  # Get the 'category' query parameter from the URL
+    if category:
+        menu_items = MenuDetails.query.filter_by ( category_name=category ).all ()  # Fetch items for the given category
+    else:
+        menu_items = MenuDetails.query.all ()  # If no category is provided, fetch all items
+
+    return render_template ( 'menu.html',category=category,menu_items=menu_items )
 
 @app.route('/cart')
 def cart():

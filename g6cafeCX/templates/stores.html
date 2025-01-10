@@ -133,7 +133,7 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}">
-                <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+                <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
             </a>
         </nav>
     </header>
@@ -154,22 +154,50 @@
 
             <div class="delivery-form">
                 <h2>Delivery Details</h2>
-                <form id="deliveryDetailsForm">
-                    <input type="text" id="houseNumber" placeholder="House Number" required>
-                    <input type="text" id="streetName" placeholder="Street Name" required>
-                    <input type="text" id="subdivisionName" placeholder="Subdivision Name">
-                    <input type="text" id="barangay" placeholder="Barangay" required>
-                    <input type="text" id="city" placeholder="City" required>
-                    <textarea id="deliveryInstruction" placeholder="Delivery Instructions" rows="3"></textarea>
-                    <a href="{{ url_for('menu') }}">
-                        <button type="button" onclick="submitDeliveryDetails()">Submit Details</button>
-                    </a>
-                </form>
+            <form id="deliveryDetailsForm" onsubmit="submitDeliveryDetails(event)">
+                <input id="houseNumber" type="text" placeholder="House Number">
+                <input id="streetName" type="text" placeholder="Street Name">
+                <input id="subdivisionName" type="text" placeholder="Subdivision Name">
+                <input id="barangay" type="text" placeholder="Barangay">
+                <input id="city" type="text" placeholder="City">
+                <textarea id="deliveryInstruction" placeholder="Delivery Instruction" rows="3"></textarea>
+                <button type="submit">Submit Details</button>
+            </form>
                 <p id="deliveryCharge" style="margin-top: 10px;"></p>
             </div>
         </main>
     </div>
-
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+            <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
+        </div>
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
+            <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
+        </div>
+        <div class="footer-social">
+            <h3>For news and updates, follow us</h3>
+            <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 G6 Cafe | All Rights Reserved</p>
+    </div>
+</footer>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

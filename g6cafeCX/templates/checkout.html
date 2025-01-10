@@ -19,7 +19,7 @@
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}">
-    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
     <span id="cart-count">0</span>
     </a>
         </nav>
@@ -34,19 +34,20 @@
                 <h3>Delivery Information</h3>
                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 <div id="deliveryDetails">
-                    <span id="address">Loading address...</span>
-                    <p id="delivery-instructions">No instructions provided</p>
-                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstructions()">
-                </div>
+                <span id="address">Loading address...</span>
+                <p id="deliveryInstruction">No instructions provided</p>
+                <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstruction()">
+            </div>
+
                 <div id="editAddressModal" style="display:none;">
                 <textarea id="editAddressText" rows="4" placeholder="Enter your address"></textarea>
                 <button onclick="saveAddress()">Save</button>
                 <button onclick="closeEditAddressModal()">Cancel</button>
             </div>
 
-                <div id="editInstructionsModal" style="display:none;">
-                    <textarea id="editInstructionsText" rows="4" placeholder="Enter your delivery instructions"></textarea>
-                    <button onclick="saveDeliveryInstructions()">Save</button>
+                <div id="editInstructionModal" style="display:none;">
+                    <textarea id="editInstructionText" rows="4" placeholder="Enter your delivery instructions"></textarea>
+                    <button onclick="saveDeliveryInstruction()">Save</button>
                     <button onclick="closeEditInstructionsModal()">Cancel</button>
                 </div>
 
@@ -57,8 +58,6 @@
                 <a href="{{ url_for('storespick') }}" class="change-store-link">
                 </a>
                 </div>
-
-
 
                 <!-- Personal Details -->
                 <h3>Personal Details</h3>
@@ -165,22 +164,52 @@
     <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
 
     <h2>Thank you for your Order!</h2>
-    <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}</br>.</p>
+    <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
       <a href="{{ url_for('home') }}">
           <button onclick="redirectToOrderStatus()">OK </button></a>
   </div>
 </div>
-
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+            <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
+        </div>
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
+            <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
+        </div>
+        <div class="footer-social">
+            <h3>For news and updates, follow us</h3>
+            <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 G6 Cafe | All Rights Reserved</p>
+    </div>
+</footer>
 
 </body>
 </html>
 
     <script>
-     document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
     const deliveryDetailsSection = document.getElementById('deliveryDetails');
-    console.log(localStorage.getItem('deliveryInstructions'));
     const pickupDetailsSection = document.getElementById('pickupDetails');
+    const addressSection = document.getElementById('address');
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
     const discountCheckbox = document.getElementById("discount-checkbox");
@@ -193,47 +222,51 @@
     // Initialize the page and load data
     initialize();
 
-
     function initialize() {
-    setupEventListeners();  // Set up event listeners for radio buttons, etc.
-    loadCart();  // Load the cart and order summary on page load
-    displaySavedAddress();  // Display saved delivery details (if any)
-    displaySelectedStore();  // Display selected store information
-    displaySavedDeliveryInstructions();  // Display saved delivery instructions (if any)
-}
-
-// Function to display saved address
-function displaySavedAddress() {
-    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
-    if (storedDetails) {
-        const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName ? storedDetails.subdivisionName + ', ' : ''}${storedDetails.barangay}, ${storedDetails.city}`;
-        document.getElementById('address').textContent = address;
-    } else {
-        document.getElementById('address').textContent = 'No address saved';
+        setupEventListeners();  // Set up event listeners
+        loadCart();  // Load the cart
+        displaySavedAddress();  // Display saved address
+        displaySelectedStore();  // Display selected store
+        displaySavedDeliveryInstruction();  // Display saved delivery instruction
     }
-}
 
-// Function to display saved delivery instructions
-function displaySavedDeliveryInstructions() {
-    const deliveryInstructionsElement = document.getElementById('delivery-instructions');
-    if (!deliveryInstructionsElement) {
-        console.error("Element with ID 'delivery-instructions' not found.");
+    // Function to display saved address
+    function displaySavedAddress() {
+        const addressSection = document.getElementById('address');
+        if (!addressSection) {
+            console.error("Element with ID 'address' not found.");
+            return;
+        }
+
+        const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+        if (storedDetails) {
+            const address = `${storedDetails.houseNumber} ${storedDetails.streetName}, ${storedDetails.subdivisionName ? storedDetails.subdivisionName + ', ' : ''}${storedDetails.barangay}, ${storedDetails.city}`;
+            addressSection.textContent = address;
+        } else {
+            addressSection.textContent = 'No address saved';
+        }
+    }
+
+    function displaySavedDeliveryInstruction() {
+    const deliveryInstructionElement = document.getElementById('deliveryInstruction');
+    if (!deliveryInstructionElement) {
+        console.error("Element with ID 'deliveryInstruction' not found.");
         return;
     }
 
-    const storedInstructions = localStorage.getItem('deliveryInstructions');
-    if (storedInstructions) {
-        deliveryInstructionsElement.textContent = storedInstructions;
+    // Correctly retrieve the deliveryDetails object from localStorage
+    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+    if (storedDetails && storedDetails.deliveryInstruction) {
+        deliveryInstructionElement.textContent = storedDetails.deliveryInstruction;  // Display saved instruction
     } else {
-        deliveryInstructionsElement.textContent = 'No instructions provided';
+        deliveryInstructionElement.textContent = 'No instructions provided';  // Default text if no instructions are saved
     }
 }
 
 // Function to display selected store details in the Pick-Up Location section
 function displaySelectedStore() {
-    // Ensure the variable `pickupLocationSection` is defined
-    const pickupLocationSection = document.getElementById('pickupDetails');
-    if (!pickupLocationSection) {
+    const pickupDetailsSection = document.getElementById('pickupDetails');
+    if (!pickupDetailsSection) {
         console.error("Element with ID 'pickupDetails' not found.");
         return;
     }
@@ -245,10 +278,11 @@ function displaySelectedStore() {
             const storeDetailsText = `${storeDetails.name}, ${storeDetails.location}`;
 
             // Show the pickup details section and update with the selected store
-            pickupLocationSection.style.display = 'block';
+            pickupDetailsSection.style.display = 'block';
+
             const pickupLocationElement = document.getElementById('pickup-location');
             if (pickupLocationElement) {
-                pickupLocationElement.textContent = `${storeDetailsText}`;
+                pickupLocationElement.textContent = storeDetailsText;
             } else {
                 console.error("Element with ID 'pickup-location' not found.");
             }
@@ -256,109 +290,116 @@ function displaySelectedStore() {
             console.error("Error parsing selectedStore from localStorage:", error);
         }
     } else {
-        // Hide if no store is selected
-        pickupLocationSection.style.display = 'none';
+        pickupDetailsSection.style.display = 'none'; // Hide the section if no store is selected
     }
 }
 
-    function setupEventListeners() {
-        optionRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value === "delivery") {
-                console.log("Delivery selected");
-                // Show delivery address section, hide pickup section
-                deliveryAddressSection.style.display = 'block'; // Show delivery details
-                pickupLocationSection.style.display = 'none';  // Hide pick-up details
-                storeDisplay.style.display = 'none';          // Hide selected store details
+function setupEventListeners() {
+    const optionRadioButtons = document.querySelectorAll('input[name="deliveryOption"]');
+    const deliveryDetailsSection = document.getElementById('deliveryDetails');
+    const pickupDetailsSection = document.getElementById('pickupDetails');
+    const addressSection = document.getElementById('address');
+
+    if (!deliveryDetailsSection || !pickupDetailsSection || !addressSection) {
+        console.error("Required elements not found (deliveryDetails, pickupDetails, address).");
+        return;
+    }
+
+    optionRadioButtons.forEach(button => {
+        button.addEventListener('change', function () {
+            if (this.value === "delivery") {
+                console.log("Delivery option selected.");
+                deliveryDetailsSection.style.display = 'block';
+                pickupDetailsSection.style.display = 'none';
+                addressSection.style.display = 'block';
             } else if (this.value === "pickup") {
-                console.log("Pick-Up selected");
-                // Show pickup section, hide delivery address section
-                deliveryAddressSection.style.display = 'none'; // Hide delivery details
-                pickupLocationSection.style.display = 'block'; // Show pick-up details
-                storeDisplay.style.display = 'block';
+                console.log("Pick-Up option selected.");
+                deliveryDetailsSection.style.display = 'none';
+                pickupDetailsSection.style.display = 'block';
+                addressSection.style.display = 'none';
+            }
+        });
+    });
+
+        // Payment method change listener
+        paymentRadioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.value === "debit/creditcard") {
+                    cardDetailsSection.style.display = 'block';
+                } else {
+                    cardDetailsSection.style.display = 'none';
+                }
+
+                if (this.value !== "cash") {
+                    tenderedAmountSection.style.display = 'none';
+                    tenderedAmountInput.value = '';
+                    changeDisplay.style.display = 'none';
+                    changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
+                } else {
+                    tenderedAmountSection.style.display = 'block';
+                    changeDisplay.style.display = 'block';
+                    changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
                 }
             });
         });
 
-    paymentRadioButtons.forEach(button => {
-        button.addEventListener('change', function() {
-            if (this.value === "debit/creditcard") {
-                cardDetailsSection.style.display = 'block';
+        // Discount checkbox listener
+        discountCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                discountDetailsSection.style.display = 'block';
             } else {
-                cardDetailsSection.style.display = 'none';
+                discountDetailsSection.style.display = 'none';
             }
-
-            if (this.value !== "cash") {
-                tenderedAmountSection.style.display = 'none';
-                tenderedAmountInput.value = '';
-                changeDisplay.style.display = 'none';
-                changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
-            } else {
-                tenderedAmountSection.style.display = 'block';
-                changeDisplay.style.display = 'block';
-                changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
-            }
+            loadCart();
         });
-    });
-
-    discountCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            discountDetailsSection.style.display = 'block';
-        } else {
-            discountDetailsSection.style.display = 'none';
-        }
-        loadCart();
-    });
-}
-
-// Load cart items and update the order summary
-function loadCart() {
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const orderSummary = document.getElementById('order-summary');
-    const orderNumberElement = document.getElementById('order-number');
-    let totalItems = 0;
-    let subtotal = 0;
-    let vat = 0;
-    let discount = 0;
-
-    if (cartItems.length === 0) {
-        orderSummary.innerHTML = '<p>Your cart is empty.</p>';
-        orderNumberElement.innerText = ''; // Clear the order number if cart is empty
-    } else {
-        let orderSummaryHtml = '';
-
-        cartItems.forEach(item => {
-            const itemSubtotal = item.quantity * item.itemPrice;
-            subtotal += itemSubtotal;
-            totalItems += item.quantity;
-
-            orderSummaryHtml += `
-                <div>
-                    <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
-                </div>
-            `;
-        });
-
-        if (discountCheckbox.checked) {
-            discount = subtotal * 0.20;
-            vat = 0;
-        } else {
-            vat = subtotal * 0.12;
-            discount = 0;
-        }
-
-        const totalAmount = subtotal + vat - discount;
-
-        orderSummary.innerHTML = orderSummaryHtml;
-        document.getElementById('total-items').innerText = totalItems;
-        document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
-        document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
-        document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
-        document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
     }
 
-    updateChangeDisplay();
-}
+    // Load cart items and update the order summary
+    function loadCart() {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const orderSummary = document.getElementById('order-summary');
+        let totalItems = 0;
+        let subtotal = 0;
+        let vat = 0;
+        let discount = 0;
+
+        if (cartItems.length === 0) {
+            orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+        } else {
+            let orderSummaryHtml = '';
+
+            cartItems.forEach(item => {
+                const itemSubtotal = item.quantity * item.itemPrice;
+                subtotal += itemSubtotal;
+                totalItems += item.quantity;
+
+                orderSummaryHtml += `
+                    <div>
+                        <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
+                    </div>
+                `;
+            });
+
+            if (discountCheckbox.checked) {
+                discount = subtotal * 0.20;
+                vat = 0;
+            } else {
+                vat = subtotal * 0.12;
+                discount = 0;
+            }
+
+            const totalAmount = subtotal + vat - discount;
+
+            orderSummary.innerHTML = orderSummaryHtml;
+            document.getElementById('total-items').innerText = totalItems;
+            document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
+            document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
+            document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
+            document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
+        }
+
+        updateChangeDisplay();
+    }
 
     // Update the change display based on the tendered amount
     function updateChangeDisplay() {
@@ -377,43 +418,37 @@ function loadCart() {
         });
     }
 
-
     // Trigger the Thank You modal when the "Place Order" button is clicked
-document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-    event.preventDefault();  // Prevent the default form submission action
+    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+        event.preventDefault();  // Prevent the default form submission action
 
-    // Clear the cart
-    clearCart();
+        // Clear the cart
+        clearCart();
 
-    // Show the Thank You modal
-    showThankYouModal();
-});
+        // Show the Thank You modal
+        showThankYouModal();
+    });
 
-function showThankYouModal() {
-    const modal = document.getElementById("thankYouModal");
-    if (modal) {
-        modal.style.display = "block";  // Show the modal
+    function showThankYouModal() {
+        const modal = document.getElementById("thankYouModal");
+        if (modal) {
+            modal.style.display = "block";  // Show the modal
+        }
     }
-}
 
-function closeThankYouModal() {
-    const modal = document.getElementById("thankYouModal");
-    if (modal) {
-        modal.style.display = "none";  // Hide the modal
+    function closeThankYouModal() {
+        const modal = document.getElementById("thankYouModal");
+        if (modal) {
+            modal.style.display = "none";  // Hide the modal
+        }
     }
-}
 
-// Function to clear the cart
-function clearCart() {
-    // If the cart is stored in localStorage, remove it
-    localStorage.removeItem('cart');  // Clears the cart data from localStorage
-
-    // Optionally, clear the cart display in the HTML (e.g., an element with ID 'cartContainer')
-    const cartContainer = document.getElementById('cartContainer');
-    if (cartContainer) {
-        cartContainer.innerHTML = '';  // Clear the cart display in HTML
+    // Function to clear the cart
+    function clearCart() {
+        // If the cart is stored in localStorage, remove it
+        localStorage.removeItem('cart');
+        loadCart();  // Reload the cart to reflect the changes
     }
-}
 
 });
     function editAddress() {
@@ -438,26 +473,36 @@ function clearCart() {
         document.getElementById('editAddressModal').style.display = 'none';
     }
 
-    // Function to edit the delivery instructions
-    function editDeliveryInstructions() {
-        const currentInstructions = document.getElementById('delivery-instructions').innerText;
+    // Function to edit the delivery instruction
+    function editDeliveryInstruction() {
+        const currentInstructions = document.getElementById('delivery-instruction').innerText;
         document.getElementById('editInstructionsText').value = currentInstructions;
         document.getElementById('editInstructionsModal').style.display = 'block';
     }
 
-    // Function to save the new delivery instructions
-    function saveDeliveryInstructions() {
-        const newInstructions = document.getElementById('editInstructionsText').value;
-        document.getElementById('delivery-instructions').innerText = newInstructions;
+    // Function to edit the delivery instruction
+function editDeliveryInstruction() {
+    const currentInstructions = document.getElementById('deliveryInstruction').innerText;
+    document.getElementById('editInstructionText').value = currentInstructions;
+    document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
+}
 
-        // Save the new delivery instructions to local storage
-        localStorage.setItem('delivery-instructions', newInstructions);
+// Function to save the new delivery instruction
+function saveDeliveryInstruction() {
+    const newInstructions = document.getElementById('editInstructionText').value;
+    document.getElementById('deliveryInstruction').innerText = newInstructions;
 
-        closeEditInstructionsModal();
-    }
-    function closeEditInstructionsModal() {
-        document.getElementById('editInstructionsModal').style.display = 'none';
-    }
+    // Save the new delivery instruction to local storage
+    localStorage.setItem('delivery-instruction', newInstructions);
+
+    closeEditInstructionsModal(); // Close the modal
+}
+
+// Function to close the modal
+function closeEditInstructionsModal() {
+    document.getElementById('editInstructionModal').style.display = 'none'; // Hide the modal
+}
+
 
     function editPickUpLocation() {
         // Get the current pick-up location value
@@ -484,8 +529,6 @@ function clearCart() {
             window.location.href = storePickUpUrl;  // Redirect to the store pick-up page
         }
     }
-
-
 
     </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>

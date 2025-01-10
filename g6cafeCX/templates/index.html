@@ -23,51 +23,202 @@
             <a href="{{ url_for('storespick') }}">
             <img src="static/images/pin.png" alt="Find a Store" style="width: 40px; height: auto;">Find A Store</a>
             <a href="{{ url_for('cart') }}">
-    <img src="{{ url_for('static', filename='images/cart.png') }}" height="50px" width="50">
+    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
     <span id="cart-count">0</span>
     </a>
 
 
         </nav>
     </header>
-
-    <section class="promo">
-    <div class="button-group">
-        <span class="order-now">Order Now</span>
-        <a href="{{ url_for('stores') }}" id="deliveryLink">
-            <button class="btn-delivery">Delivery</button>
-        </a>
-        <span class="or-text">or</span>
-        <a href="{{ url_for('storespick') }}" id="pickupLink">
-            <button class="btn-pickup">Pick Up</button>
-        </a>
-    </div>
-</section>
-
-<!-- Delivery Details Section -->
-<section id="deliveryDetails" style="display: none;">
-    <h3>Delivery Details</h3>
-    <p id="address">No address saved</p>
-    <button onclick="editAddress()">Edit Address</button>
-</section>
-
-<!-- Pick-Up Details Section -->
-<section id="pickupDetails" style="display: none;">
-    <h3>Pick-Up Location</h3>
-    <p id="pickup-location">No store selected</p>
-    <button onclick="editPickUpLocation()">Edit Pick-Up Location</button>
-</section>
-    <div class="promo-content">
-        <div class="promo">
-            <img src="/static/css/home.png" alt="Promo Image">
+<div class="carousel-container">
+    <div class="carousel-slides">
+        <div class="carousel-slide">
+            <img src="/static/images/thumbler.jpg" alt="Promo Image 1">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide1.jpg" alt="Promo Image 2">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide2.jpg" alt="Promo Image 2">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide3.jpg" alt="Promo Image 2">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide4.jpg" alt="Promo Image 2">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide5.jpg" alt="Promo Image 2">
+        </div>
+        <div class="carousel-slide">
+            <img src="/static/images/slide6.jpg" alt="Promo Image 2">
         </div>
     </div>
+    <button class="carousel-prev">&#10094;</button>
+    <button class="carousel-next">&#10095;</button>
+    <div class="carousel-dots">
+        <span class="carousel-dot active" data-index="0"></span>
+        <span class="carousel-dot" data-index="1"></span>
+        <span class="carousel-dot" data-index="2"></span>
+        <span class="carousel-dot" data-index="3"></span>
+        <span class="carousel-dot" data-index="4"></span>
+        <span class="carousel-dot" data-index="5"></span>
+        <span class="carousel-dot" data-index="6"></span>
+    </div>
+</div>
+    <section class="promo">
+    <div class="promo-content">
+        <span class="order-now">Order Now</span>
+    </div>
+        <div id="deliveryDetails" style="display: none;">Delivery Details Section</div>
+        <div id="pickupDetails" style="display: none;">Pick-Up Details Section</div>
+        <div id="address" style="display: none;">Saved Address Section</div>
+
+        <div class="button-group">
+            <a href="{{ url_for('stores') }}" id="deliveryLink">
+                <button class="deliveryBtn">Delivery</button>
+            </a>
+            <span class="or-text">or</span>
+            <a href="{{ url_for('storespick') }}" id="pickupLink">
+                <button class="pickupBtn">Pick Up</button>
+    </a>
+</div>
+
 </section>
 
-<footer>
-        <p>&copy; 2024 G6 Cafe. All rights reserved.</p>
-    </footer>
+    <section id="menuCategory">
+        <h3>Menu</h3>
+        <p>Discover our delicious menu options to satisfy your cravings!</p>
+        <div class="menu-category-container">
+    <aside class="menu-category-navigation">
+        <a href="{{ url_for('menu') }}?category=Promo" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/promo.png') }}" alt="promo"><p>Promo Deals</p>
+    </a>
+    <a href="{{ url_for('menu') }}?category=Espresso" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/coffee.png') }}" alt="coffee"><p>Coffee</p>
+    </a>
+    <a href="{{ url_for('menu') }}?category=Tea" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/tea.png') }}" alt="tea"><p>Tea</p>
+    </a>
+    <a href="{{ url_for('menu') }}?category=Ice Blended" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/ice blended.png') }}" alt="ice blended"><p>Ice Blended</p>
+    </a>
+    <a href="{{ url_for('menu') }}?category=Pasta" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/pasta.png') }}" alt="pasta"><p>Pasta</p>
+    </a>
+    <a href="{{ url_for('menu') }}?category=Pastries" class="menu-category-link">
+        <img src="{{ url_for('static', filename='images/pastries.png') }}" alt="pastries"><p>Pastries</p>
+    </a>
+</aside>
+
+</div>
+    </section>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+            <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
+        </div>
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
+            <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
+        </div>
+        <div class="footer-social">
+            <h3>For news and updates, follow us</h3>
+            <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 G6 Cafe | All Rights Reserved</p>
+    </div>
+</footer>
+
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
 </body>
 </html>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const slides = document.querySelector('.carousel-slides');
+    const slide = document.querySelectorAll('.carousel-slide');
+    const prev = document.querySelector('.carousel-prev');
+    const next = document.querySelector('.carousel-next');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    let currentIndex = 0;
+
+    // Update the carousel display based on the current index
+    function updateCarousel(index) {
+    const slideWidth = slide[0].clientWidth;
+    console.log("Slide width:", slideWidth);  // Debugging the slide width
+    console.log("Updating carousel to slide:", index); // Debugging log
+
+    // Move the carousel to the correct slide
+    slides.style.transform = `translateX(${-index * slideWidth}px)`;
+
+    // Update the active state for the dots
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[index].classList.add('active');
+}
+
+
+        // Show the next slide
+    function showNextSlide() {
+        // Increment the index and loop back to the first slide if at the last slide
+        currentIndex = (currentIndex + 1) % slide.length;
+        updateCarousel(currentIndex);
+    }
+
+    // Show the previous slide
+    function showPrevSlide() {
+        currentIndex = (currentIndex - 1 + slide.length) % slide.length;
+        console.log('Showing previous slide:', currentIndex); // Debugging log
+        updateCarousel(currentIndex);
+    }
+
+
+    // Ensure prev and next buttons exist and add event listeners
+    if (prev && next) {
+        // Event listener for "Prev" button
+        prev.addEventListener('click', () => {
+            console.log('Prev button clicked'); // Debugging log
+            showPrevSlide();
+        });
+
+        // Event listener for "Next" button
+        next.addEventListener('click', () => {
+            showNextSlide();
+        });
+    } else {
+        console.error('Prev or Next button not found');
+    }
+
+    // Event listener for dots
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            currentIndex = parseInt(e.target.getAttribute('data-index')); // Get the index from the dot's data attribute
+            updateCarousel(currentIndex);
+        });
+    });
+
+    // Auto-slide every 3 seconds
+    setInterval(showNextSlide, 3000);
+});
+
+
+</script>
