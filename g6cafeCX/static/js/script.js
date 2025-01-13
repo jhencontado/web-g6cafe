@@ -345,7 +345,6 @@ let map, userMarker;
                 });
         });
 
-// Function to submit the delivery details form
 function submitDeliveryDetails(event) {
     event.preventDefault();  // Prevent form from submitting traditionally
 
@@ -379,9 +378,23 @@ function submitDeliveryDetails(event) {
     // Optionally, show a message or update the UI to reflect the saved details
     alert("Delivery details saved successfully!");
 
+    // Update the delivery charge (example)
+    const deliveryCharge = calculateDeliveryCharge(city);
+    document.getElementById("deliveryCharge").textContent = `Delivery Charge: $${deliveryCharge}`;
+
     // Redirect to the menu page
     window.location.href = "/menu";  // Change "/menu" to the actual URL of your menu page
 }
+
+// Example function to calculate delivery charge based on city
+function calculateDeliveryCharge(city) {
+    let charge = 45;  // Base charge
+    if (city === 'Metro Manila') {
+        charge = 55;  // Higher charge for Metro Manila
+    }
+    return charge;
+}
+
 
         // Initialize map on page load
         window.onload = initMap;

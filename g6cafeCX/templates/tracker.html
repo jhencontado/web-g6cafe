@@ -27,6 +27,10 @@
         <main>
         <form action="{{ url_for('search_receipt') }}" method="POST" class="search-invoice-form">
     <label for="order_id">Enter Order ID:</label>
+            <select id="search_option" name="search_option" required>
+        <option value="order_id">Receipt</option>
+        <option value="track_order">Track My Order</option>
+    </select>
     <input type="text" id="order_id" name="order_id" required>
     <button type="submit" class="search-button">Search</button>
     </form>
@@ -47,15 +51,6 @@
                 <li><a href="#">Careers</a></li>
             </ul>
         </div>
-
-
-
-
-
-
-
-
-
         <div class="footer-contact">
             <h3>Contact Us</h3>
             <p>Phone: (123) 456-7890</p>

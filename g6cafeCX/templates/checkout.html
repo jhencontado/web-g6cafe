@@ -99,8 +99,8 @@
                 <!-- Card Details (hidden by default) -->
                 <div id="card-details" class="payment-details">
                     <h4>Card Details</h4>
-                    <label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" required></label>
-                    <label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" required></label>
+                    <label><input type="text" name="card_name" placeholder="Full Name on Card" required></label>
+                    <label><input type="text" name="card_number" placeholder="1234 5678 9012 3456" required></label>
                     <div class="expiration-container">
                         <label>Expiration Month:
                             <select name="expiration_month" required>
@@ -210,6 +210,7 @@
     const deliveryDetailsSection = document.getElementById('deliveryDetails');
     const pickupDetailsSection = document.getElementById('pickupDetails');
     const addressSection = document.getElementById('address');
+    const optionButtons = document.querySelectorAll('.deliveryBtn, .pickupBtn');
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
     const discountCheckbox = document.getElementById("discount-checkbox");
@@ -223,6 +224,12 @@
     initialize();
 
     function initialize() {
+        const currentSelection = localStorage.getItem('currentSelection');
+        if (currentSelection === 'pickup') {
+            toggleOptions('pickup');
+        } else {
+            toggleOptions('delivery');
+        }
         setupEventListeners();  // Set up event listeners
         loadCart();  // Load the cart
         displaySavedAddress();  // Display saved address
@@ -230,9 +237,7 @@
         displaySavedDeliveryInstruction();  // Display saved delivery instruction
     }
 
-    // Function to display saved address
     function displaySavedAddress() {
-        const addressSection = document.getElementById('address');
         if (!addressSection) {
             console.error("Element with ID 'address' not found.");
             return;
@@ -248,78 +253,71 @@
     }
 
     function displaySavedDeliveryInstruction() {
-    const deliveryInstructionElement = document.getElementById('deliveryInstruction');
-    if (!deliveryInstructionElement) {
-        console.error("Element with ID 'deliveryInstruction' not found.");
-        return;
-    }
-
-    // Correctly retrieve the deliveryDetails object from localStorage
-    const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
-    if (storedDetails && storedDetails.deliveryInstruction) {
-        deliveryInstructionElement.textContent = storedDetails.deliveryInstruction;  // Display saved instruction
-    } else {
-        deliveryInstructionElement.textContent = 'No instructions provided';  // Default text if no instructions are saved
-    }
-}
-
-// Function to display selected store details in the Pick-Up Location section
-function displaySelectedStore() {
-    const pickupDetailsSection = document.getElementById('pickupDetails');
-    if (!pickupDetailsSection) {
-        console.error("Element with ID 'pickupDetails' not found.");
-        return;
-    }
-
-    const selectedStore = localStorage.getItem('selectedStore');
-    if (selectedStore) {
-        try {
-            const storeDetails = JSON.parse(selectedStore);
-            const storeDetailsText = `${storeDetails.name}, ${storeDetails.location}`;
-
-            // Show the pickup details section and update with the selected store
-            pickupDetailsSection.style.display = 'block';
-
-            const pickupLocationElement = document.getElementById('pickup-location');
-            if (pickupLocationElement) {
-                pickupLocationElement.textContent = storeDetailsText;
-            } else {
-                console.error("Element with ID 'pickup-location' not found.");
-            }
-        } catch (error) {
-            console.error("Error parsing selectedStore from localStorage:", error);
+        const deliveryInstructionElement = document.getElementById('deliveryInstruction');
+        if (!deliveryInstructionElement) {
+            console.error("Element with ID 'deliveryInstruction' not found.");
+            return;
         }
-    } else {
-        pickupDetailsSection.style.display = 'none'; // Hide the section if no store is selected
-    }
-}
 
-function setupEventListeners() {
-    const optionRadioButtons = document.querySelectorAll('input[name="deliveryOption"]');
-    const deliveryDetailsSection = document.getElementById('deliveryDetails');
-    const pickupDetailsSection = document.getElementById('pickupDetails');
-    const addressSection = document.getElementById('address');
-
-    if (!deliveryDetailsSection || !pickupDetailsSection || !addressSection) {
-        console.error("Required elements not found (deliveryDetails, pickupDetails, address).");
-        return;
+        const storedDetails = JSON.parse(localStorage.getItem('deliveryDetails'));
+        if (storedDetails && storedDetails.deliveryInstruction) {
+            deliveryInstructionElement.textContent = storedDetails.deliveryInstruction;
+        } else {
+            deliveryInstructionElement.textContent = 'No instructions provided';
+        }
     }
 
-    optionRadioButtons.forEach(button => {
-        button.addEventListener('change', function () {
-            if (this.value === "delivery") {
-                console.log("Delivery option selected.");
-                deliveryDetailsSection.style.display = 'block';
-                pickupDetailsSection.style.display = 'none';
-                addressSection.style.display = 'block';
-            } else if (this.value === "pickup") {
-                console.log("Pick-Up option selected.");
-                deliveryDetailsSection.style.display = 'none';
+    function displaySelectedStore() {
+        if (!pickupDetailsSection) {
+            console.error("Element with ID 'pickupDetails' not found.");
+            return;
+        }
+
+        const selectedStore = localStorage.getItem('selectedStore');
+        if (selectedStore) {
+            try {
+                const storeDetails = JSON.parse(selectedStore);
+                const storeDetailsText = `${storeDetails.name}, ${storeDetails.location}`;
                 pickupDetailsSection.style.display = 'block';
-                addressSection.style.display = 'none';
+
+                const pickupLocationElement = document.getElementById('pickup-location');
+                if (pickupLocationElement) {
+                    pickupLocationElement.textContent = storeDetailsText;
+                } else {
+                    console.error("Element with ID 'pickup-location' not found.");
+                }
+            } catch (error) {
+                console.error("Error parsing selectedStore from localStorage:", error);
             }
+        } else {
+            pickupDetailsSection.style.display = 'none';
+        }
+    }
+
+    // Set up event listeners for toggling
+    function setupEventListeners() {
+        optionButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const option = this.classList.contains('deliveryBtn') ? 'delivery' : 'pickup';
+                toggleOptions(option);
+            });
         });
-    });
+    }
+
+    function toggleOptions(option) {
+        if (option === 'delivery') {
+            console.log("Delivery option selected.");
+            deliveryDetailsSection.style.display = 'block'; // Show delivery details
+            pickupDetailsSection.style.display = 'none';   // Hide pickup details
+            addressSection.style.display = 'block';       // Show saved address
+        } else if (option === 'pickup') {
+            console.log("Pick-Up option selected.");
+            deliveryDetailsSection.style.display = 'none'; // Hide delivery details
+            pickupDetailsSection.style.display = 'block';  // Show pickup details
+            addressSection.style.display = 'none';         // Hide saved address
+        } else {
+            console.error("Invalid option passed to toggleOptions.");
+        }
 
         // Payment method change listener
         paymentRadioButtons.forEach(button => {
@@ -471,13 +469,6 @@ function setupEventListeners() {
     // Function to close the address edit modal
     function closeEditAddressModal() {
         document.getElementById('editAddressModal').style.display = 'none';
-    }
-
-    // Function to edit the delivery instruction
-    function editDeliveryInstruction() {
-        const currentInstructions = document.getElementById('delivery-instruction').innerText;
-        document.getElementById('editInstructionsText').value = currentInstructions;
-        document.getElementById('editInstructionsModal').style.display = 'block';
     }
 
     // Function to edit the delivery instruction

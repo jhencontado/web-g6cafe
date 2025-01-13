@@ -531,6 +531,42 @@ form label, form input {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
 }
+/* General styling for the dropdown */
+#search_option {
+    width: 100%; /* Ensures the dropdown takes full width of its container */
+    padding: 10px; /* Adds some padding for better appearance */
+    margin-bottom: 15px; /* Adds space below the dropdown */
+    font-size: 14px; /* Sets the font size */
+    border: 1px solid #ccc; /* Adds a border */
+    border-radius: 4px; /* Rounds the corners slightly */
+    background-color: #f9f9f9; /* Light background for dropdown */
+    color: #333; /* Text color */
+    appearance: none; /* Hides the default dropdown styling (browser-specific) */
+    cursor: pointer; /* Changes cursor to pointer for better UX */
+}
+
+/* Styling the dropdown on focus */
+#search_option:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow effect */
+    outline: none; /* Removes default outline */
+}
+
+/* Optional: Add a dropdown arrow for better UI */
+#search_option::after {
+    content: ''; /* Empty content for custom arrow */
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -5px;
+    pointer-events: none; /* Makes arrow non-clickable */
+}
 
 .search-invoice-form label {
     display: block;
@@ -633,6 +669,269 @@ form label, form input {
 
 .search-button:focus {
     outline: none;
+}
+.button-container {
+    display: flex; /* Align buttons horizontally */
+    gap: 10px; /* Space between buttons */
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.back-button {
+    display: inline-block;
+    background-color: #8d6e63;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.back-button:hover {
+    background-color: #c3b39a;
+}
+
+.back-button:active {
+    background-color: #004085;
+    transform: scale(0.98); /* Shrink the button slightly on click */
+}
+/* General Container Design */
+.g6-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f6f2ef;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.g6-store-info img {
+    width: 200px;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;  /* Add space below the logo */
+}
+/* Header Style */
+.g6-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.g6-store-info {
+    text-align: left;
+    font-size: 14px;
+    width: 50%;
+}
+
+.g6-store-info h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.g6-receipt-info {
+    border: 2px solid #ccc; /* Border color and thickness */
+    padding: 40px 25px;
+    background-color: #c3b39a; /* Light gray background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    width: 40%; /* Adjust box width (80% of parent container) */
+    margin-right: -20px;
+}
+
+.g6-receipt-number p,h1{
+    color: #555;
+    text-align: right;
+    margin-right: 40%;
+}
+
+
+.g6-invoice-info h2 {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    display: flex;
+}
+
+.g6-order-details-container {
+    display: flex;
+    justify-content: space-between; /* Space between Order and Discount sections */
+    gap: 20px; /* Add space between the two columns */
+}
+
+.g6-order-details, .g6-discount-details {
+    width: 48%; /* Both sections take up 48% of the container width */
+    padding: 15px;
+}
+
+.g6-order-details p, .g6-discount-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Item List Section */
+.g6-items-list {
+    margin-top: 20px;
+    border-top: 2px solid #ccc;
+    padding-top: 10px;
+}
+
+.g6-item-header-row {
+    font-weight: bold;
+    background-color: #f1f1f1;
+}
+
+.g6-item-name, .g6-item-quantity, .g6-item-preference, .g6-item-subtotal {
+    padding: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Space adjustment for item header */
+.g6-items-header {
+    font-size: 18px;
+    color: #495057;
+    margin: 20px;  /* Adjusted to reduce space above and below header */
+}
+
+.g6-item-header-row {
+    display: flex;
+    justify-content: space-between;
+    background-color: #8d6e63;
+    padding: 10px;
+    margin-bottom: 10px; /* Adds space between header and items */
+    margin: 10px 0;
+}
+
+/* Individual columns for headers */
+.g6-item-header {
+    flex: 1;
+    font-size: 14px;
+    color: white;
+    text-align: left;
+    margin-left: 20px;
+}
+.g6-item-row {
+    display: flex;
+    border-bottom: 1px solid #dee2e6;
+    justify-content: space-between;
+    margin-bottom: 8px; /* Space between item rows */
+    padding: 5px 0;
+}
+
+/* Individual columns for item, quantity, subtotal, and preference */
+.g6-item-name,
+.g6-item-quantity,
+.g6-item-subtotal,
+.g6-item-preference {
+    flex: 1; /* Makes each column take equal width */
+    font-size: 14px;
+    color: #495057;
+    text-align: left;
+    margin-left: 20px;
+}
+
+/* Summary Section Styling */
+.g6-summary {
+    margin-top: 20px;
+    padding: 20px;
+    max-width: 300px;
+    width: 100%; /* Make the box responsive */
+    margin-left: 53%;
+    margin-bottom: 70px;
+}
+
+.g6-summary p {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 3px 0;
+    line-height: 1.5;
+    text-align: left; /* Align text to the left */
+    display: flex; /* Make the <p> a flex container */
+    justify-content: space-between; /* Space out label and value */
+    align-items: center; /* Align items vertically */
+}
+
+/* Style for the <strong> label */
+.g6-summary p strong {
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Style for the value */
+.g6-summary p span {
+    font-weight: normal;
+    color: #495057;
+}
+
+/* Add border below the "Total" field */
+.g6-summary p.total-line {
+    border-bottom: 1px solid #ccc; /* Thin gray line */
+    padding-bottom: 5px; /* Spacing below the text */
+    margin-bottom: 10px; /* Space between the line and the next item */
+}
+
+/* Optional: Adding a lighter background for the last part of the summary */
+.g6-summary .g6-total {
+    background-color: #e9ecef;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.g6-footer {
+    padding: 20px 10px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.g6-footer-section {
+    margin-bottom: 0px; /* Increased margin to provide spacing between sections */
+    display: inline-block;
+    width: 30%;
+    vertical-align: top;
+    padding: 0 10px;
+    text-align: left;
+    border-right: 1px solid #ddd;
+}
+.g6-footer-section:last-child {
+    border-right: none; /* Remove the line from the last section */
+}
+.g6-footer-section p {
+    font-size: 12px;
+    color: black;
+    margin: 5px 0;
+}
+
+.g6-footer-section a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.g6-footer-section a:hover {
+    text-decoration: underline;
+}
+
+.g6-footer button:hover {
+    background-color: #0056b3;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .g6-footer-section {
+        width: 100%;
+        margin-bottom: 15px; /* Decreased margin for mobile view */
+        text-align: center; /* Center-align text on smaller screens */
+    }
+
+    .g6-footer button {
+        width: 100%; /* Make the print button full width on small screens */
+    }
 }
 
 .cart {
@@ -885,7 +1184,8 @@ button:hover {
         }
 
         .checkout-form {
-            width: 95%; /* 60% for the checkout form */
+            width: 100%;
+            padding: 15px;
         }
 
         .order-summary {
@@ -895,6 +1195,8 @@ button:hover {
         padding: 40px;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+         width: 100%;
+        padding: 15px;
 
     }
         .order-details {
@@ -993,13 +1295,12 @@ button:hover {
 .checkout label input[type="email"],
 .checkout label input[type="tel"],
 .checkout label input[type="date"] {
-    width: 300%;
+    width: 100%;
     padding: 10px;
     margin-top: 2px;
     border: 1px #c3b39a;
     border-radius: 4px;
     font-size: 14px;
-    margin-left: 20px;
     box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
     transition: background-color 0.3s, border-color 0.3s;
 }
@@ -1010,6 +1311,8 @@ button:hover {
 .checkout label input[type="date"]:hover {
     background-color: #f9e4d4; /* Light background color on hover */
     border-color: #a52a2a; /* Darker border color on hover */
+    width: 100%;
+
 }
 
 .checkout strong {
@@ -1028,6 +1331,7 @@ button:hover {
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         width: 500px; /* Set the desired width */
         max-width: 100%; /* Optional: allows the modal to be responsive */
+        z-index: 9999;
     }
 
     /* Textarea styles inside modals */
@@ -1185,84 +1489,4 @@ button {
 
 button:hover {
     background-color: #45a049;
-}
-
-/* Receipt container */
-.receipt {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-h2 {
-    font-family: 'Playfair Display', serif;
-    color: #6f4f1f;
-    border-bottom: 2px solid #6f4f1f;
-    padding-bottom: 5px;
-}
-
-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
-
-table th, table td {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-table th {
-    background-color: #f4f4f4;
-}
-
-/* Item row */
-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 14px;
-    color: #6f4f1f;
-}
-
-/* Button for print */
-button {
-    background-color: #6f4f1f;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-}
-
-button:hover {
-    background-color: #4e3b2e;
-}
-
-@media print {
-    /* Hide unnecessary sections during printing */
-    header, footer, nav, button {
-        display: none;
-    }
-
-    /* Style the receipt for printing */
-    .receipt {
-        width: 100%;
-        border: none;
-        box-shadow: none;
-    }
-
-    body {
-        background-color: #fff;
-        color: #000;
-    }
 }

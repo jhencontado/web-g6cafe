@@ -26,8 +26,6 @@
     <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
     <span id="cart-count">0</span>
     </a>
-
-
         </nav>
     </header>
 <div class="carousel-container">
@@ -75,14 +73,15 @@
         <div id="address" style="display: none;">Saved Address Section</div>
 
         <div class="button-group">
-            <a href="{{ url_for('stores') }}" id="deliveryLink">
-                <button class="deliveryBtn">Delivery</button>
-            </a>
-            <span class="or-text">or</span>
-            <a href="{{ url_for('storespick') }}" id="pickupLink">
-                <button class="pickupBtn">Pick Up</button>
+    <a href="{{ url_for('stores') }}" id="deliveryLink">
+        <button class="deliveryBtn" id="deliveryButton" onclick="toggleOptions('delivery')">Delivery</button>
+    </a>
+    <span class="or-text">or</span>
+    <a href="{{ url_for('storespick') }}" id="pickupLink">
+        <button class="pickupBtn" id="pickupButton" onclick="toggleOptions('pickup')">Pick Up</button>
     </a>
 </div>
+
 
 </section>
 
