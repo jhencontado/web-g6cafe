@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,41 +9,69 @@
 <body>
     <header>
         <section class="g6logo">
-    <div class="g6logo">
-        <a href="{{ url_for('home') }}">
-            <img src="/static/images/g6logo.png" alt="g6logo">
-        </a>
-    </div>
-</section>
+            <div class="g6logo">
+                <a href="{{ url_for('home') }}">
+                    <img src="/static/images/g6logo.png" alt="g6logo">
+                </a>
+            </div>
+        </section>
 
         <nav>
             <a href="{{ url_for('menu') }}">Menu</a>
             <a href="{{ url_for('cart') }}">
-    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
-    <span id="cart-count">0</span>
-    </a>
+                <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
+                <span id="cart-count">0</span>
+            </a>
         </nav>
     </header>
-
     <section class="checkout">
-        <h2>Checkout</h2>
+        <h2>Order Details</h2>
         <div class="checkout-container">
             <!-- Checkout Form -->
-            <form id="checkout-form" class="checkout-form" action="#" method="POST">
-                <!-- Delivery Address Section (fetched from local storage) -->
+            <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
+                <!-- Order Summary -->
+<!--                <div class="order-summary">-->
+<!--                    <div class="order-info">-->
+<!--                        <h3>Order Details</h3>-->
+<!--                    </div>-->
+                    <div id="order-summary"></div>
+
+                    <div class="order-details">
+                        <div id="hiddenCartListContainer" hidden="hidden">
+                            <input type="text" name="subtotal" id="subtotal_hidden" />
+                            <input type="text" name="vat" id="vat_hidden" />
+                            <input type="text" name="discount" id="discount_hidden" />
+                            <input type="text" name="amount_due" id="amount_due_hidden" />
+                            <input type="text" name="change_value" id="change_value_hidden" />
+                        </div>
+
+                        <p>Total Items: <span id="total-items">0</span></p>
+                        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
+                        <p>Vat: <span id="vat">P0.00</span></p>
+                        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
+                        <p>Amount Due: <span id="amount-due">P0.00</span></p>
+                        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
+                    </div>
+<!--                </div>-->
+
+                <!--Delivery Address Section (fetched from local storage) -->
+                <div id="hidden_address_fields" hidden="hidden">
+                    <input type="text" name="addressHidden" id="addressHidden" />
+                    <input type="text" name="deliveryInstructionHidden" id="deliveryInstructionHidden" />
+                </div>
                 <h3>Delivery Information</h3>
                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 <div id="deliveryDetails">
-                <span id="address">Loading address...</span>
-                <p id="deliveryInstruction">No instructions provided</p>
-                <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstruction()">
-            </div>
+                    <span id="address">Loading address...</span>
+                    <p id="deliveryInstruction">No instructions provided</p>
+                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstruction()">
+                </div>
 
                 <div id="editAddressModal" style="display:none;">
-                <textarea id="editAddressText" rows="4" placeholder="Enter your address"></textarea>
-                <button onclick="saveAddress()">Save</button>
-                <button onclick="closeEditAddressModal()">Cancel</button>
-            </div>
+                    <textarea id="editAddressText" rows="4" placeholder="Enter your address"></textarea>
+                    <button onclick="saveAddress()">Save</button>
+                    <button onclick="closeEditAddressModal()">Cancel</button>
+                </div>
 
                 <div id="editInstructionModal" style="display:none;">
                     <textarea id="editInstructionText" rows="4" placeholder="Enter your delivery instructions"></textarea>
@@ -52,11 +80,10 @@
                 </div>
 
                 <div id="pickupDetails" style="display: none;">
-                <h3>Selected Branch</h3>
+                    <h3>Selected Branch</h3>
                     <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
-                <p id="pickup-location">Pick up your order from the selected store.</p>
-                <a href="{{ url_for('storespick') }}" class="change-store-link">
-                </a>
+                    <p id="pickup-location">Pick up your order from the selected store.</p>
+                    <a href="{{ url_for('storespick') }}" class="change-store-link"></a>
                 </div>
 
                 <!-- Personal Details -->
@@ -68,11 +95,11 @@
                 <!-- PWD/Senior Citizen Discount Section -->
                 <h3>PWD/Senior Citizen Discount</h3>
                 <label>
-                    <input type="checkbox" id="discount-checkbox"> PWD or Senior Citizen
+                    <input type="checkbox" name="discount-checkbox" id="discount-checkbox"> PWD or Senior Citizen
                 </label>
                 <div id="discount-details" style="display:none;">
-                    <label>Full Name: <input type="text" name="discount_name" placeholder="Enter your full name" required></label>
-                    <label>ID Number: <input type="text" name="discount_id_number" placeholder="Enter your ID number" required></label>
+                    <label>Full Name: <input type="text" name="discount_name" id="discount_name" placeholder="Enter your full name" required></label>
+                    <label>ID Number: <input type="text" name="discount_id_number" id="discount_id_number" placeholder="Enter your ID number" required></label>
                 </div>
 
                 <!-- Payment Details -->
@@ -97,10 +124,10 @@
 
 
                 <!-- Card Details (hidden by default) -->
-                <div id="card-details" class="payment-details">
+                <div id="card-details" class="payment-details" hidden="hidden">
                     <h4>Card Details</h4>
-                    <label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" required></label>
-                    <label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" required></label>
+                    <label>Name on Card: <input type="text" name="card_name" id="card_name" placeholder="Full Name on Card" required></label>
+                    <label>Card Number: <input type="text" name="card_number" id="card_number" placeholder="1234 5678 9012 3456" required></label>
                     <div class="expiration-container">
                         <label>Expiration Month:
                             <select name="expiration_month" required>
@@ -132,31 +159,12 @@
                             </select>
                         </label>
                     </div>
-                    <label>CVV: <input type="text" name="cvv" maxlength="3" placeholder="CVV" required></label>
+                    <label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
                 </div>
-
+                <button type="submit" id="place_holder_btn">Place Order</button>
             </form>
         </div>
     </section>
-
-    <!-- Order Summary -->
-    <div class="order-summary">
-    <div class="order-info">
-        <h3>Order Details</h3>
-    </div>
-    <div id="order-summary"></div>
-
-    <div class="order-details">
-        <p>Total Items: <span id="total-items">0</span></p>
-        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
-        <p>Vat: <span id="vat">P0.00</span></p>
-        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
-        <p>Amount Due: <span id="amount-due">P0.00</span></p>
-        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
-    </div>
-</div>
-
-        <button type="submit">Place Order</button>
         <!-- Thank You Modal -->
 <div id="thankYouModal" class="modal">
   <div class="modal-content">
@@ -165,8 +173,8 @@
 
     <h2>Thank you for your Order!</h2>
     <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
-      <a href="{{ url_for('home') }}">
-          <button onclick="redirectToOrderStatus()">OK </button></a>
+      <a href=""><button>OK </button></a>
+<!--      onclick="redirectToOrderStatus()-->
   </div>
 </div>
 <footer class="footer">
@@ -218,6 +226,12 @@
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
+    const cardNameInput = document.getElementById('card_name');
+    const cardNumberInput = document.getElementById('card_number');
+    const cvvInput = document.getElementById('cvv');
+    const discountCheckBox = document.getElementById('discount-checkbox');
+    const discountNameInput = document.getElementById('discount_name');
+    const discountIDNumberInput = document.getElementById('discount_id_number');
 
     // Initialize the page and load data
     initialize();
@@ -228,6 +242,14 @@
         displaySavedAddress();  // Display saved address
         displaySelectedStore();  // Display selected store
         displaySavedDeliveryInstruction();  // Display saved delivery instruction
+
+        //set to default - not required
+        discountNameInput.required = false;
+        discountIDNumberInput.required = false;
+
+        cardNameInput.required = false;
+        cardNumberInput.required = false;
+        cvvInput.required = false;
     }
 
     // Function to display saved address
@@ -321,43 +343,59 @@ function setupEventListeners() {
         });
     });
 
-        // Payment method change listener
-        paymentRadioButtons.forEach(button => {
-            button.addEventListener('change', function() {
-                if (this.value === "debit/creditcard") {
-                    cardDetailsSection.style.display = 'block';
-                } else {
-                    cardDetailsSection.style.display = 'none';
-                }
+    // Payment method change listener
+    paymentRadioButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            if (this.value === "debit/creditcard") {
+                cardDetailsSection.style.display = 'block';
+                cardNameInput.required = true;
+                cardNumberInput.required = true;
+                cvvInput.required = true;
+            } else {
+                cardDetailsSection.style.display = 'none';
+                cardNameInput.required = false;
+                cardNumberInput.required = false;
+                cvvInput.required = false;
+            }
 
-                if (this.value !== "cash") {
-                    tenderedAmountSection.style.display = 'none';
-                    tenderedAmountInput.value = '';
-                    changeDisplay.style.display = 'none';
-                    changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
-                } else {
-                    tenderedAmountSection.style.display = 'block';
-                    changeDisplay.style.display = 'block';
-                    changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
-                }
+            if (this.value !== "cash") {
+                tenderedAmountSection.style.display = 'none';
+                tenderedAmountInput.value = '';
+                changeDisplay.style.display = 'none';
+                changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
+            } else {
+                tenderedAmountSection.style.display = 'block';
+                changeDisplay.style.display = 'block';
+                changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
+                    }
+                });
             });
-        });
 
         // Discount checkbox listener
         discountCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 discountDetailsSection.style.display = 'block';
+                discountNameInput.required = true;
+                discountIDNumberInput.required = true;
             } else {
                 discountDetailsSection.style.display = 'none';
+                discountNameInput.required = false;
+                discountIDNumberInput.required = false;
             }
             loadCart();
         });
+    }
+
+    function addMultipleKeyValuePairs(dataList, keyValuePairs) {
+      dataList.push(Object.fromEntries(keyValuePairs));
+      return dataList;
     }
 
     // Load cart items and update the order summary
     function loadCart() {
         const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const orderSummary = document.getElementById('order-summary');
+
         let totalItems = 0;
         let subtotal = 0;
         let vat = 0;
@@ -368,10 +406,22 @@ function setupEventListeners() {
         } else {
             let orderSummaryHtml = '';
 
+<!--            const cartList = [];-->
+<!--            const updatedList = [];-->
+
             cartItems.forEach(item => {
                 const itemSubtotal = item.quantity * item.itemPrice;
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
+
+<!--                key_value_pairs = [-->
+<!--                    ["item_name", item.itemName],-->
+<!--                    ["item_price", item.itemPrice.toFixed(2)],-->
+<!--                    ["item_quantity", item.quantity],-->
+<!--                    ["item_subtotal", subtotal]-->
+<!--                ]-->
+
+<!--                updatedList = addMultipleKeyValuePairs(myList, keyValuePairs);-->
 
                 orderSummaryHtml += `
                     <div>
@@ -379,6 +429,8 @@ function setupEventListeners() {
                     </div>
                 `;
             });
+
+<!--            document.getElementById('hiddenCartListContainer').value = updatedList;-->
 
             if (discountCheckbox.checked) {
                 discount = subtotal * 0.20;
@@ -392,10 +444,18 @@ function setupEventListeners() {
 
             orderSummary.innerHTML = orderSummaryHtml;
             document.getElementById('total-items').innerText = totalItems;
+
             document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
+            document.getElementById('subtotal_hidden').value = subtotal.toFixed(2);
+
             document.getElementById('vat').innerText = `P${vat.toFixed(2)}`;
+            document.getElementById('vat_hidden').value = vat.toFixed(2);
+
             document.getElementById('discount').innerText = `P${discount.toFixed(2)}`;
+            document.getElementById('discount_hidden').value = discount.toFixed(2);
+
             document.getElementById('amount-due').innerText = `P${totalAmount.toFixed(2)}`;
+            document.getElementById('amount_due_hidden').value = totalAmount.toFixed(2);
         }
 
         updateChangeDisplay();
@@ -410,6 +470,7 @@ function setupEventListeners() {
             if (!isNaN(tenderedAmount) && tenderedAmount >= amountDue) {
                 const change = tenderedAmount - amountDue;
                 changeDisplay.innerText = `Change: P${change.toFixed(2)}`;
+                document.getElementById('change_value_hidden').value = change.toFixed(2);
             } else if (!isNaN(tenderedAmount)) {
                 changeDisplay.innerText = `Insufficient funds!`;
             } else {
@@ -419,8 +480,8 @@ function setupEventListeners() {
     }
 
     // Trigger the Thank You modal when the "Place Order" button is clicked
-    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-        event.preventDefault();  // Prevent the default form submission action
+    document.querySelector("#place_holder_btn").addEventListener("click", function(event) {
+<!--        event.preventDefault();  // Prevent the default form submission action-->
 
         // Clear the cart
         clearCart();
@@ -461,9 +522,11 @@ function setupEventListeners() {
     function saveAddress() {
         const newAddress = document.getElementById('editAddressText').value;
         document.getElementById('address').innerText = newAddress;
+        document.getElementById('addressHidden').value = newAddress;
 
         // Save the new address to local storage
         localStorage.setItem('address', newAddress);
+        localStorage.setItem('addressHidden', newAddress);
 
         closeEditAddressModal();
     }
@@ -471,13 +534,6 @@ function setupEventListeners() {
     // Function to close the address edit modal
     function closeEditAddressModal() {
         document.getElementById('editAddressModal').style.display = 'none';
-    }
-
-    // Function to edit the delivery instruction
-    function editDeliveryInstruction() {
-        const currentInstructions = document.getElementById('delivery-instruction').innerText;
-        document.getElementById('editInstructionsText').value = currentInstructions;
-        document.getElementById('editInstructionsModal').style.display = 'block';
     }
 
     // Function to edit the delivery instruction
@@ -491,9 +547,11 @@ function editDeliveryInstruction() {
 function saveDeliveryInstruction() {
     const newInstructions = document.getElementById('editInstructionText').value;
     document.getElementById('deliveryInstruction').innerText = newInstructions;
+    document.getElementById('deliveryInstructionHidden').value = newInstructions;
 
     // Save the new delivery instruction to local storage
-    localStorage.setItem('delivery-instruction', newInstructions);
+    localStorage.setItem('deliveryInstruction', newInstructions);
+    localStorage.setItem('deliveryInstructionHidden', newInstructions);
 
     closeEditInstructionsModal(); // Close the modal
 }

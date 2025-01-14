@@ -64,20 +64,21 @@ CREATE TABLE order_address (
     delivery_date DATETIME NULL,
     contact_name VARCHAR(100) NOT NULL,
     contact_email VARCHAR(50) NULL,
-    contact_number INT NOT NULL,
+    contact_number LONG NOT NULL,
+    delivery_instruction TEXT NULL,
     FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
 );
 
 -- Table for order_payment_details
 DROP TABLE IF EXISTS order_payment_details;
-CREATE TABLE order_payment_detailsstores (
+CREATE TABLE order_payment_details (
 	order_payment_details_id INT AUTO_INCREMENT NOT NULL primary key,
     order_id INT NOT NULL,
     payment_option VARCHAR(50) NOT NULL,
     gcash_ref_number INT NULL,
     change_for_cash INT NULL,
     card_name VARCHAR(100) NULL,
-    card_number INT NULL,
+    card_number LONG NULL,
     card_exp_month INT NULL,
     card_exp_year INT NULL,
     card_cvv INT NULL,
@@ -157,7 +158,7 @@ VALUES
 (1, @order_id, '123 Elm Street, Springfield, IL', '2025-01-15 10:00:00', '2025-01-15 14:00:00', 'John Doe', 'johndoe@example.com', 1234567890);
 
 -- Insert payment details for a cash payment
-INSERT INTO order_payment_detailsstores (
+INSERT INTO order_payment_details (
     order_id,
     payment_option,
     gcash_ref_number,
@@ -169,13 +170,13 @@ INSERT INTO order_payment_detailsstores (
     card_cvv
 )
 VALUES
-(@order_id, 'Cash', NULL, 100, NULL, NULL, NULL, NULL, NULL); -- Cash payment with change
+(@order_id, 'Cash', NULL, 100, NULL, NULL, NULL, NULL, NULL), -- Cash payment with change
 
 -- Insert payment details for a GCash payment
-(102, 'GCash', 123456789, NULL, NULL, NULL, NULL, NULL, NULL), -- GCash payment with reference number
+(@order_id, 'GCash', 123456789, NULL, NULL, NULL, NULL, NULL, NULL), -- GCash payment with reference number
 
 -- Insert payment details for a card payment
-(103, 'Credit Card', NULL, NULL, 'John Doe', 1234567812345678, 12, 2025, 123); -- Card payment with all details
+(@order_id, 'Credit Card', NULL, NULL, 'John Doe', 1234567812345678, 12, 2025, 123); -- Card payment with all details
 /* ----------------------------------------------sample 2---------------------------------------------------------- */
 
 
@@ -185,14 +186,14 @@ SET @order_id = (SELECT LAST_INSERT_ID());
 
 -- Insert PWD and Senior discount details
 INSERT INTO pwdsenior_details (order_id, discount_type, customer_name, id_number, discount_amount)
-VALUES	(38, 'Senior', 'Jane Smith', 'SEN987654', 30.00);
+VALUES	(@order_id, 'Senior', 'Jane Smith', 'SEN987654', 30.00);
 -- Senior customer with 30 discount
 
 -- Insert items for order 2 (Senior customer)
 INSERT INTO order_details (order_id, item_id, quantity,subtotal, order_preference)
 VALUES
-(38, 3, 1,125,'No milk'),  -- 1 Double Espresso
-(38, 4, 2,350,'With milk');  -- 2 Lattes
+(@order_id, 3, 1,125,'No milk'),  -- 1 Double Espresso
+(@order_id, 4, 2,350,'With milk');  -- 2 Lattes
 
 /* ----------------------------------------------sample 3---------------------------------------------------------- */
 -- Insert Orders with PWD, Senior, and Regular customers
@@ -202,8 +203,8 @@ VALUES (300.00, 30.00, 0.00, 300.00 + 30.00, 300.00, 0.00, 'REC003');
 -- Insert items for order 3 (Regular customer)
 INSERT INTO order_details (order_id, item_id, quantity,subtotal, order_preference)
 VALUES
-(3, 5, 3,525,'Hot'),  -- 3 Macchiatos
-(3, 6, 1,180,'Cold');  -- 1 Mocha
+(@order_id, 5, 3,525,'Hot'),  -- 3 Macchiatos
+(@order_id, 6, 1,180,'Cold');  -- 1 Mocha
 
 /* ----------------------------------------------sample 4---------------------------------------------------------- */
 
@@ -234,9 +235,6 @@ VALUES
 (@order_id, 10, 1,110, 'Black');  -- 1 Green Tea
 
 INSERT INTO pwdsenior_details (order_id, discount_type, customer_name, id_number, discount_amount)
-VALUES	(@order_id, 'Senior', 'Alan Walker', 'SEN9976987', 30.00);
-
-INSERT into order_address (order_id, discount_type, customer_name, id_number, discount_amount)
 VALUES	(@order_id, 'Senior', 'Alan Walker', 'SEN9976987', 30.00);
 
 CREATE TABLE stores (
@@ -277,6 +275,18 @@ VALUES ('Promo', 'Macha + Carbonara', 'promo1.jpg', 265),
 ('Promo', 'G6 Thumbler Pink', 'pink.jpg', 450),
 ('Promo', 'G6 Thumbler Black', 'black.jpg', 450);
 
+
+-- Table for delivery riders
+DROP TABLE IF EXISTS delivery_rider;
+CREATE TABLE delivery_rider (
+    delivery_rider_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    vehicle_plate_number VARCHAR(50) NOT NULL,
+    vehicle_model VARCHAR(255) NOT NULL,
+    vehicle_color VARCHAR(50) NOT NULL,
+    branch_assigned VARCHAR(255) NOT NULL
+    );
+
 -- Table for trackdetails
 DROP TABLE IF EXISTS trackdetails;
 CREATE TABLE trackdetails (
@@ -297,18 +307,6 @@ CREATE TABLE trackdetails (
     FOREIGN KEY (id) REFERENCES stores(id) ON DELETE CASCADE,
     FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
 );
-
-
--- Table for delivery riders
-DROP TABLE IF EXISTS delivery_rider;
-CREATE TABLE delivery_rider (
-    delivery_rider_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    vehicle_plate_number VARCHAR(50) NOT NULL,
-    vehicle_model VARCHAR(255) NOT NULL,
-    vehicle_color VARCHAR(50) NOT NULL,
-    branch_assigned VARCHAR(255) NOT NULL
-    );
 /* ---------------------------------------------- Display tables---------------------------------------------------------- */
 
 select * from menu_details;
@@ -316,8 +314,7 @@ select * from pwdsenior_details ;
 select * from order_address;
 select * from orders;
 select * from order_details;
-select distinct pwdsenior_details;
-select distinct pwd_senior_id from pwdsenior_details;
-SELECT * FROM ORDER_PAYMENT_DETAILSstores;
+select distinct pwdsenior_id from pwdsenior_details;
+SELECT * FROM ORDER_PAYMENT_DETAILS;
 SELECT * FROM ORDER_ADDRESS;
 select *from stores;

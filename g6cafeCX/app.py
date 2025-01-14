@@ -1,3 +1,6 @@
+import datetime
+import decimal
+
 from flask import Flask, render_template, jsonify, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
@@ -70,6 +73,7 @@ class OrderAddress(db.Model):
     contact_name = db.Column(db.String(100), nullable=False)
     contact_email = db.Column(db.String(50))
     contact_number = db.Column(db.String(15), nullable=False)
+    delivery_instruction = db.Column(db.Text)
 
 class Store(db.Model):
     __tablename__ = 'stores'
@@ -220,6 +224,122 @@ def search_receipt():
     # Redirect to the receipt page with the order_id
     return redirect(url_for('receipt', order_id=order_id))
 
+def generate_receipt_number():
+    """
+    Generates a unique receipt number using current timestamp and a random component.
+
+    Returns:
+        str: The generated receipt number.
+    """
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    # Add a random component for further uniqueness (optional)
+    import random
+    random_part = str(random.randint(1000, 9999))
+    return f"REC{timestamp}-{random_part}"
+
+def get_item_id(item_name):
+    try:
+        item = MenuDetails.query.filter_by(item_name = item_name).first()
+        if item:
+            return item.item_id
+        else:
+            return jsonify({'message': 'item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def get_items():
+    # Example: Fetch the cart from the session or database
+    cart = session.get('cart', [])
+    return cart
+
+@app.route('/proceed-checkout', methods=['POST'])
+def proceed_checkout():
+    # addressHidden = request.form.get('addressHidden')
+    try:
+
+        #insert to order_details
+        data = get_items()
+
+        if len(data) == 0:
+            return "No cart in session", 500
+
+    # if request.method == 'Post':
+        #insert to order
+        subtotal = request.form.get('subtotal')
+        vat_amount = request.form.get('vat')
+        discount_amount = request.form.get('discount')
+        net_amount = request.form.get('amount_due')
+        tender_amount = request.form.get('tendered_amount')
+        change_amount = request.form.get('change_value')
+        receipt_number = generate_receipt_number()
+        new_order = Order(
+            subtotal = subtotal,
+            vat_amount = vat_amount,
+            discount_amount = discount_amount,
+            net_amount = net_amount,
+            tender_amount = tender_amount,
+            change_amount = change_amount,
+            receipt_number = receipt_number
+        )
+        db.session.add(new_order)
+        db.session.commit()
+
+        #get the last inserted order id
+        last_inserted_id = new_order.order_id
+
+
+        items = []
+        for cartItem in data:
+            item_id = get_item_id(cartItem.itemName)
+            qty = int(cartItem.quantity)
+            amount = decimal.Decimal(cartItem.itemPrice)
+            new_order_details = OrderDetails(
+                order_id = last_inserted_id,
+                item_id = item_id,
+                quantity = qty,
+                subtotal = qty * amount,
+                order_preference = cartItem.preferences
+            )
+            items.append(new_order_details)
+
+        db.session.add_all(items)
+        db.session.commit()
+
+        if 'discount-checkbox' in request.form:
+            new_pwdsenior_details = PwdSeniorDetails(
+                order_id = last_inserted_id,
+                discount_type = 'Senior',
+                customer_name = request.form.get('discount_name'),
+                id_number = request.form.get('discount_id_number'),
+                discount_amount = discount_amount
+            )
+
+            db.session.add(new_pwdsenior_details)
+            db.session.commit()
+
+
+        #insert to order_address
+        address = request.form.get('addressHidden')
+        contact_name = request.form.get('name')
+        contact_email = request.form.get('email')
+        contact_number = request.form.get('contact')
+        delivery_instruction = request.form.get('deliveryInstructionHidden')
+
+        new_address = OrderAddress(
+            order_id = last_inserted_id,
+            address = address,
+            contact_name = contact_name,
+            contact_email = contact_email,
+            contact_number = contact_number,
+            delivery_instruction = delivery_instruction
+        )
+        db.session.add(new_address)
+        db.session.commit()
+
+        return redirect(url_for('receipt', order_id=last_inserted_id))
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/receipt/<int:order_id>')
 def receipt(order_id):
