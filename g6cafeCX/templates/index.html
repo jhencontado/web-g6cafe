@@ -72,15 +72,16 @@
         <div id="pickupDetails" style="display: none;">Pick-Up Details Section</div>
         <div id="address" style="display: none;">Saved Address Section</div>
 
-        <div class="button-group">
-    <a href="{{ url_for('stores') }}" id="deliveryLink">
-        <button class="deliveryBtn" id="deliveryButton" onclick="toggleOptions('delivery')">Delivery</button>
+<div class="button-group">
+    <a href="{{ url_for('stores') }}" id="deliveryLink" onclick="handleDeliveryClick(event)">
+        <button class="deliveryBtn" id="deliveryButton">Delivery</button>
     </a>
     <span class="or-text">or</span>
-    <a href="{{ url_for('storespick') }}" id="pickupLink">
-        <button class="pickupBtn" id="pickupButton" onclick="toggleOptions('pickup')">Pick Up</button>
+    <a href="{{ url_for('storespick') }}" id="pickupLink" onclick="handlePickupClick(event)">
+        <button class="pickupBtn" id="pickupButton">Pick Up</button>
     </a>
 </div>
+
 
 
 </section>
@@ -125,7 +126,6 @@
                 <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('menu') }}">Menu</a></li>
                 <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
                 <li><a href="#">Careers</a></li>
             </ul>
         </div>

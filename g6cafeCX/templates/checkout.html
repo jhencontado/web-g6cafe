@@ -31,7 +31,6 @@
             <!-- Checkout Form -->
             <form id="checkout-form" class="checkout-form" action="#" method="POST">
                 <!-- Delivery Address Section (fetched from local storage) -->
-                <h3>Delivery Information</h3>
                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 <div id="deliveryDetails">
                 <span id="address">Loading address...</span>
@@ -138,7 +137,7 @@
             </form>
         </div>
     </section>
-
+<section>
     <!-- Order Summary -->
     <div class="order-summary">
     <div class="order-info">
@@ -155,7 +154,7 @@
         <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
     </div>
 </div>
-
+ </section>
         <button type="submit">Place Order</button>
         <!-- Thank You Modal -->
 <div id="thankYouModal" class="modal">
@@ -169,6 +168,7 @@
           <button onclick="redirectToOrderStatus()">OK </button></a>
   </div>
 </div>
+
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-logo">
@@ -181,7 +181,6 @@
                 <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('menu') }}">Menu</a></li>
                 <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
                 <li><a href="#">Careers</a></li>
             </ul>
         </div>
@@ -220,22 +219,30 @@
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
 
+    // Handle Delivery Button Click
+    function handleDeliveryClick(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
+        toggleOptions('delivery');
+    }
+
+    // Handle Pickup Button Click
+    function handlePickupClick(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
+        toggleOptions('pickup');
+    }
+
     // Initialize the page and load data
     initialize();
 
     function initialize() {
-        const currentSelection = localStorage.getItem('currentSelection');
-        if (currentSelection === 'pickup') {
-            toggleOptions('pickup');
-        } else {
-            toggleOptions('delivery');
-        }
-        setupEventListeners();  // Set up event listeners
-        loadCart();  // Load the cart
-        displaySavedAddress();  // Display saved address
-        displaySelectedStore();  // Display selected store
-        displaySavedDeliveryInstruction();  // Display saved delivery instruction
-    }
+    const currentSelection = localStorage.getItem('currentSelection') || 'delivery'; // Default to 'delivery'
+    toggleOptions(currentSelection);
+    setupEventListeners();
+    loadCart();
+    displaySavedAddress();
+    displaySelectedStore();
+    displaySavedDeliveryInstruction();
+}
 
     function displaySavedAddress() {
         if (!addressSection) {
@@ -294,30 +301,43 @@
         }
     }
 
-    // Set up event listeners for toggling
-    function setupEventListeners() {
-        optionButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const option = this.classList.contains('deliveryBtn') ? 'delivery' : 'pickup';
-                toggleOptions(option);
-            });
-        });
+   function toggleOptions(option) {
+        console.log('Selected option:', option);
+        console.log('Delivery section:', deliveryDetailsSection);
+        console.log('Pickup section:', pickupDetailsSection);
+        console.log('Address section:', addressSection);
+
+        if (option === 'delivery') {
+            // Show delivery details and address
+            deliveryDetailsSection.style.display = 'block';
+            pickupDetailsSection.style.display = 'none';
+            addressSection.style.display = 'block'; // If needed, show address
+        } else if (option === 'pickup') {
+            // Show pickup details and hide delivery
+            deliveryDetailsSection.style.display = 'none';
+            pickupDetailsSection.style.display = 'block';
+            addressSection.style.display = 'none'; // Optionally hide address for pickup
+        } else {
+            console.error('Invalid option passed to toggleOptions.');
+        }
     }
 
-    function toggleOptions(option) {
-        if (option === 'delivery') {
-            console.log("Delivery option selected.");
-            deliveryDetailsSection.style.display = 'block'; // Show delivery details
-            pickupDetailsSection.style.display = 'none';   // Hide pickup details
-            addressSection.style.display = 'block';       // Show saved address
-        } else if (option === 'pickup') {
-            console.log("Pick-Up option selected.");
-            deliveryDetailsSection.style.display = 'none'; // Hide delivery details
-            pickupDetailsSection.style.display = 'block';  // Show pickup details
-            addressSection.style.display = 'none';         // Hide saved address
-        } else {
-            console.error("Invalid option passed to toggleOptions.");
+    // Set up event listeners for option buttons
+    function setupEventListeners() {
+        if (optionButtons.length === 0) {
+            console.error("No option buttons found.");
         }
+
+        optionButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+            event.preventDefault();
+            console.log('Button clicked:', button);
+                const option = this.classList.contains('deliveryBtn') ? 'delivery' : 'pickup';
+                toggleOptions(option); // Call toggleOptions when a button is clicked
+                localStorage.setItem('currentSelection', option);
+            });
+        });
+
 
         // Payment method change listener
         paymentRadioButtons.forEach(button => {

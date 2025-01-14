@@ -214,12 +214,19 @@ def cart_count():
 @app.route('/search-receipt', methods=['POST'])
 def search_receipt():
     order_id = request.form.get('order_id')
+    search_option = request.form.get('search_option')
+
     if not order_id:
         return "Order ID is required", 400
 
-    # Redirect to the receipt page with the order_id
-    return redirect(url_for('receipt', order_id=order_id))
+    if search_option == 'order_id':
+        # Redirect to the receipt page with the order_id
+        return redirect(url_for('receipt', order_id=order_id))
+    elif search_option == 'track_order':
+        # Redirect to the order tracking page
+        return redirect(url_for('track_order', order_id=order_id))
 
+    return "Invalid search option", 400
 
 @app.route('/receipt/<int:order_id>')
 def receipt(order_id):
@@ -280,6 +287,20 @@ def receipt(order_id):
         })
 
     return render_template('receipt.html', order=order_data, items=items)
+
+@app.route('/track-order/<int:order_id>')
+def track_order(order_id):
+    # You can modify this with actual tracking logic (e.g., order status, shipping, etc.)
+    order = Order.query.filter_by(order_id=order_id).first()
+
+    if not order:
+        return "Order not found", 404
+
+    # Example of order status
+    order_status = "Order is being processed"  # Example static status; replace with real status check
+
+    return render_template('track_order.html', order_id=order_id, status=order_status)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
