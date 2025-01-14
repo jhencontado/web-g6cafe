@@ -153,18 +153,34 @@
             <div id="map"></div>
 
             <div class="delivery-form">
-                <h2>Delivery Details</h2>
-            <form id="deliveryDetailsForm" onsubmit="submitDeliveryDetails(event)">
-                <input id="houseNumber" type="text" placeholder="House Number">
-                <input id="streetName" type="text" placeholder="Street Name">
-                <input id="subdivisionName" type="text" placeholder="Subdivision Name">
-                <input id="barangay" type="text" placeholder="Barangay">
-                <input id="city" type="text" placeholder="City">
-                <textarea id="deliveryInstruction" placeholder="Delivery Instruction" rows="3"></textarea>
-                <button type="submit">Submit Details</button>
-            </form>
-                <p id="deliveryCharge" style="margin-top: 10px;"></p>
-            </div>
+    <h2>Delivery Details</h2>
+    <form id="deliveryDetailsForm" onsubmit="submitDeliveryDetails(event)">
+        <!-- Input fields for delivery details -->
+        <label for="houseNumber">House Number</label>
+        <input id="houseNumber" type="text" placeholder="House Number" required>
+
+        <label for="streetName">Street Name</label>
+        <input id="streetName" type="text" placeholder="Street Name" required>
+
+        <label for="subdivisionName">Subdivision Name (Optional)</label>
+        <input id="subdivisionName" type="text" placeholder="Subdivision Name">
+
+        <label for="barangay">Barangay</label>
+        <input id="barangay" type="text" placeholder="Barangay" required>
+
+        <label for="city">City</label>
+        <input id="city" type="text" placeholder="City" required>
+
+        <label for="deliveryInstruction">Delivery Instruction (Optional)</label>
+        <textarea id="deliveryInstruction" placeholder="Delivery Instruction" rows="3"></textarea>
+
+        <button type="submit">Submit Details</button>
+    </form>
+
+    <!-- Display delivery charge or any other messages -->
+    <p id="deliveryCharge" style="margin-top: 10px;"></p>
+</div>
+
         </main>
     </div>
 <footer class="footer">

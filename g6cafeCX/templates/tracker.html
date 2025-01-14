@@ -25,11 +25,24 @@
         </nav>
     </header>
         <main>
-        <form action="{{ url_for('search_receipt') }}" method="POST" class="search-invoice-form">
-    <label for="order_id">Enter Order ID:</label>
+          <div class="container">
+              <img src="{{ url_for('static', filename='images/trackorder.png') }}" alt="trackorder" class="tracker-image">
+       <form class="search-invoice-form" method="POST" action="{{ url_for('search_receipt') }}">
+           <h1 class="tracker">Track your order</h1>
+    <label for="order_id">Enter Order ID number:</label>
+    <select id="search_option" name="search_option" required>
+        <option value="order_id">Receipt</option>
+        <option value="track_order">Track My Order</option>
+    </select>
     <input type="text" id="order_id" name="order_id" required>
     <button type="submit" class="search-button">Search</button>
-    </form>
+</form>
+
+    <!-- Div to display order status -->
+    <div id="order_status" style="display:none;">
+        <p>Your order status will appear here.</p>
+    </div>
+</div>
     </main>
     <footer class="footer">
     <div class="footer-content">
@@ -43,19 +56,9 @@
                 <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('menu') }}">Menu</a></li>
                 <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
                 <li><a href="#">Careers</a></li>
             </ul>
         </div>
-
-
-
-
-
-
-
-
-
         <div class="footer-contact">
             <h3>Contact Us</h3>
             <p>Phone: (123) 456-7890</p>

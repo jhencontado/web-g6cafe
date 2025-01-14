@@ -4,166 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f7f4;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .invoice {
-            max-width: 700px;
-            margin: auto;
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            text-align: left;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 20px;
-        }
-
-        .header img {
-            max-width: 100px;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            margin: 10px 0;
-            color: #6b4e16;
-        }
-
-        .contact-info, .invoice-info {
-            margin-bottom: 20px;
-        }
-
-        .contact-info p, .invoice-info p {
-            margin: 5px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        table th, table td {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #f4e3d0;
-            font-size: 14px;
-        }
-
-        .summary {
-            margin-top: 20px;
-        }
-
-        .summary p {
-            font-size: 16px;
-            margin: 5px 0;
-        }
-
-        .total {
-            font-weight: bold;
-            color: #6b4e16;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .footer p {
-            font-size: 14px;
-            margin: 5px 0;
-        }
-
-        .footer .social-icons img {
-            width: 24px;
-            margin: 0 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="receipt">
-        <div class="header">
+    <div class="g6-container">
+    <div class="g6-header">
+        <!-- Left side: Store Information -->
+        <div class="g6-store-info">
             <img src="/static/images/g6logo.png" alt="g6logo">
-            <h1>G6 Cafe</h1>
+            <p>7850 Makati Ave, Makati, Metro Manila</p>
+            <p>Phone: (123) 456-7890</p>
         </div>
-        <div class="invoice-info">
-            <h2>Order Details</h2>
-            <p><strong>Receipt Number:</strong> {{ order['receipt_number'] }}</p>
+        <div class="g6-receipt-info">
+                <div class="g6-receipt-number">
+                    <h1>Receipt</h1>
+                <p><strong>No. </strong>{{ order['receipt_number'] }}
+            </div>
+        </div>
+    </div> <!-- Close g6-header -->
+
+    <div class="g6-invoice-info">
+    <h2>Order Details</h2>
+    <div class="g6-order-details-container">
+        <div class="g6-order-details">
             <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
-        </div>
-        <div class="contact-info">
             <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
             <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
             <p><strong>Address:</strong> {{ order['address'] }}</p>
+        </div>
 
-            {% if 'pwd_name' in order %}
-            <h2>PWD Details</h2>
+        {% if 'pwd_name' in order %}
+        <div class="g6-discount-details">
             <p><strong>PWD Name:</strong> {{ order['pwd_name'] }}</p>
             <p><strong>PWD ID Number:</strong> {{ order['pwd_id_number'] }}</p>
             <p><strong>Discount Type:</strong> {{ order['pwd_discount_type'] }}</p>
-            {% endif %}
         </div>
-
-        <h2>Items</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Preference</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                <tr>
-                    <td>{{ item['item_name'] }}</td>
-                    <td>{{ item['quantity'] }}</td>
-                    <td>{{ "%.2f"|format(item['subtotal']) }}</td>
-                    <td>{{ item['preference'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="summary">
-            <h2>Summary</h2>
-            <p><strong>Subtotal:</strong> {{ "%.2f"|format(order['subtotal']) }}</p>
-            <p><strong>VAT:</strong> {{ "%.2f"|format(order['vat_amount']) }}</p>
-            <p><strong>Discount:</strong> {{ "%.2f"|format(order['discount_amount']) }}</p>
-            {% if 'pwd_discount_amount' in order %}
-            <p><strong>PWD Discount:</strong> {{ "%.2f"|format(order['pwd_discount_amount']) }}</p>
-            {% endif %}
-            <p><strong>Net Amount:</strong> {{ "%.2f"|format(order['net_amount']) }}</p>
-            <p><strong>Tender Amount:</strong> {{ "%.2f"|format(order['tender_amount']) }}</p>
-            <p><strong>Change Amount:</strong> {{ "%.2f"|format(order['change_amount']) }}</p>
-        </div>
-
-        <div class="footer">
-            <p>Thank you for visiting G6 Cafe!</p>
-            <p>Visit again for a freshly brewed experience!</p>
-            <button onclick="printReceipt()">Generate Receipt</button>
-        </div>
-
+        {% endif %}
     </div>
+</div>
+
+
+    <h2 class="g6-items-header"></h2>
+    <div class="g6-items-list">
+        <!-- Table Header -->
+        <div class="g6-item-header-row">
+            <div class="g6-item-header">Item</div>
+            <div class="g6-item-header">Quantity</div>
+            <div class="g6-item-header">Preference</div>
+            <div class="g6-item-header">Subtotal</div>
+        </div>
+
+        {% for item in items %}
+        <div class="g6-item-row">
+            <div class="g6-item-name">{{ item['item_name'] }}</div>
+            <div class="g6-item-quantity">{{ item['quantity'] }}</div>
+            <div class="g6-item-preference">{{ item['preference'] }}</div>
+            <div class="g6-item-subtotal">{{ "%.2f"|format(item['subtotal']) }}</div>
+        </div>
+        {% endfor %}
+    </div> <!-- Close g6-items-list -->
+
+   <div class="g6-summary">
+    <p><strong>Subtotal</strong> {{ "%.2f"|format(order['subtotal']) }}</p>
+    <p><strong>VAT</strong> {{ "%.2f"|format(order['vat_amount']) }}</p>
+    <p><strong>Discount</strong> {{ "%.2f"|format(order['discount_amount']) }}</p>
+    {% if 'pwd_discount_amount' in order %}
+    <p><strong>PWD Discount</strong> {{ "%.2f"|format(order['pwd_discount_amount']) }}</p>
+    {% endif %}
+    <p class="total-line"><strong>Total</strong> {{ "%.2f"|format(order['net_amount']) }}</p>
+    <p><strong>Tender Amount</strong> {{ "%.2f"|format(order['tender_amount']) }}</p>
+    <p><strong>Change Amount</strong> {{ "%.2f"|format(order['change_amount']) }}</p>
+</div>
+
+
 
     <script>
         function printReceipt() {
             window.print();
         }
     </script>
+
+
+    <div class="g6-footer">
+    <div class="g6-footer-section g6-footer-questions">
+        <p><strong>If you have Questions?</strong></p>
+        <p>For assistance, please feel free to reach out to our support team.</p>
+    </div>
+
+    <div class="g6-footer-section g6-footer-contact-info">
+        <p><strong>Contact Information</strong></p>
+        <p>Email: <strong>info@g6cafe.com</strong></p>
+        <p>Phone: <strong>Phone: (123) 456-7890</strong></p>
+    </div>
+
+    <div class="g6-footer-section g6-footer-terms">
+        <p><strong>Terms & Conditions</strong></p>
+        <p>By using our services, you agree to our <a href="/terms-and-conditions" target="_blank"><strong>Terms and Conditions</strong></a>.</p>
+    </div>
+</div></div>
+<div class="button-container">
+    <div><a href="{{ url_for('menu') }}" class="back-button">Back</a></div>
+    <div><a href="javascript:void(0);" onclick="printReceipt()" class="back-button">Print Receipt</a></div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="/static/images/g6logo.png" alt="g6logo">
+            <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
+        </div>
+        <div class="footer-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact Us</h3>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
+            <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
+        </div>
+        <div class="footer-social">
+            <h3>For news and updates, follow us</h3>
+            <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 G6 Cafe | All Rights Reserved</p>
+    </div>
+</footer>
 </body>
 </html>
