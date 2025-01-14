@@ -30,11 +30,10 @@
             <!-- Checkout Form -->
             <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
                 <!-- Order Summary -->
-<!--                <div class="order-summary">-->
-<!--                    <div class="order-info">-->
-<!--                        <h3>Order Details</h3>-->
-<!--                    </div>-->
-                    <div id="order-summary"></div>
+                 <div class="order-summary">
+                    <div class="order-info">
+                        <h3>Order Details</h3>
+                    </div>
 
                     <div class="order-details">
                         <div id="hiddenCartListContainer" hidden="hidden">
@@ -52,8 +51,7 @@
                         <p>Amount Due: <span id="amount-due">P0.00</span></p>
                         <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
                     </div>
-<!--                </div>-->
-
+                 </div>
                 <!--Delivery Address Section (fetched from local storage) -->
                 <div id="hidden_address_fields" hidden="hidden">
                     <input type="text" name="addressHidden" id="addressHidden" />
@@ -165,23 +163,6 @@
             </form>
         </div>
     </section>
-
-    <!-- Order Summary -->
-    <div class="order-summary">
-    <div class="order-info">
-        <h3>Order Details</h3>
-    </div>
-    <div id="order-summary"></div>
-
-    <div class="order-details">
-        <p>Total Items: <span id="total-items">0</span></p>
-        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
-        <p>Vat: <span id="vat">P0.00</span></p>
-        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
-        <p>Amount Due: <span id="amount-due">P0.00</span></p>
-        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
-    </div>
-</div>
 
         <button type="submit">Place Order</button>
         <!-- Thank You Modal -->
