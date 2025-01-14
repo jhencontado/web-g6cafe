@@ -175,7 +175,7 @@ def get_nearby_stores():
         distance = geodesic(user_location, store_location).km  # In kilometers
 
         # Only add stores within the 5-7 km range
-        if 0 <= distance <= 7:
+        if 0 <= distance <= 5:
             nearby_stores.append({
                 'name': store.name,
                 'address': store.address,

@@ -316,11 +316,15 @@ let map, userMarker;
                                 const stores = data.stores;
                                 resultsDiv.innerHTML = '';
 
-                                if (stores.length > 0) {
+                                 if (stores.length > 0) {
                                     stores.forEach(store => {
                                         const storeDiv = document.createElement('div');
                                         storeDiv.classList.add('store-info');
-                                        storeDiv.innerHTML = `<strong>${store.name}</strong><br>${store.address}<br><em>${store.distance} km<button onclick="selectStore(${store.Name})">Select</button></em>`;
+                                        storeDiv.innerHTML = `<strong>${store.name}</strong>
+                                        <br>${store.address}<br>
+                                        <br>Open: ${store.business_hours}<br>
+                                        <em>${store.distance} km
+                                        <button onclick="selectdeliverystore('${store.name}', '${store.address}')">Select</button></em>`;
                                         resultsDiv.appendChild(storeDiv);
 
                                         // Add marker for each store
@@ -384,6 +388,21 @@ function submitDeliveryDetails(event) {
 
     // Redirect to the menu page
     window.location.href = "/menu";  // Change "/menu" to the actual URL of your menu page
+}
+
+function selectdeliverystore(storeName, storeLocation) {
+    // Store the selected store's name and location in localStorage
+    const selectedStore = {
+        name: storeName,
+        location: storeLocation
+    };
+
+    localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+
+    // Optionally, you can show a message or redirect the user to the checkout page
+    alert("Store selected: " + storeName);
+    // Redirect to checkout page if needed (uncomment the next line if desired)
+    // window.location.href = "/checkout";
 }
 
 // Example function to calculate delivery charge based on city
