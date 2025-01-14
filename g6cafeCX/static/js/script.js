@@ -274,14 +274,15 @@ function updateCartDisplay() {
 }
 
 let map, userMarker;
+let selectedMarker = null;
 
 // Initialize Google Maps
 function initMap() {
-    // Create the map centered at a default location (e.g., Manila)
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 14.565111, lng: 121.029889 },  // Default center
         zoom: 12
     });
+
 }
 
 // Event listener for store locator form
@@ -290,7 +291,14 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
     const location = document.getElementById('locationInput').value;
     const resultsDiv = document.getElementById('store-results');
 
-    // Use Google Maps Geocoding service to find coordinates
+    // Clear old search results
+    resultsDiv.innerHTML = '';
+
+    // Clear the map of any previous markers (user's location and stores)
+    if (userMarker) {
+        userMarker.setMap(null);
+    }
+
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'address': location }, function(results, status) {
         if (status === 'OK') {
@@ -300,12 +308,10 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
             map.setCenter(locationLatLng);
             map.setZoom(12);
 
-            // Remove old user marker if exists
             if (userMarker) {
                 userMarker.setMap(null);
             }
 
-            // Display marker for entered location
             userMarker = new google.maps.Marker({
                 position: locationLatLng,
                 map: map,
@@ -330,13 +336,27 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
                                 <button onclick="selectdeliverystore('${store.name}', '${store.address}')">Select</button></em>`;
                             resultsDiv.appendChild(storeDiv);
 
-                            // Add marker for each store
                             const storeLatLng = new google.maps.LatLng(store.lat, store.lng);
-                            new google.maps.Marker({
+                            const storeMarker = new google.maps.Marker({
                                 position: storeLatLng,
                                 map: map,
                                 title: store.name
-                            }).addListener('click', function() {
+                            });
+
+                            // Hover event for the store marker on the map
+                            storeMarker.addListener('mouseover', function() {
+                                map.setCenter(storeLatLng);
+                                map.setZoom(14);
+                            });
+
+                            // Hover event for the store list item (highlight the store on map)
+                            storeDiv.addEventListener('mouseover', function() {
+                                map.setCenter(storeLatLng);
+                                map.setZoom(14);
+                            });
+
+                            // Click event to show store details in an info window
+                            storeMarker.addListener('click', function() {
                                 new google.maps.InfoWindow({
                                     content: `<strong>${store.name}</strong><br>${store.address}`
                                 }).open(map, this);
@@ -356,6 +376,7 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
         }
     });
 });
+
 
 function submitDeliveryDetails(event) {
     event.preventDefault();  // Prevent form from submitting traditionally
