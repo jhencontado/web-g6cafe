@@ -7,7 +7,7 @@ html, body {
     display: flex;
     color: #333;
     flex-direction: column;
-    height: 190%;
+    height: 150%;
 }
 main , .menu-container {
     flex: 1;
@@ -850,6 +850,7 @@ button:hover {
     padding: 20px 10px;
     text-align: center;
     margin-top: 30px;
+    flex:1;
 }
 
 .g6-footer-section {

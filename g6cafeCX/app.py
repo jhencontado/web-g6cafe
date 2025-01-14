@@ -1,4 +1,3 @@
-import datetime
 import decimal
 
 from flask import Flask, render_template, jsonify, request, url_for, redirect
@@ -7,6 +6,8 @@ from flask_cors import CORS
 from geopy.distance import geodesic
 import math
 from flask import session
+
+import datetime
 
 
 app = Flask(__name__)
@@ -218,11 +219,19 @@ def cart_count():
 @app.route('/search-receipt', methods=['POST'])
 def search_receipt():
     order_id = request.form.get('order_id')
+    search_option = request.form.get('search_option')
+
     if not order_id:
         return "Order ID is required", 400
 
-    # Redirect to the receipt page with the order_id
-    return redirect(url_for('receipt', order_id=order_id))
+    if search_option == 'order_id':
+        # Redirect to the receipt page with the order_id
+        return redirect(url_for('receipt', order_id=order_id))
+    elif search_option == 'track_order':
+        # Redirect to the order tracking page
+        return redirect(url_for('track_order', order_id=order_id))
+
+    return "Invalid search option", 400
 
 def generate_receipt_number():
     """
@@ -231,7 +240,7 @@ def generate_receipt_number():
     Returns:
         str: The generated receipt number.
     """
-    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.datetime.now().strftime("%Y%m%d")
     # Add a random component for further uniqueness (optional)
     import random
     random_part = str(random.randint(1000, 9999))
@@ -260,8 +269,8 @@ def proceed_checkout():
         #insert to order_details
         data = get_items()
 
-        if len(data) == 0:
-            return "No cart in session", 500
+        # if len(data) == 0:
+        #     return "No cart in session", 500
 
     # if request.method == 'Post':
         #insert to order
@@ -270,7 +279,11 @@ def proceed_checkout():
         discount_amount = request.form.get('discount')
         net_amount = request.form.get('amount_due')
         tender_amount = request.form.get('tendered_amount')
+        if len (tender_amount) ==0:
+            tender_amount = 0
         change_amount = request.form.get('change_value')
+        if len (change_amount) ==0:
+            change_amount = 0
         receipt_number = generate_receipt_number()
         new_order = Order(
             subtotal = subtotal,
@@ -400,6 +413,20 @@ def receipt(order_id):
         })
 
     return render_template('receipt.html', order=order_data, items=items)
+
+@app.route('/track-order/<int:order_id>')
+def track_order(order_id):
+    # You can modify this with actual tracking logic (e.g., order status, shipping, etc.)
+    order = Order.query.filter_by(order_id=order_id).first()
+
+    if not order:
+        return "Order not found", 404
+
+    # Example of order status
+    order_status = "Order is being processed"  # Example static status; replace with real status check
+
+    return render_template('track_order.html', order_id=order_id, status=order_status)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
