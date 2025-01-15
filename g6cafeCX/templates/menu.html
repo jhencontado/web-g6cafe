@@ -7,29 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <header>
-        <section class="g6logo">
-    <div class="g6logo">
-        <a href="{{ url_for('home') }}">
-            <img src="/static/images/g6logo.png" alt="g6logo">
-        </a>
-    </div>
-</section>
+{% include "header.html" %}
 
-        <nav>
-            <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="{{ url_for('tracker') }}">Tracker</a>
-            <a href="{{ url_for('storespick') }}">
-            <img src="static/images/pin.png" alt="Find a Store" style="width: 40px; height: auto;">Find A Store</a>
-            <a href="{{ url_for('cart') }}">
-    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
-    <span id="cart-count">0</span>
-    </a>
-        </nav>
-    </header>
-
-    </section>
-    <div class="menu-container">
+<div class="menu-container">
         <aside class="best-seller-navigation">
             <a href="#promo" class="nav-link"><img src="{{ url_for('static', filename='images/promo.png') }}" alt="pastries"><p>Promo Deals</p></a>
             <a href="#espresso" class="nav-link"><img src="{{ url_for('static', filename='images/coffee.png') }}" alt="coffee"><p>Coffee</p></a>
@@ -64,36 +44,7 @@
             </form>
         </div>
     </div>
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-logo">
-            <img src="/static/images/g6logo.png" alt="g6logo">
-            <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
-        </div>
-        <div class="footer-links">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('menu') }}">Menu</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Careers</a></li>
-            </ul>
-        </div>
-        <div class="footer-contact">
-            <h3>Contact Us</h3>
-            <p>Phone: (123) 456-7890</p>
-            <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
-            <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
-        </div>
-        <div class="footer-social">
-            <h3>For news and updates, follow us</h3>
-            <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2025 G6 Cafe | All Rights Reserved</p>
-    </div>
-</footer>
+{% include "footer.html" %}
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

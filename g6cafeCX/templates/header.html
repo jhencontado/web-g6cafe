@@ -1,0 +1,22 @@
+<header>
+    <section class="g6logo">
+        <div class="g6logo">
+            <a href="{{ url_for('home') }}">
+                <img src="/static/images/g6logo.png" alt="g6logo">
+            </a>
+        </div>
+    </section>
+
+    <nav>
+        <a href="{{ url_for('menu') }}">Menu</a>
+        <a href="{{ url_for('tracker') }}">Tracker</a>
+        <a href="{{ url_for('storespick') }}">
+            <img src="{{ url_for('static', filename='images/pin.png') }}" alt="Find a Store" style="width: 40px; height: auto;">
+            Find A Store
+        </a>
+        <a href="{{ url_for('cart') }}">
+            <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
+            <span id="cart-count">0</span>
+        </a>
+    </nav>
+</header>
