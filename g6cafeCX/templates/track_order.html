@@ -2,9 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #3e3e3e;
+            text-align: center;
+        }
+
+        .order-status-container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            max-width: 800px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .order-status-step {
+            text-align: center;
+        }
+
+        .status-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #d1b39e; /* Light coffee brown */
+            display: inline-block;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .status-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #3e3e3e;
+        }
+
+        #pending {
+            background-color: #d1b39e; /* Light coffee brown */
+        }
+
+        #preparing {
+            background-color: #6f4f1e; /* Coffee brown */
+        }
+
+        #ready-for-pickup {
+            background-color: #c49a6c; /* Medium coffee cream */
+        }
+
+        #picked-up {
+            background-color: #3e2723; /* Dark coffee brown */
+        }
+
+        /* Transitioning between statuses */
+        #pending.active {
+            background-color: #6f4f1e; /* Coffee brown */
+            transform: scale(1.1);
+        }
+
+        #preparing.active {
+            background-color: #c49a6c; /* Medium coffee cream */
+            transform: scale(1.1);
+        }
+
+        #ready-for-pickup.active {
+            background-color: #3e2723; /* Dark coffee brown */
+            transform: scale(1.1);
+        }
+
+        #picked-up.active {
+            background-color: #3e2723; /* Dark coffee brown */
+            transform: scale(1.1);
+        }
+
+        .order-id {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6f4f1e; /* Coffee brown */
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Order ID Display -->
+        <div class="order-id">
+            Order ID: <strong>{{ order_id }}</strong>
+        </div>
 
+        <!-- Order Status Display -->
+        <div class="order-status-container">
+            <div class="order-status-step">
+                <div class="status-circle" id="pending"></div>
+                <p class="status-text">Pending</p>
+            </div>
+            <div class="order-status-step">
+                <div class="status-circle" id="preparing"></div>
+                <p class="status-text">Preparing</p>
+            </div>
+            <div class="order-status-step">
+                <div class="status-circle" id="ready-for-pickup"></div>
+                <p class="status-text">Ready for Pick-Up</p>
+            </div>
+            <div class="order-status-step">
+                <div class="status-circle" id="picked-up"></div>
+                <p class="status-text">Picked Up</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Statuses array in the order of the process
+        const orderStatus = "{{ order_status }}";  // Backend value passed to JS
+        const statuses = {
+            'pending': '#pending',
+            'preparing': '#preparing',
+            'ready for pick-up': '#ready-for-pickup',
+            'picked-up': '#picked-up'
+        };
+
+        // Highlight the corresponding status step
+        const activeStatus = statuses[orderStatus];
+        if (activeStatus) {
+            document.querySelector(activeStatus).classList.add('active');
+        }
+    </script>
 </body>
 </html>

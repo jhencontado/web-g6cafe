@@ -9,26 +9,33 @@
 <body>
 
 {% include "header.html" %}
-        <main>
-          <div class="container">
-              <img src="{{ url_for('static', filename='images/trackorder.png') }}" alt="trackorder" class="tracker-image">
-       <form class="search-invoice-form" method="POST" action="{{ url_for('search_receipt') }}">
-           <h1 class="tracker">Track your order</h1>
-    <label for="order_id">Enter Order ID number:</label>
-    <select id="search_option" name="search_option" required>
-        <option value="order_id">Receipt</option>
-        <option value="track_order">Track My Order</option>
-    </select>
-    <input type="text" id="order_id" name="order_id" required>
-    <button type="submit" class="search-button">Search</button>
-</form>
+<main>
+    <div class="container">
+        <!-- Admin Button -->
+        <div class="admin-button-container">
+            <a href="{{ url_for('admin_login') }}" class="admin-button">Admin Login</a>
+        </div>
 
-    <!-- Div to display order status -->
-    <div id="order_status" style="display:none;">
-        <p>Your order status will appear here.</p>
+        <img src="{{ url_for('static', filename='images/trackorder.png') }}" alt="trackorder" class="tracker-image">
+
+        <!-- Track Your Order Form -->
+        <form class="search-invoice-form" method="POST" action="{{ url_for('search_receipt') }}">
+            <h1 class="tracker">Track your order</h1>
+            <label for="order_id">Enter Order ID number:</label>
+            <select id="search_option" name="search_option" required>
+                <option value="order_id">Receipt</option>
+                <option value="track_order">Track My Order</option>
+            </select>
+            <input type="text" id="order_id" name="order_id" required>
+            <button type="submit" class="search-button">Search</button>
+        </form>
+
+        <!-- Div to display order status -->
+        <div id="order_status" style="display:none;">
+            <p>Your order status will appear here.</p>
+        </div>
     </div>
-</div>
-    </main>
+</main>
 {% include "footer.html" %}
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

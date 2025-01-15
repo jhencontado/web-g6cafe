@@ -1,6 +1,7 @@
 import decimal
+import os
 
-from flask import Flask, render_template, jsonify, request, url_for, redirect
+from flask import Flask, render_template, jsonify, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
 from geopy.distance import geodesic
@@ -12,6 +13,7 @@ import datetime
 
 app = Flask(__name__)
 CORS(app)
+app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
@@ -84,6 +86,17 @@ class Store(db.Model):
     lat = db.Column(db.Float, nullable=False)
     lng = db.Column(db.Float, nullable=False)
     business_hours = db.Column(db.String(255), nullable=False)
+
+
+class TrackDetails(db.Model):
+    __tablename__ = 'trackdetails'
+
+    track_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'), nullable=False)
+    order_status = db.Column(
+        db.Enum('pending', 'preparing', 'ready for pick-up', 'out for delivery', 'delivered', 'cancelled'),
+        nullable=False
+    )
 
 @app.route('/')
 def home():
@@ -416,16 +429,148 @@ def receipt(order_id):
 
 @app.route('/track-order/<int:order_id>')
 def track_order(order_id):
-    # You can modify this with actual tracking logic (e.g., order status, shipping, etc.)
-    order = Order.query.filter_by(order_id=order_id).first()
+    """
+    Fetch the order status using the given order_id.
+    """
+    try:
+        # Query the TrackDetails table for the given order_id
+        order = TrackDetails.query.filter_by(order_id=order_id).first()
 
-    if not order:
-        return "Order not found", 404
+        if order:
+            # Pass the order status to the template
+            return render_template(
+                'track_order.html',
+                order_status=order.order_status,
+                order_id=order_id
+            )
+        else:
+            # If no order is found, show an error message
+            return render_template(
+                'tracker.html',
+                error="Order not found! Please check the Order ID."
+            )
+    except Exception as e:
+        # Handle any unexpected errors
+        return render_template(
+            'tracker.html',
+            error=f"An error occurred: {str(e)}"
+        )
 
-    # Example of order status
-    order_status = "Order is being processed"  # Example static status; replace with real status check
 
-    return render_template('track_order.html', order_id=order_id, status=order_status)
+@app.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # Validate admin credentials (implement your logic here)
+        if username == 'admin' and password == 'admin123':  # Example validation
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid credentials', 'error')
+    return render_template('admin_login.html')
+
+
+from sqlalchemy.sql import text
+
+
+@app.route('/process_login', methods=['POST'])
+def process_login():
+    username = request.form['username']
+    password = request.form['password']
+
+    # Example authentication logic (replace with your actual authentication logic)
+    sql = text("""
+        SELECT * FROM admins 
+        WHERE username = :username AND password = :password
+    """)
+
+    admins = db.session.execute(
+        sql,
+        {'username': username, 'password': password}  # Consider hashing passwords
+    ).fetchone()
+
+    if admins:
+        # Store admin user and store_id in session
+        session['admin_id'] = admins.id
+        session['store_id'] = admins.store_id  # Storing the store_id for further use
+
+        flash('Login successful!', 'success')
+        return redirect(url_for('admin_update_status'))
+    else:
+        flash('Invalid username or password. Please try again.', 'error')
+        return redirect(url_for('admin_login'))
+
+
+# Example of using raw SQL with text()
+def get_order_details(order_id):
+    sql = """
+        SELECT o.order_id, o.pickup_date, o.delivery_date, o.order_status, r.delivery_rider_id 
+        FROM orders o 
+        LEFT JOIN delivery_rider r ON o.delivery_rider_id = r.delivery_rider_id
+        WHERE o.order_id = :order_id
+    """
+    # Using SQLAlchemy's text() function to wrap the raw SQL query
+    result = db.session.execute(text(sql), {'order_id': order_id})
+
+
+@app.route('/admin_update_status', methods=['GET', 'POST'])
+def admin_update_status():
+    # Check if the admin is logged in
+    if 'admin_id' not in session:
+        flash('Please log in to access the admin panel.', 'warning')
+        return redirect(url_for('admin_login'))
+
+    store_id = session.get('store_id')  # Get store_id from session
+
+    # Fetch required data to populate the admin update status page
+    orders = db.session.execute(
+        text("""
+            SELECT 
+                o.order_id, 
+                oa.pickup_date, 
+                oa.delivery_date, 
+                t.order_status, 
+                t.delivery_rider_id
+            FROM orders o
+            LEFT JOIN order_address oa ON o.order_id = oa.order_id
+            LEFT JOIN trackdetails t ON o.order_id = t.order_id
+            WHERE t.id = :store_id
+        """),
+        {'store_id': store_id}  # Correctly pass store_id here
+    ).fetchall()
+
+    # Fetch delivery riders (no need for store_id here)
+    riders = db.session.execute(
+        text("""
+            SELECT delivery_rider_id, name
+            FROM delivery_rider
+        """)
+    ).fetchall()
+
+    if request.method == 'POST':
+        # Process the form data for individual order updates
+        order_id = request.form.get('update_order_id')
+
+        # If order_id is found in the form data, update it
+        if order_id:
+            order_status = request.form.get(f'order_status[{order_id}]')
+            delivery_rider_id = request.form.get(f'delivery_rider_id[{order_id}]')
+
+            # Update the trackdetails table
+            db.session.execute(
+                text("""
+                    UPDATE trackdetails 
+                    SET order_status = :status, 
+                        delivery_rider_id = :rider_id 
+                    WHERE order_id = :order_id AND id = :store_id
+                """),
+                {'status': order_status, 'rider_id': delivery_rider_id, 'order_id': order_id, 'store_id': store_id}
+            )
+
+            db.session.commit()
+            flash('Order status updated successfully!', 'success')
+
+    return render_template('admin_update_status.html', orders=orders, riders=riders)
 
 
 if __name__ == '__main__':
