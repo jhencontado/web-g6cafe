@@ -289,24 +289,26 @@ CREATE TABLE delivery_rider (
 
 -- Table for trackdetails
 DROP TABLE IF EXISTS trackdetails;
-CREATE TABLE trackdetails (
-    track_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    id INT NOT NULL,
-    order_status ENUM('pending', 'preparing', 'out for delivery', 'delivered', 'cancelled') NOT NULL,
-    delivery_address TEXT NOT NULL,
-    order_summary TEXT NOT NULL,
-    order_date_time DATETIME NOT NULL,
-    customer_name VARCHAR(255) NOT NULL,
-    total_amount DECIMAL(10, 2) NOT NULL,
-    delivery_fee DECIMAL(10, 2) NOT NULL,
-    payment_status ENUM('pending', 'paid', 'failed') NOT NULL,
-    payment_method ENUM('cash', 'credit card', 'online') NOT NULL,
-    delivery_rider_id INT,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-    FOREIGN KEY (id) REFERENCES stores(id) ON DELETE CASCADE,
-    FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
+	CREATE TABLE trackdetails (
+		track_id INT AUTO_INCREMENT PRIMARY KEY,
+		order_id INT NOT NULL,
+		id INT NOT NULL,
+		order_status ENUM('pending', 'preparing', 'ready for pick-up ','out for delivery', 'delivered', 'cancelled') NOT NULL,
+        delivery_rider_id INT NOT NULL,
+		FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+		FOREIGN KEY (id) REFERENCES stores(id) ON DELETE CASCADE,
+		FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
+	);
+
+
+-- Table for Admins
+  CREATE TABLE admins (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(200) NOT NULL
 );
+
 /* ---------------------------------------------- Display tables---------------------------------------------------------- */
 
 select * from menu_details;
