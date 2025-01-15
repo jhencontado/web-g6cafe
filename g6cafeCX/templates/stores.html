@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Locator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
-            font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
             padding: 0;
@@ -19,6 +19,7 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
         }
         main h2 {
             font-size: 24px;
@@ -32,11 +33,13 @@
         }
         #locationInput {
             width: 60%;
-            padding: 10px;
+            padding: 20px;
             font-size: 16px;
             margin-right: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            height: 70px;
+            margin-top: 10px;
         }
         button {
             padding: 10px 20px;
@@ -120,21 +123,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <section class="g6logo">
-            <div class="g6logo">
-                <a href="{{ url_for('home') }}">
-                    <img src="/static/images/g6logo.png" alt="g6logo">
-                </a>
-            </div>
-        </section>
-        <nav>
-            <a href="{{ url_for('menu') }}">Menu</a>
-            <a href="{{ url_for('cart') }}">
-                <img src="{{ url_for('static', filename='images/cart.png') }}" alt="cart" height="50px" width="50">
-            </a>
-        </nav>
-    </header>
+  {% include "header.html" %}
 
     <div class="container">
         <main>
@@ -181,40 +170,9 @@
         </main>
     </div>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="/static/images/g6logo.png" alt="g6logo">
-                <p>Your go-to spot for great coffee, fresh pastries, and a cozy atmosphere.</p>
-            </div>
-            <div class="footer-links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    <li><a href="{{ url_for('menu') }}">Menu</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Careers</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h3>Contact Us</h3>
-                <p>Phone: (123) 456-7890</p>
-                <p>Email: <a href="mailto:info@g6cafe.com">info@g6cafe.com</a></p>
-                <p>Address: 7850 Makati Ave, Makati, Metro Manila</p>
-            </div>
-            <div class="footer-social">
-                <h3>For news and updates, follow us</h3>
-                <p><a href="#"><img src="/static/images/fb.png" alt="fb"></a> <a href="#"><img src="/static/images/instagram.png" alt="ins"></a> <a href="#"><img src="/static/images/twitter.png" alt="twit"></a></p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2025 G6 Cafe | All Rights Reserved</p>
-        </div>
-    </footer>
-
+{% include "footer.html" %}
     <!-- Google Maps Script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=xxxxxD0Ol8bTErF-cA2REqhHUmYuY1vOgPT1-k&callback=initMap" async defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0Ol8bTErF-cA2REqhHUmYuY1vOgPT1-k&callback=initMap" async defer></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>

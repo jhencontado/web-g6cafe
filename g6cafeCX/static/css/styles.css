@@ -7,18 +7,22 @@ html, body {
     display: flex;
     color: #333;
     flex-direction: column;
-    height: 150%;
+    height: 180%;
+    width: 100%
+    over-flow-x: hidden;
 }
 main , .menu-container {
     flex: 1;
 }
-/* General styling for the header */
 header {
+    width: 100%;
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 10px 20px; /* Adjust padding to your needs */
     background-color: #8d6e63;
     justify-content: space-between;
+    box-sizing: border-box; /* Include padding in the width */
+    overflow: hidden; /* Prevent any content from overflowing */
 }
 
 /* Styling for the logo section */
@@ -1206,30 +1210,98 @@ button:hover {
         margin-top: 0px; /* Adds space before the change amount */
         font-weight: bold; /* Bold font to highlight the change amount */
         }
+        /* Style for the tendered amount section */
+        #tendered-amount-section {
+            display: none; /* Initially hidden */
+            margin-left: 20px; /* Add spacing from the radio button */
+            padding: 10px;
+            background-color: #f9f9f9; /* Light gray background */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+        }
 
-.checkout {
-    max-width: 650px;
-    background: #fff;
-    margin: 10px auto;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
-    width: 100%;
-}
+        /* Style for the label text */
+        #tendered-amount-section label {
+            font-weight: bold; /* Bold text */
+            margin-bottom: 5px;
+            display: block; /* Ensures proper spacing */
+            color: #333; /* Darker text color for readability */
+        }
+
+        /* Style for the input field */
+        #tendered_amount {
+            width: 100%; /* Full width input field */
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc; /* Subtle border */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 14px;
+            box-sizing: border-box; /* Prevents padding from affecting width */
+        }
+
+        #tendered_amount:focus {
+            border-color: #8d6e63; /* Highlight border color */
+            outline: none; /* Remove default outline */
+            box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+        }
+
+        /* Style for the GCash section container */
+        #gcash-number-section {
+            display: none; /* Initially hidden */
+            margin-left: 20px; /* Add spacing from the radio button */
+            padding: 10px;
+            background-color: #f9f9f9; /* Light gray background */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+        }
+
+        /* Style for the label in the GCash section */
+        #gcash-number-section label {
+            color: #333; /* Darker text for readability */
+            margin-bottom: 5px;
+            display: block; /* Ensures proper spacing */
+        }
+
+        /* Style for the GCash number input */
+        #gcash-number {
+            width: 100%; /* Full width for better usability */
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc; /* Subtle border */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 14px;
+            box-sizing: border-box; /* Prevent padding from affecting width */
+        }
+
+        /* Highlight the input field when focused */
+        #gcash-number:focus {
+            border-color: #8d6e63;
+            outline: none;
+            box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+        }
+        .checkout {
+            max-width: 650px;
+            background: #fff;
+            margin: 10px auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
+            width: 100%;
+        }
 
 
-.checkout h2 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #8d6e63;
-}
+        .checkout h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #8d6e63;
+        }
 
-.checkout h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #8d6e63;
-}
+        .checkout h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #8d6e63;
+        }
 
 .checkout label {
     display: flex;
@@ -1237,9 +1309,6 @@ button:hover {
     font-size: 16px;
     gap: 10px;
 }
-    #tendered-amount-section {
-        margin-top: 10px; /* Space below the Cash option */
-    }
 
 .checkout label input[type="text"],
 .checkout label input[type="email"],
@@ -1248,7 +1317,7 @@ button:hover {
     width: 150%;
     padding: 10px;
     margin-top: 2px;
-    border: 1px #c3b39a;
+    border: 1px #8d6e63;
     border-radius: 4px;
     font-size: 14px;
     box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
@@ -1260,7 +1329,7 @@ button:hover {
 .checkout label input[type="tel"]:hover,
 .checkout label input[type="date"]:hover {
     background-color: #f9e4d4; /* Light background color on hover */
-    border-color: #a52a2a; /* Darker border color on hover */
+    border-color: #8d6e63; /* Darker border color on hover */
     width: 100%;
 
 }
