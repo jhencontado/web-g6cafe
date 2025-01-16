@@ -270,12 +270,12 @@ def get_item_id(item_name):
         return jsonify({'error': str(e)}), 500
 
 def get_items():
-    data = request.form.get('jsonData')
+    data = request.form.get('hiddenCartListContainer')
     if data:
         try:
             json_data = json.loads(data)
             # Process the JSON data here (e.g., validate, save to database)
-            return jsonify({'message': 'Data received successfully'}), 200
+            return json_data
         except json.JSONDecodeError:
             return jsonify({'error': 'Invalid JSON data'}), 400
     else:
@@ -284,11 +284,7 @@ def get_items():
 
 @app.route('/proceed-checkout', methods=['POST'])
 def proceed_checkout():
-    # addressHidden = request.form.get('addressHidden')
     try:
-
-        #insert to order_details
-        data = get_items()
 
         # if len(data) == 0:
         #     return "No cart in session", 500
@@ -321,23 +317,30 @@ def proceed_checkout():
         #get the last inserted order id
         last_inserted_id = new_order.order_id
 
-
-        items = []
-        for cartItem in data:
-            item_id = get_item_id(cartItem.itemName)
-            qty = int(cartItem.quantity)
-            amount = decimal.Decimal(cartItem.itemPrice)
-            new_order_details = OrderDetails(
-                order_id = last_inserted_id,
-                item_id = item_id,
-                quantity = qty,
-                subtotal = qty * amount,
-                order_preference = cartItem.preferences
-            )
-            items.append(new_order_details)
-
-        db.session.add_all(items)
-        db.session.commit()
+        #insert to order_details
+        # data = request.form.get('hiddenCartListContainer')
+        # if data:
+        #     try:
+        #         json_data = json.loads(data)
+        #         # Process the JSON data here (e.g., validate, save to database)
+        #         items = []
+        #         for cartItem in json_data:
+        #             item_id = get_item_id(cartItem.itemName)
+        #             qty = int(cartItem.quantity)
+        #             amount = decimal.Decimal(cartItem.itemPrice)
+        #             new_order_details = OrderDetails(
+        #                 order_id = last_inserted_id,
+        #                 item_id = item_id,
+        #                 quantity = qty,
+        #                 subtotal = qty * amount,
+        #                 order_preference = cartItem.preferences
+        #             )
+        #             items.append(new_order_details)
+        #
+        #         db.session.add_all(items)
+        #         db.session.commit()
+        #     except json.JSONDecodeError:
+        #         return jsonify({'error': 'Invalid JSON data'}), 400
 
         if 'discount-checkbox' in request.form:
             new_pwdsenior_details = PwdSeniorDetails(
