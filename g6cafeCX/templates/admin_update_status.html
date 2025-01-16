@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Update Order Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Update Order Status</h1>
+    <form method="POST" action="{{ url_for('admin_update_status') }}">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Pickup Date</th>
+                    <th>Delivery Date</th>
+                    <th>Order Status</th>
+                    <th>Delivery Rider</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.pickup_date }}</td>
+                    <td>{{ order.delivery_date }}</td>
+                    <td>
+                        <select name="order_status[{{ order.order_id }}]" required>
+                            <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="preparing" {% if order.order_status == 'preparing' %}selected{% endif %}>Preparing</option>
+                            <option value="ready for pick-up" {% if order.order_status == 'ready for pick-up' %}selected{% endif %}>Ready for Pick-up</option>
+                            <option value="out for delivery" {% if order.order_status == 'out for delivery' %}selected{% endif %}>Out for Delivery</option>
+                            <option value="delivered" {% if order.order_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="cancelled" {% if order.order_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="delivery_rider_id[{{ order.order_id }}]" required>
+                            {% for rider in riders %}
+                            <option value="{{ rider.delivery_rider_id }}" {% if rider.delivery_rider_id == order.delivery_rider_id %}selected{% endif %}>
+                                {{ rider.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <!-- Update button for each row -->
+                        <button type="submit" name="update_order_id" value="{{ order.order_id }}" class="update-button">Update</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    <div class="footer-text">
+        <p>Return to <a href="{{ url_for('process_login') }}">Log-In</a></p>
+        <p>Return to <a href="{{ url_for('admin_update_status') }}">Dashboard</a></p>
+        <p>Return to <a href="{{ url_for('home') }}">Home</a></p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -44,7 +44,7 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 <h3>Delivery Information</h3>
                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
                 <div id="deliveryDetails">
-                    <span id="">Loading address...</span>
+                    <span id="address">Loading address...</span>
                     <p id="deliveryInstruction">No instructions provided</p>
                     <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstruction()">
                 </div>
@@ -99,6 +99,10 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                     <input type="radio" name="payment" value="gcash">
                     <span>GCash (Pay online)</span>
                 </label>
+                <div id="gcash-number-section" style="display: none; margin-left: 20px;">
+                    <label>Gcash Number <input type="text" name="gcash-number" id="gcash-number" placeholder="Enter Gcash number"></label>
+                    <span id="gcash-error" style="color: red; display: none;">Please enter a valid 11-digit phone number.</span>
+                </div>
                 <label>
                     <input type="radio" name="payment" value="debit/creditcard">
                     <span>Debit/Credit Card (Pay online)</span>
@@ -178,6 +182,9 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     const discountCheckbox = document.getElementById("discount-checkbox");
     const discountDetailsSection = document.getElementById("discount-details");
     const cashPaymentRadio = document.getElementById("cash-payment");
+    const gcashPaymentRadio = document.getElementById("gcash-payment");
+    const gcashSection = document.getElementById('gcash-number-section');
+    const gcashNumberInput = document.getElementById('gcash-number');
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
@@ -323,6 +330,7 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 cvvInput.required = false;
             }
 
+
             if (this.value !== "cash") {
                 tenderedAmountSection.style.display = 'none';
                 tenderedAmountInput.value = '';
@@ -332,9 +340,18 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 tenderedAmountSection.style.display = 'block';
                 changeDisplay.style.display = 'block';
                 changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
-                    }
-                });
-            });
+            }
+            if (this.value === "gcash") {
+                gcashSection.style.display = 'block';
+                gcashNumberInput.required = false; // Make GCash number input required
+                } else {
+                gcashSection.style.display = 'none';
+                gcashNumberInput.required = false;
+                gcashNumberInput.value = '';
+            }
+        });
+     });
+
 
         // Discount checkbox listener
         discountCheckbox.addEventListener('change', function() {
