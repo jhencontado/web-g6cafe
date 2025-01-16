@@ -19,9 +19,8 @@
                     </div>
                     <div id="order-summary"></div>
                     <div class="order-details">
-                        <div hidden="hidden">
-                            <input type="hidden" name="hiddenCartListContainer" id="hiddenCartListContainer">
-                            <input type="hidden" name="subtotal" id="subtotal_hidden" />
+                        <div id="hiddenCartListContainer" hidden="hidden">
+                            <input type="text" name="subtotal" id="subtotal_hidden" />
                             <input type="text" name="vat" id="vat_hidden" />
                             <input type="text" name="discount" id="discount_hidden" />
                             <input type="text" name="amount_due" id="amount_due_hidden" />
@@ -77,11 +76,19 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 <!-- PWD/Senior Citizen Discount Section -->
                 <h3>PWD/Senior Citizen Discount</h3>
                 <label>
-                    <input type="checkbox" name="discount-checkbox" id="discount-checkbox"> PWD or Senior Citizen
+                    <input type="checkbox" name="discount-checkbox" id="pwd-checkbox"> PWD
                 </label>
-                <div id="discount-details" style="display:none;">
-                    <label>Full Name: <input type="text" name="discount_name" id="discount_name" placeholder="Enter your full name"></label>
-                    <label>ID Number: <input type="text" name="discount_id_number" id="discount_id_number" placeholder="Enter your ID number"></label>
+                <div id="pwd-discount-details" style="display:none;">
+                    <label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
+                    <label>ID Number: <input type="text" name="pwd_discount_id_number" id="pwd_discount_id_number" placeholder="Enter your ID number"></label>
+                </div>
+
+                <label>
+                    <input type="checkbox" name="discount-checkbox" id="senior-checkbox"> Senior Citizen
+                </label>
+                <div id="senior-discount-details" style="display:none;">
+                    <label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
+                    <label>ID Number: <input type="text" name="senior_discount_id_number" id="senior_discount_id_number" placeholder="Enter your ID number"></label>
                 </div>
 
                 <!-- Payment Details -->
@@ -179,23 +186,28 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     const optionButtons = document.querySelectorAll('.deliveryBtn, .pickupBtn');
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
-    const discountCheckbox = document.getElementById("discount-checkbox");
-    const discountDetailsSection = document.getElementById("discount-details");
+
+    const pwdCheckbox = document.getElementById('pwd-checkbox');
+    const seniorCheckbox = document.getElementById('senior-checkbox');
+    const pwdDiscountDetails = document.getElementById('pwd-discount-details');
+    const seniorDiscountDetails = document.getElementById('senior-discount-details');
+    const pwdDiscountNameInput = document.getElementById('pwd_discount_name');
+    const pwdDiscountIDNumberInput = document.getElementById('pwd_discount_id_number');
+    const seniorDiscountNameInput = document.getElementById('senior_discount_name');
+    const seniorDiscountIDNumberInput = document.getElementById('senior_discount_id_number');
+
     const cashPaymentRadio = document.getElementById("cash-payment");
     const gcashPaymentRadio = document.getElementById("gcash-payment");
     const gcashSection = document.getElementById('gcash-number-section');
     const gcashNumberInput = document.getElementById('gcash-number');
+
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
     const changeDisplay = document.getElementById('change-amount');
+
     const cardNameInput = document.getElementById('card_name');
     const cardNumberInput = document.getElementById('card_number');
     const cvvInput = document.getElementById('cvv');
-    const discountNameInput = document.getElementById('discount_name');
-    const discountIDNumberInput = document.getElementById('discount_id_number');
-
-<!--    // Retrieve the cart data from localStorage-->
-<!--    const cartData = JSON.parse(localStorage.getItem('cart')) || [];-->
 
     // Handle Delivery Button Click
     function handleDeliveryClick(event) {
@@ -213,11 +225,11 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     initialize();
 
     function initialize() {
-        setupEventListeners();  // Set up event listeners
-        loadCart();  // Load the cart
-        displaySavedAddress();  // Display saved address
-        displaySelectedStore();  // Display selected store
-        displaySavedDeliveryInstruction();  // Display saved delivery instruction
+        setupEventListeners();
+        loadCart();
+        displaySavedAddress();
+        displaySelectedStore();
+        displaySavedDeliveryInstruction();
     }
 
     function displaySavedAddress() {
@@ -352,22 +364,61 @@ address                    <input type="text" name="deliveryInstructionHidden" i
         });
      });
 
+        // Event listener for PWD checkbox
+    pwdCheckbox.addEventListener('change', function () {
+    // Show/hide PWD details
+    pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
+    pwdDiscountNameInput.required = this.checked;
+    pwdDiscountIDNumberInput.required = this.checked;
 
-        // Discount checkbox listener
-        discountCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                discountDetailsSection.style.display = 'block';
-                discountNameInput.required = true;
-                discountIDNumberInput.required = true;
-            } else {
-                discountDetailsSection.style.display = 'none';
-                discountNameInput.required = false;
-                discountIDNumberInput.required = false;
-            }
-            loadCart();
-        });
+    // If PWD is checked, hide Senior Citizen details and uncheck its checkbox
+    if (this.checked) {
+        seniorCheckbox.checked = false;
+        seniorDiscountDetails.style.display = 'none';
+        seniorDiscountNameInput.required = false;
+        seniorDiscountIDNumberInput.required = false;
+    }
+});
+
+    // Event listener for PWD checkbox
+    pwdCheckbox.addEventListener('change', function () {
+    // Show/hide PWD details
+    pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
+    pwdDiscountNameInput.required = this.checked;
+    pwdDiscountIDNumberInput.required = this.checked;
+
+    // If PWD is checked, hide Senior Citizen details and uncheck its checkbox
+    if (this.checked) {
+        seniorCheckbox.checked = false;
+        seniorDiscountDetails.style.display = 'none';
+        seniorDiscountNameInput.required = false;
+        seniorDiscountIDNumberInput.required = false;
     }
 
+    // Call loadCart() to update the summary with discount
+    loadCart();
+});
+
+    // Event listener for Senior Citizen checkbox
+    seniorCheckbox.addEventListener('change', function () {
+    // Show/hide Senior Citizen details
+    seniorDiscountDetails.style.display = this.checked ? 'block' : 'none';
+    seniorDiscountNameInput.required = this.checked;
+    seniorDiscountIDNumberInput.required = this.checked;
+
+    // If Senior Citizen is checked, hide PWD details and uncheck its checkbox
+    if (this.checked) {
+        pwdCheckbox.checked = false;
+        pwdDiscountDetails.style.display = 'none';
+        pwdDiscountNameInput.required = false;
+        pwdDiscountIDNumberInput.required = false;
+    }
+
+    // Call loadCart() to update the summary with discount
+    loadCart();
+});
+            tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+    }
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
       return dataList;
@@ -388,10 +439,22 @@ address                    <input type="text" name="deliveryInstructionHidden" i
         } else {
             let orderSummaryHtml = '';
 
+<!--            const cartList = [];-->
+<!--            const updatedList = [];-->
+
             cartItems.forEach(item => {
                 const itemSubtotal = item.quantity * item.itemPrice;
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
+
+<!--                key_value_pairs = [-->
+<!--                    ["item_name", item.itemName],-->
+<!--                    ["item_price", item.itemPrice.toFixed(2)],-->
+<!--                    ["item_quantity", item.quantity],-->
+<!--                    ["item_subtotal", subtotal]-->
+<!--                ]-->
+
+<!--                updatedList = addMultipleKeyValuePairs(myList, keyValuePairs);-->
 
                 orderSummaryHtml += `
                     <div>
@@ -401,9 +464,9 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 `;
             });
 
-            document.getElementById('hiddenCartListContainer').value = cartItems;
+<!--            document.getElementById('hiddenCartListContainer').value = updatedList;-->
 
-            if (discountCheckbox.checked) {
+            if (pwdCheckbox.checked || seniorCheckbox.checked) {
                 discount = subtotal * 0.20;
                 vat = 0;
             } else {

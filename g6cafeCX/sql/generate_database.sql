@@ -64,21 +64,21 @@ CREATE TABLE order_address (
     delivery_date DATETIME NULL,
     contact_name VARCHAR(100) NOT NULL,
     contact_email VARCHAR(50) NULL,
-    contact_number LONG NOT NULL,
-    delivery_instruction TEXT NULL,
+    contact_number INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
 );
-
+ALTER TABLE order_address MODIFY contact_number VARCHAR(15) NOT NULL;
+ALTER TABLE order_address ADD COLUMN delivery_instruction VARCHAR(255);
 -- Table for order_payment_details
 DROP TABLE IF EXISTS order_payment_details;
-CREATE TABLE order_payment_details (
+CREATE TABLE order_payment_detailsstores (
 	order_payment_details_id INT AUTO_INCREMENT NOT NULL primary key,
     order_id INT NOT NULL,
     payment_option VARCHAR(50) NOT NULL,
     gcash_ref_number INT NULL,
     change_for_cash INT NULL,
     card_name VARCHAR(100) NULL,
-    card_number LONG NULL,
+    card_number INT NULL,
     card_exp_month INT NULL,
     card_exp_year INT NULL,
     card_cvv INT NULL,
@@ -158,7 +158,7 @@ VALUES
 (1, @order_id, '123 Elm Street, Springfield, IL', '2025-01-15 10:00:00', '2025-01-15 14:00:00', 'John Doe', 'johndoe@example.com', 1234567890);
 
 -- Insert payment details for a cash payment
-INSERT INTO order_payment_details (
+INSERT INTO order_payment_detailsstores (
     order_id,
     payment_option,
     gcash_ref_number,
@@ -170,13 +170,13 @@ INSERT INTO order_payment_details (
     card_cvv
 )
 VALUES
-(@order_id, 'Cash', NULL, 100, NULL, NULL, NULL, NULL, NULL), -- Cash payment with change
+(@order_id, 'Cash', NULL, 100, NULL, NULL, NULL, NULL, NULL); -- Cash payment with change
 
 -- Insert payment details for a GCash payment
-(@order_id, 'GCash', 123456789, NULL, NULL, NULL, NULL, NULL, NULL), -- GCash payment with reference number
+(102, 'GCash', 123456789, NULL, NULL, NULL, NULL, NULL, NULL), -- GCash payment with reference number
 
 -- Insert payment details for a card payment
-(@order_id, 'Credit Card', NULL, NULL, 'John Doe', 1234567812345678, 12, 2025, 123); -- Card payment with all details
+(103, 'Credit Card', NULL, NULL, 'John Doe', 1234567812345678, 12, 2025, 123); -- Card payment with all details
 /* ----------------------------------------------sample 2---------------------------------------------------------- */
 
 
@@ -186,14 +186,14 @@ SET @order_id = (SELECT LAST_INSERT_ID());
 
 -- Insert PWD and Senior discount details
 INSERT INTO pwdsenior_details (order_id, discount_type, customer_name, id_number, discount_amount)
-VALUES	(@order_id, 'Senior', 'Jane Smith', 'SEN987654', 30.00);
+VALUES	(38, 'Senior', 'Jane Smith', 'SEN987654', 30.00);
 -- Senior customer with 30 discount
 
 -- Insert items for order 2 (Senior customer)
 INSERT INTO order_details (order_id, item_id, quantity,subtotal, order_preference)
 VALUES
-(@order_id, 3, 1,125,'No milk'),  -- 1 Double Espresso
-(@order_id, 4, 2,350,'With milk');  -- 2 Lattes
+(38, 3, 1,125,'No milk'),  -- 1 Double Espresso
+(38, 4, 2,350,'With milk');  -- 2 Lattes
 
 /* ----------------------------------------------sample 3---------------------------------------------------------- */
 -- Insert Orders with PWD, Senior, and Regular customers
@@ -203,8 +203,8 @@ VALUES (300.00, 30.00, 0.00, 300.00 + 30.00, 300.00, 0.00, 'REC003');
 -- Insert items for order 3 (Regular customer)
 INSERT INTO order_details (order_id, item_id, quantity,subtotal, order_preference)
 VALUES
-(@order_id, 5, 3,525,'Hot'),  -- 3 Macchiatos
-(@order_id, 6, 1,180,'Cold');  -- 1 Mocha
+(3, 5, 3,525,'Hot'),  -- 3 Macchiatos
+(3, 6, 1,180,'Cold');  -- 1 Mocha
 
 /* ----------------------------------------------sample 4---------------------------------------------------------- */
 
@@ -235,6 +235,9 @@ VALUES
 (@order_id, 10, 1,110, 'Black');  -- 1 Green Tea
 
 INSERT INTO pwdsenior_details (order_id, discount_type, customer_name, id_number, discount_amount)
+VALUES	(@order_id, 'Senior', 'Alan Walker', 'SEN9976987', 30.00);
+
+INSERT into order_address (order_id, discount_type, customer_name, id_number, discount_amount)
 VALUES	(@order_id, 'Senior', 'Alan Walker', 'SEN9976987', 30.00);
 
 CREATE TABLE stores (
@@ -275,18 +278,6 @@ VALUES ('Promo', 'Macha + Carbonara', 'promo1.jpg', 265),
 ('Promo', 'G6 Thumbler Pink', 'pink.jpg', 450),
 ('Promo', 'G6 Thumbler Black', 'black.jpg', 450);
 
-
--- Table for delivery riders
-DROP TABLE IF EXISTS delivery_rider;
-CREATE TABLE delivery_rider (
-    delivery_rider_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    vehicle_plate_number VARCHAR(50) NOT NULL,
-    vehicle_model VARCHAR(255) NOT NULL,
-    vehicle_color VARCHAR(50) NOT NULL,
-    branch_assigned VARCHAR(255) NOT NULL
-    );
-
 -- Table for trackdetails
 DROP TABLE IF EXISTS trackdetails;
 	CREATE TABLE trackdetails (
@@ -300,23 +291,80 @@ DROP TABLE IF EXISTS trackdetails;
 		FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
 	);
 
+INSERT INTO trackdetails (order_id,id,order_status,delivery_rider_id)
+values (1, 1,'pending',1),
+(2, 1,'pending',1),
+(3, 2,'pending',2),
+(4, 2,'pending',2),
+(5, 3,'pending',2),
+(5, 3,'pending',2);
 
--- Table for Admins
-  CREATE TABLE admins (
+
+-- Table for delivery riders
+DROP TABLE IF EXISTS delivery_rider;
+CREATE TABLE delivery_rider (
+    delivery_rider_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    vehicle_plate_number VARCHAR(50) NOT NULL,
+    vehicle_model VARCHAR(255) NOT NULL,
+    vehicle_color VARCHAR(50) NOT NULL,
+    branch_assigned VARCHAR(255) NOT NULL
+    );
+
+
+    CREATE TABLE admins (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(200) NOT NULL
 );
+    ALTER TABLE admins ADD COLUMN store_id INT,
+    ADD CONSTRAINT fk_store_id FOREIGN KEY (store_id) REFERENCES stores(id);
+
+
+   INSERT INTO admins (username, email, password, store_id)
+VALUES ('admin_1', 'admin1@example.com', 'Admin@1', 1);
+
+UPDATE admins
+SET store_id = 1
+WHERE username = 'admin_1';
+
+INSERT INTO admins (username, email, password)
+VALUES ('admin_2', 'admin2@example.com', 'Admin@2');
+
+UPDATE admins
+SET store_id = 2
+WHERE username = 'admin_2';
+    -- Insert values into delivery_rider table
+INSERT INTO delivery_rider (name, vehicle_plate_number, vehicle_model, vehicle_color, branch_assigned)
+VALUES
+    ('John Doe', 'ABC1234', 'Yamaha NMAX', 'Black', 'G6 Cafe Hotel Sogo - EDSA Guadalupe'),
+    ('Jane Smith', 'XYZ5678', 'Honda Click', 'White', 'G6 Cafe Makati Ave.'),
+    ('Michael Johnson', 'MNO9876', 'Suzuki Raider', 'Red', 'G6 Cafe Timog Ave., Quezon City'),
+    ('Emily Davis', 'JKL5432', 'Yamaha Aerox', 'Blue', 'G6 Cafe UST'),
+    ('Chris Brown', 'DEF2468', 'Honda Beat', 'Green', 'G6 Cafe Caloocan'),
+    ('Sarah Wilson', 'GHI1357', 'Kawasaki Ninja', 'Yellow', 'G6 Cafe Karuhatan Valenzuela City'),
+    ('David Lee', 'TUV8642', 'Yamaha Mio', 'Gray', 'G6 Cafe Valenzuela'),
+    ('Anna Martinez', 'QRS5791', 'Suzuki Skydrive', 'Black', 'G6 Cafe Tondo, Manila'),
+    ('Paul Anderson', 'WXY3214', 'Honda XRM', 'White', 'G6 Cafe Malabon'),
+    ('Laura Hernandez', 'ZXC8529', 'Yamaha Sniper', 'Blue', 'G6 Cafe Marilao'),
+    ('James Carter', 'BNM6547', 'Suzuki Burgman', 'Red', 'G6 Cafe Maginhawa'),
+    ('Jessica Walker', 'RTY7412', 'Honda PCX', 'Green', 'G6 Cafe Eastwood, Quezon City'),
+    ('Brian Harris', 'UIO9638', 'Kymco Like', 'Yellow', 'G6 Cafe Tomas Morato Ave., Quezon City'),
+    ('Olivia Moore', 'PLM2583', 'Vespa Primavera', 'Pink', 'G6 Cafe East Kapitolyo, Pasig City'),
+    ('Daniel Lewis', 'FGH7531', 'SYM Jet X', 'Orange', 'G6 Cafe Fairview Terraces, Quezon City');
 
 /* ---------------------------------------------- Display tables---------------------------------------------------------- */
-
+use g6cafe;
 select * from menu_details;
 select * from pwdsenior_details ;
 select * from order_address;
 select * from orders;
 select * from order_details;
-select distinct pwdsenior_id from pwdsenior_details;
-SELECT * FROM ORDER_PAYMENT_DETAILS;
+select distinct pwd_senior_id from pwdsenior_details;
+SELECT * FROM ORDER_PAYMENT_DETAILSstores;
 SELECT * FROM ORDER_ADDRESS;
 select *from stores;
+select * from delivery_rider;
+select* from trackdetails;
+select * from Admins;
