@@ -159,7 +159,7 @@ button:hover {
         <div class="store-list-container">
             <div class="store-list">
                 {% for store in stores %}
-                <div class="store-card" onclick="selectStore('{{ store.name }}')">
+                <div class="store-card" onclick="selectStore('{{ store.name }}', '{{ store.address or 'No address available' }}')">
                     <h2>{{ store.name }}</h2>
                     <p class="store-details">
                         <span><strong>Address:</strong> {{ store.address }}</span><br>

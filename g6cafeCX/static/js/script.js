@@ -456,7 +456,7 @@ function selectStore(storeName, storeLocation) {
 
     // Set the modal message
     const modalMessage = document.getElementById("modal-message");
-    modalMessage.innerHTML = `${storeName}. Do you want to proceed?`;
+    modalMessage.innerHTML = `${storeName} at ${storeLocation}. Do you want to proceed?`;
 
     // Get the modal and buttons
     const modal = document.getElementById("storeModal");
