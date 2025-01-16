@@ -551,17 +551,17 @@ button:hover {
     margin-left: 50px;
 }
 .tracker-image {
-    display: block; /* Makes the image a block element */
-    margin-left: auto; /* Auto margin to the left */
-    margin-right: auto; /* Auto margin to the right */
-    max-width: 100%; /* Adjust the image width according to the container */
-    height: auto; /* Keeps the aspect ratio intact */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    height: auto;
 }
 #search_option {
     width: 20%;
     padding: 10px;
     margin-bottom: 15px;
-    font-size: 14px;
+    font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 15px;
     background-color: #f9f9f9;
@@ -598,7 +598,7 @@ button:hover {
     margin-bottom: 8px;
     font-weight: bold;
     color: #333;
-    font-size:24px
+    font-size:26px
 }
 
 .search-invoice-form input[type="text"] {
@@ -608,7 +608,7 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 15px;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .search-invoice-form button {
@@ -629,6 +629,14 @@ button:hover {
 
 .search-invoice-form button:focus {
     outline: none;
+}
+.tracking-image {
+    width: auto;
+    height: 500px; /* Adjust the height as needed */
+    margin-top: 50px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    object-fit: contain; /* Ensures the image keeps its aspect ratio */
 }
 @media screen and (min-width: 1400px) {
     .search-invoice-form {
