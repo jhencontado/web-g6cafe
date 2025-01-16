@@ -205,6 +205,8 @@
             event.preventDefault();
             if (cartData.length > 0) {
                 alert("Proceeding to Checkout. Thank you for your order!");
+
+                localStorage.setItem('cart', JSON.stringify(cartData));
                 window.location.href = "{{ url_for('checkout') }}";
             } else {
                 alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
