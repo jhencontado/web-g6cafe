@@ -8,7 +8,7 @@ import math
 from flask import session
 
 import datetime
-
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -257,9 +257,17 @@ def get_item_id(item_name):
         return jsonify({'error': str(e)}), 500
 
 def get_items():
-    # Example: Fetch the cart from the session or database
-    cart = session.get('cart', [])
-    return cart
+    data = request.form.get('jsonData')
+    if data:
+        try:
+            json_data = json.loads(data)
+            # Process the JSON data here (e.g., validate, save to database)
+            return jsonify({'message': 'Data received successfully'}), 200
+        except json.JSONDecodeError:
+            return jsonify({'error': 'Invalid JSON data'}), 400
+    else:
+        return jsonify({'error': 'No JSON data provided'}), 400
+    # return cart
 
 @app.route('/proceed-checkout', methods=['POST'])
 def proceed_checkout():

@@ -19,8 +19,9 @@
                     </div>
                     <div id="order-summary"></div>
                     <div class="order-details">
-                        <div id="hiddenCartListContainer" hidden="hidden">
-                            <input type="text" name="subtotal" id="subtotal_hidden" />
+                        <div hidden="hidden">
+                            <input type="hidden" name="hiddenCartListContainer" id="hiddenCartListContainer">
+                            <input type="hidden" name="subtotal" id="subtotal_hidden" />
                             <input type="text" name="vat" id="vat_hidden" />
                             <input type="text" name="discount" id="discount_hidden" />
                             <input type="text" name="amount_due" id="amount_due_hidden" />
@@ -185,6 +186,9 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     const cvvInput = document.getElementById('cvv');
     const discountNameInput = document.getElementById('discount_name');
     const discountIDNumberInput = document.getElementById('discount_id_number');
+
+<!--    // Retrieve the cart data from localStorage-->
+<!--    const cartData = JSON.parse(localStorage.getItem('cart')) || [];-->
 
     // Handle Delivery Button Click
     function handleDeliveryClick(event) {
@@ -367,22 +371,10 @@ address                    <input type="text" name="deliveryInstructionHidden" i
         } else {
             let orderSummaryHtml = '';
 
-<!--            const cartList = [];-->
-<!--            const updatedList = [];-->
-
             cartItems.forEach(item => {
                 const itemSubtotal = item.quantity * item.itemPrice;
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
-
-<!--                key_value_pairs = [-->
-<!--                    ["item_name", item.itemName],-->
-<!--                    ["item_price", item.itemPrice.toFixed(2)],-->
-<!--                    ["item_quantity", item.quantity],-->
-<!--                    ["item_subtotal", subtotal]-->
-<!--                ]-->
-
-<!--                updatedList = addMultipleKeyValuePairs(myList, keyValuePairs);-->
 
                 orderSummaryHtml += `
                     <div>
@@ -392,7 +384,7 @@ address                    <input type="text" name="deliveryInstructionHidden" i
                 `;
             });
 
-<!--            document.getElementById('hiddenCartListContainer').value = updatedList;-->
+            document.getElementById('hiddenCartListContainer').value = cartItems;
 
             if (discountCheckbox.checked) {
                 discount = subtotal * 0.20;
