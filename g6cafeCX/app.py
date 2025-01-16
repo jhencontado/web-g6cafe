@@ -438,34 +438,33 @@ def receipt(order_id):
 
     return render_template('receipt.html', order=order_data, items=items)
 
-@app.route('/track-order/<int:order_id>')
-def track_order(order_id):
-    """
-    Fetch the order status using the given order_id.
-    """
+
+@app.route ( '/track-order/<int:order_id>' )
+def track_order ( order_id ):
     try:
-        # Query the TrackDetails table for the given order_id
-        order = TrackDetails.query.filter_by(order_id=order_id).first()
+        # Fetch order details based on order_id
+        order = TrackDetails.query.filter_by ( order_id=order_id ).first ()
 
         if order:
-            # Pass the order status to the template
-            return render_template(
+            # Define the statuses and their order
+            status_steps = ["pending","preparing","ready-for-pickup","picked-up"]
+
+            # Determine completed and current steps
+            completed_steps = status_steps[:status_steps.index ( order.order_status ) + 1]
+            current_step = order.order_status
+
+            # Pass status data to the template
+            return render_template (
                 'track_order.html',
                 order_status=order.order_status,
+                completed_steps=completed_steps,
+                current_step=current_step,
                 order_id=order_id
             )
         else:
-            # If no order is found, show an error message
-            return render_template(
-                'tracker.html',
-                error="Order not found! Please check the Order ID."
-            )
+            return render_template ( 'tracker.html',error="Order not found!" )
     except Exception as e:
-        # Handle any unexpected errors
-        return render_template(
-            'tracker.html',
-            error=f"An error occurred: {str(e)}"
-        )
+        return render_template ( 'tracker.html',error=f"An error occurred: {str ( e )}" )
 
 
 @app.route('/admin-login', methods=['GET', 'POST'])

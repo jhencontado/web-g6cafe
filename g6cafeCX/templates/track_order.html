@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
         * {
             margin: 0;
@@ -12,70 +14,29 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            min-height: 100vh; /* Take up full viewport height */
             background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             color: #3e3e3e;
             text-align: center;
+            flex-direction: column; /* Stack content vertically */
         }
 
-        .order-status-container {
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            max-width: 1000px;
-            align-items: center;
-            margin: 40px 0;
-            gap: 2in; /* Adds 2 inches of space between the circles */
+        .container {
+            max-width: 700px;
+            width: 100%;
+            height: 1000px;
+            margin-bottom: 50px; /* Space between container and footer */
         }
 
-        .order-status-step {
-            text-align: center;
-            flex: 1;
-        }
-
-        .status-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #d1b39e; /* Default color */
-            display: inline-block;
-            margin: 20px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .status-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: #3e3e3e;
-            margin-top: 15px;
-        }
-
-        /* Individual Status Colors */
-        #pending {
-            background-color: #d1b39e; /* Light coffee brown */
-        }
-
-        #preparing {
-            background-color: #6f4f1e; /* Coffee brown */
-        }
-
-        #ready-for-pickup {
-            background-color: #c49a6c; /* Medium coffee cream */
-        }
-
-        #picked-up {
-            background-color: #3e2723; /* Dark coffee brown */
-        }
-
-        /* Active Status Highlight */
-        .status-circle.active {
-            background-color: #32cd32; /* Bright green for active status */
-            transform: scale(2); /* Larger size for visibility */
-            box-shadow: 0 0 15px #32cd32;
+        .delivery-image {
+            height: 300px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .order-id {
@@ -84,32 +45,97 @@
             color: #6f4f1e; /* Coffee brown */
             margin-bottom: 20px;
         }
+
+        /* Order Status Container: Align circles next to each other */
+        .order-status-container {
+            display: flex; /* Align circles in a row */
+            justify-content: space-evenly; /* Evenly space the circles */
+            align-items: center; /* Align the circles vertically */
+            gap: 30px; /* Optional: Adjust space between circles if needed */
+            margin-bottom: 50px; /* Space between the order status and the footer */
+        }
+
+
+        .order-status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Space between circle and text */
+        }
+
+        .status-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ddd; /* Default gray */
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Completed Step */
+        .status-circle.completed {
+            background-color: #4caf50; /* Green for completed status */
+            border-color: #4caf50;
+        }
+
+        .status-circle.completed::before {
+            content: '✔'; /* Display a checkmark for completed steps */
+            font-size: 24px;
+            color: white;
+        }
+
+        /* Current Step */
+        .status-circle.active {
+            background-color: #ffc107; /* Yellow for active/current step */
+            border-color: #ffc107;
+            box-shadow: 0 0 10px #ffc107;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #3e3e3e;
+        }
     </style>
 </head>
-<body>
 
+<body>
+    {% include "header.html" %}
     <div class="container">
+        <img src="{{ url_for('static', filename='images/delivery.png') }}" alt="delivery" class="delivery-image">
         <!-- Order ID Display -->
         <div class="order-id">
             Order ID: <strong>{{ order_id }}</strong>
         </div>
 
-        <!-- Order Status Display -->
         <div class="order-status-container">
             <div class="order-status-step">
-                <div class="status-circle" id="pending"></div>
+                <div class="status-circle
+                    {% if 'pending' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'pending' %}active{% endif %}" id="pending"></div>
                 <p class="status-text">Pending</p>
             </div>
             <div class="order-status-step">
-                <div class="status-circle" id="preparing"></div>
+                <div class="status-circle
+                    {% if 'preparing' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'preparing' %}active{% endif %}" id="preparing"></div>
                 <p class="status-text">Preparing</p>
             </div>
             <div class="order-status-step">
-                <div class="status-circle" id="ready-for-pickup"></div>
+                <div class="status-circle
+                    {% if 'ready-for-pickup' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'ready-for-pickup' %}active{% endif %}" id="ready-for-pickup"></div>
                 <p class="status-text">Ready for Pick-Up</p>
             </div>
             <div class="order-status-step">
-                <div class="status-circle" id="picked-up"></div>
+                <div class="status-circle
+                    {% if 'picked-up' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'picked-up' %}active{% endif %}" id="picked-up"></div>
                 <p class="status-text">Picked Up</p>
             </div>
         </div>
@@ -131,5 +157,7 @@
             document.querySelector(activeStatus).classList.add('active');
         }
     </script>
+    {% include "footer.html" %}
 </body>
+
 </html>
