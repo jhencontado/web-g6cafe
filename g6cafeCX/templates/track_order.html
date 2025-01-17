@@ -147,8 +147,8 @@
             </div>
             <div class="order-status-step">
                 <div class="status-circle
-                    {% if 'ready-for-pickup' in completed_steps %}completed{% endif %}
-                    {% if current_step == 'ready-for-pickup' %}active{% endif %}" id="ready-for-pickup"></div>
+                    {% if 'ready for pick-up' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'ready for pick-up' %}active{% endif %}" id="ready for pick-up"></div>
                 <p class="status-text">Ready for Pick-Up</p>
             </div>
             <div class="order-status-step">
@@ -159,8 +159,8 @@
             </div>
             <div class="order-status-step">
                 <div class="status-circle
-                    {% if 'out-for-delivery' in completed_steps %}completed{% endif %}
-                    {% if current_step == 'out-for-delivery' %}active{% endif %}" id="out-for-delivery"></div>
+                    {% if 'out for delivery' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'out-for-delivery' %}active{% endif %}" id="out for delivery"></div>
                 <p class="status-text">Out for Delivery</p>
             </div>
             <div class="order-status-step">
@@ -180,9 +180,9 @@
         const statuses = {
             'pending': '#pending',
             'preparing': '#preparing',
-            'ready for pick-up': '#ready-for-pickup',
+            'ready for pick-up': '#ready for pickup',
             'picked-up': '#picked-up',
-            'out for delivery': '#out-for-delivery',
+            'out for delivery': '#out for delivery',
             'delivered': '#delivered'
         };
 
