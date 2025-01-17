@@ -14,10 +14,7 @@
         }
 
         body {
-            display: flex;
-            justify-content: center; /* Center horizontally */
             align-items: center; /* Center vertically */
-            min-height: 100vh; /* Take up full viewport height */
             background-color: #f5f5f5;
             color: #3e3e3e;
             text-align: center;
@@ -25,9 +22,10 @@
         }
 
         .container {
-            max-width: 700px;
+            flex:1;
+            max-width: 1200px;
             width: 100%;
-            height: 1000px;
+            height: 800px;
             margin-bottom: 50px; /* Space between container and footer */
         }
 
@@ -98,9 +96,29 @@
         }
 
         .status-text {
-            font-size: 14px;
-            color: #3e3e3e;
-        }
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #555; /* Neutral text color */
+        text-align: center;
+    }
+
+    /* Optional Styling for Container Borders (if desired) */
+    .order-status-container::before,
+    .order-status-container::after {
+        content: '';
+        display: block;
+        height: 2px;
+        width: 100%;
+        background-color: #ddd;
+        position: absolute;
+        top: 50%;
+        z-index: -1;
+    }
+
+    .order-status-container {
+        position: relative;
+    }
     </style>
 </head>
 
@@ -113,12 +131,13 @@
             Order ID: <strong>{{ order_id }}</strong>
         </div>
 
+
         <div class="order-status-container">
             <div class="order-status-step">
                 <div class="status-circle
                     {% if 'pending' in completed_steps %}completed{% endif %}
                     {% if current_step == 'pending' %}active{% endif %}" id="pending"></div>
-                <p class="status-text">Pending</p>
+                <p class="status-text">Order Confirmed</p>
             </div>
             <div class="order-status-step">
                 <div class="status-circle
@@ -138,9 +157,23 @@
                     {% if current_step == 'picked-up' %}active{% endif %}" id="picked-up"></div>
                 <p class="status-text">Picked Up</p>
             </div>
+            <div class="order-status-step">
+                <div class="status-circle
+                    {% if 'out-for-delivery' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'out-for-delivery' %}active{% endif %}" id="out-for-delivery"></div>
+                <p class="status-text">Out for Delivery</p>
+            </div>
+            <div class="order-status-step">
+                <div class="status-circle
+                    {% if 'delivered' in completed_steps %}completed{% endif %}
+                    {% if current_step == 'delivered' %}active{% endif %}" id="delivered"></div>
+                <p class="status-text">Delivered</p>
+            </div>
         </div>
     </div>
-
+    {% include "footer.html" %}
+</body>
+</html>
     <script>
         // Statuses array in the order of the process
         const orderStatus = "{{ order_status }}"; // Backend value passed to JS
@@ -148,7 +181,9 @@
             'pending': '#pending',
             'preparing': '#preparing',
             'ready for pick-up': '#ready-for-pickup',
-            'picked-up': '#picked-up'
+            'picked-up': '#picked-up',
+            'out for delivery': '#out-for-delivery',
+            'delivered': '#delivered'
         };
 
         // Highlight the corresponding status step
@@ -157,7 +192,5 @@
             document.querySelector(activeStatus).classList.add('active');
         }
     </script>
-    {% include "footer.html" %}
-</body>
 
-</html>
+

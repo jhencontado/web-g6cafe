@@ -447,7 +447,7 @@ def track_order ( order_id ):
 
         if order:
             # Define the statuses and their order
-            status_steps = ["pending","preparing","ready-for-pickup","picked-up"]
+            status_steps = ["pending","preparing","ready-for-pickup","picked-up","out-for-delivery","delivered"]
 
             # Determine completed and current steps
             completed_steps = status_steps[:status_steps.index ( order.order_status ) + 1]
