@@ -103,22 +103,22 @@
         text-align: center;
     }
 
-    /* Optional Styling for Container Borders (if desired) */
-    .order-status-container::before,
-    .order-status-container::after {
-        content: '';
-        display: block;
-        height: 2px;
-        width: 100%;
-        background-color: #ddd;
-        position: absolute;
-        top: 50%;
-        z-index: -1;
-    }
+        /* Optional Styling for Container Borders (if desired) */
+        .order-status-container::before,
+        .order-status-container::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 100%;
+            background-color: #ddd;
+            position: absolute;
+            top: 50%;
+            z-index: -1;
+        }
 
-    .order-status-container {
-        position: relative;
-    }
+        .order-status-container {
+            position: relative;
+        }
     </style>
 </head>
 
@@ -160,7 +160,7 @@
             <div class="order-status-step">
                 <div class="status-circle
                     {% if 'out for delivery' in completed_steps %}completed{% endif %}
-                    {% if current_step == 'out-for-delivery' %}active{% endif %}" id="out for delivery"></div>
+                    {% if current_step == 'out for delivery' %}active{% endif %}" id="out for delivery"></div>
                 <p class="status-text">Out for Delivery</p>
             </div>
             <div class="order-status-step">
