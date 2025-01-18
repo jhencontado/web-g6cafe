@@ -45,8 +45,12 @@
         <h4>Edit Item</h4>
         <form id="edit-item-form">
             <label for="edit-item-name">Item Name</label>
-            <input type="text" id="edit-item-name" disabled>
+            <p id="edit-item-name"></p> <!-- Display item name as text -->
 
+            <!-- Item Photo -->
+            <div id="edit-item-photo-container">
+                <img id="edit-item-photo" src="" alt="Item Photo" style="max-width: 250px; margin-top: 10px;" />
+            </div>
             <div class="input-group">
         <div id="edit-item-quantity" class="items-group">
             <span class="minus">-</span>
@@ -137,9 +141,13 @@
             const item = cartData[itemIndex];
 
             // Populate the modal with the current item data
-            editItemNameInput.value = item.itemName;
+            document.getElementById("edit-item-name").textContent = item.itemName; // Display item name as text
             editItemQuantityDisplay.textContent = item.quantity.toString().padStart(2, '0');
             editItemPreferencesInput.value = item.preferences || '';
+
+            const itemPhoto = item.itemPhoto || 'default-placeholder.jpg'; // Default placeholder if no photo
+            const editItemPhoto = document.getElementById("edit-item-photo"); // Image element in the modal
+            editItemPhoto.src = itemPhoto; // Set the photo source
 
             editingItemIndex = itemIndex;
 

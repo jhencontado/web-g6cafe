@@ -377,48 +377,6 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
     });
 });
 
-
-function submitDeliveryDetails(event) {
-    event.preventDefault();  // Prevent form from submitting traditionally
-
-    // Get the values from the input fields
-    const houseNumber = document.getElementById("houseNumber").value;
-    const streetName = document.getElementById("streetName").value;
-    const subdivisionName = document.getElementById("subdivisionName").value;
-    const barangay = document.getElementById("barangay").value;
-    const city = document.getElementById("city").value;
-    const deliveryInstruction = document.getElementById("deliveryInstruction").value;
-
-    // Validate that all required fields are filled
-    if (!houseNumber || !streetName || !barangay || !city) {
-        alert("Please fill in all required fields.");
-        return;  // Prevent saving if fields are missing
-    }
-
-    // Create an object with the delivery details
-    const deliveryDetails = {
-        houseNumber,
-        streetName,
-        subdivisionName,
-        barangay,
-        city,
-        deliveryInstruction
-    };
-
-    // Save the delivery details to localStorage
-    localStorage.setItem('deliveryDetails', JSON.stringify(deliveryDetails));
-
-    // Optionally, show a message or update the UI to reflect the saved details
-    alert("Delivery details saved successfully!");
-
-    // Update the delivery charge (example)
-    const deliveryCharge = calculateDeliveryCharge(city);
-    document.getElementById("deliveryCharge").textContent = `Delivery Charge: $${deliveryCharge}`;
-
-    // Redirect to the menu page
-    window.location.href = "/menu";  // Change "/menu" to the actual URL of your menu page
-}
-
 function selectdeliverystore(storeName, storeLocation) {
     // Store the selected store's name and location in localStorage
     const selectedStore = {
@@ -431,18 +389,8 @@ function selectdeliverystore(storeName, storeLocation) {
     // Optionally, you can show a message or redirect the user to the checkout page
     alert("Store selected: " + storeName);
     // Redirect to checkout page if needed (uncomment the next line if desired)
-    // window.location.href = "/checkout";
+    window.location.href = "/menu";
 }
-
-// Example function to calculate delivery charge based on city
-function calculateDeliveryCharge(city) {
-    let charge = 45;  // Base charge
-    if (city === 'Metro Manila') {
-        charge = 55;  // Higher charge for Metro Manila
-    }
-    return charge;
-}
-
 
         // Initialize map on page load
         window.onload = initMap;

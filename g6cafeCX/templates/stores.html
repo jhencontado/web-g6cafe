@@ -13,7 +13,7 @@
             padding: 0;
         }
         .container {
-            max-width: 1200px;
+            width: 1200px; /* Fixed width */
             margin: 20px auto;
             padding: 20px;
             background-color: white;
@@ -21,8 +21,14 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             flex: 1;
         }
+
         main h2 {
             font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        main h3 {
+            font-size: 14px;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -80,36 +86,9 @@
         .store-info button:hover {
             background-color: #c3b39a;
         }
-        .delivery-form {
-            margin-top: 40px;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .delivery-form input, .delivery-form textarea {
-            width: 98%;
-            padding: 12px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .delivery-form button {
-            width: 100%;
-            padding: 15px;
-            background-color: #8d6e63;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        .delivery-form button:hover {
-            background-color: #c3b39a;
-        }
         #map {
             width: 100%;
-            height: 400px;
+            height: 500px;
             margin-top: 20px;
         }
         @media (max-width: 768px) {
@@ -127,47 +106,18 @@
 
     <div class="container">
         <main>
-            <h2>SELECT YOUR LOCAL STORE</h2>
+            <h2>ENTER LOCATION</h2>
+            <h3>Enter your address to find the store nearest you.</h3>
             <form id="storeLocatorForm">
                 <input type="text" id="locationInput" placeholder="Enter your location" required>
                 <button type="submit">Search</button>
             </form>
 
+            <div id="map"></div>
             <div id="store-results">
                 <!-- Store results will appear here -->
             </div>
-
-            <div id="map"></div>
-
-            <div class="delivery-form">
-                <h2>Delivery Details</h2>
-                <form id="deliveryDetailsForm" onsubmit="submitDeliveryDetails(event)">
-                    <!-- Input fields for delivery details -->
-                    <label for="houseNumber">House Number</label>
-                    <input id="houseNumber" type="text" placeholder="House Number" required>
-
-                    <label for="streetName">Street Name</label>
-                    <input id="streetName" type="text" placeholder="Street Name" required>
-
-                    <label for="subdivisionName">Subdivision Name (Optional)</label>
-                    <input id="subdivisionName" type="text" placeholder="Subdivision Name">
-
-                    <label for="barangay">Barangay</label>
-                    <input id="barangay" type="text" placeholder="Barangay" required>
-
-                    <label for="city">City</label>
-                    <input id="city" type="text" placeholder="City" required>
-
-                    <label for="deliveryInstruction">Delivery Instruction (Optional)</label>
-                    <textarea id="deliveryInstruction" placeholder="Delivery Instruction" rows="3"></textarea>
-
-                    <button type="submit">Submit Details</button>
-                </form>
-
-                <!-- Display delivery charge or any other messages -->
-                <p id="deliveryCharge" style="margin-top: 10px;"></p>
-            </div>
-        </main>
+       </main>
     </div>
 
 {% include "footer.html" %}

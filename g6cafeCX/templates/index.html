@@ -47,24 +47,10 @@
 </div>
     <section class="promo">
     <div class="promo-content">
+        <a href="{{ url_for('stores') }}">
         <span class="order-now">Order Now</span>
+        </a>
     </div>
-        <div id="deliveryDetails" style="display: none;">Delivery Details Section</div>
-        <div id="pickupDetails" style="display: none;">Pick-Up Details Section</div>
-        <div id="address" style="display: none;">Saved Address Section</div>
-
-<div class="button-group">
-    <a href="{{ url_for('stores') }}" id="deliveryLink" onclick="handleDeliveryClick(event)">
-        <button class="deliveryBtn" id="deliveryButton">Delivery</button>
-    </a>
-    <span class="or-text">or</span>
-    <a href="{{ url_for('storespick') }}" id="pickupLink" onclick="handlePickupClick(event)">
-        <button class="pickupBtn" id="pickupButton">Pick Up</button>
-    </a>
-</div>
-
-
-
 </section>
 
     <section id="menuCategory">

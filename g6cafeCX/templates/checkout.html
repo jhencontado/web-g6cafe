@@ -8,7 +8,54 @@
 </head>
 <body>
   {% include "header.html" %}
-    <section class="checkout">
+  <section class="checkout">
+        <section class="checkout">
+    <h2>Checkout</h2>
+    <form action="#" method="POST">
+        <div id="pickupDetails" style="display: none;">
+             <h3>Selected Branch</h3>
+             <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
+              <p id="pickup-location">Pick up your order from the selected store.</p>
+              <a href="{{ url_for('stores') }}" class="change-store-link"></a>
+        </div>
+        <!-- Pick Up & Delivery Option -->
+        <h3>Order Type</h3>
+        <label>
+            <input type="radio" name="order_type" value="pick_up"> Pick-Up
+            <input type="radio" name="order_type" value="delivery"> Delivery
+        </label>
+
+        <div id="pick_up_options" style="display: none;">
+            <label>
+                <input type="radio" name="option" value="standard"> Pick-up Now
+            </label>
+            <label>
+                <input type="radio" name="option" value="scheduled"> Pick up later
+                <input type="date" name="pickup_date">
+                <input type="time" name="pickup_time">
+            </label>
+        </div>
+
+        <div id="delivery_options" style="display: none;">
+            <label>
+                <input type="radio" name="option" value="delivery"> Delivery Now
+            </label>
+            <label>
+                <input type="radio" name="option" value="scheduled_delivery"> Delivery Later
+                <input type="date" name="delivery_date">
+                <input type="time" name="delivery_time">
+            </label>
+
+            <div id="delivery_address_section" style="display: none;">
+                <h4>Delivery Address</h4>
+                <input type="text" name="address" placeholder="Enter your address" required>
+                <h4>Delivery Instruction</h4>
+                <input type="text" name="delivery-instruction" placeholder="Enter your instruction" required>
+            </div>
+        </div>
+
+ </form>
+        </section>
         <div class="checkout-container">
             <!-- Checkout Form -->
             <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
@@ -35,37 +82,6 @@
                         <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
                     </div>
                  </div>
-                <!--Delivery Address Section (fetched from local storage) -->
-                <div id="hidden_address_fields" hidden="hidden">
-                    <input type="text" name="addressHidden" id="addressHidden" />
-address                    <input type="text" name="deliveryInstructionHidden" id="deliveryInstructionHidden" />
-                </div>
-                <h3>Delivery Information</h3>
-                <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editAddress()">
-                <div id="deliveryDetails">
-                    <span id="address">Loading address...</span>
-                    <p id="deliveryInstruction">No instructions provided</p>
-                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editDeliveryInstruction()">
-                </div>
-
-                <div id="editAddressModal" style="display:none;">
-                    <textarea id="editAddressText" rows="4" placeholder="Enter your address"></textarea>
-                    <button onclick="saveAddress()">Save</button>
-                    <button onclick="closeEditAddressModal()">Cancel</button>
-                </div>
-
-                <div id="editInstructionModal" style="display:none;">
-                    <textarea id="editInstructionText" rows="4" placeholder="Enter your delivery instructions"></textarea>
-                    <button onclick="saveDeliveryInstruction()">Save</button>
-                    <button onclick="closeEditInstructionsModal()">Cancel</button>
-                </div>
-
-                <div id="pickupDetails" style="display: none;">
-                    <h3>Selected Branch</h3>
-                    <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
-                    <p id="pickup-location">Pick up your order from the selected store.</p>
-                    <a href="{{ url_for('storespick') }}" class="change-store-link"></a>
-                </div>
 
                 <!-- Personal Details -->
                 <h3>Personal Details</h3>
@@ -180,10 +196,13 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     <script>
     document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
-    const deliveryDetailsSection = document.getElementById('deliveryDetails');
     const pickupDetailsSection = document.getElementById('pickupDetails');
     const addressSection = document.getElementById('address');
     const optionButtons = document.querySelectorAll('.deliveryBtn, .pickupBtn');
+    const orderTypeRadios = document.querySelectorAll('input[name="order_type"]');
+    const pickUpOptions = document.getElementById("pick_up_options");
+    const deliveryOptions = document.getElementById("delivery_options");
+    const deliveryAddressSection = document.getElementById("delivery_address_section");
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
 
@@ -209,17 +228,33 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     const cardNumberInput = document.getElementById('card_number');
     const cvvInput = document.getElementById('cvv');
 
-    // Handle Delivery Button Click
-    function handleDeliveryClick(event) {
-        event.preventDefault(); // Prevent the default anchor behavior
-        toggleOptions('delivery');
-    }
+     // Event listener for order type selection
+    orderTypeRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            if (this.value === "delivery") {
+                // Show delivery options
+                deliveryOptions.style.display = "block";
+                pickUpOptions.style.display = "none";
+            } else if (this.value === "pick_up") {
+                // Show pick-up options
+                pickUpOptions.style.display = "block";
+                deliveryOptions.style.display = "none";
+                deliveryAddressSection.style.display = "none"; // Hide delivery address
+            }
+        });
+    });
 
-    // Handle Pickup Button Click
-    function handlePickupClick(event) {
-        event.preventDefault(); // Prevent the default anchor behavior
-        toggleOptions('pickup');
-    }
+    // Event listener for delivery options
+    deliveryOptions.addEventListener("change", (event) => {
+        if (event.target.name === "option") {
+            if (event.target.value === "delivery" || event.target.value === "scheduled_delivery") {
+                deliveryAddressSection.style.display = "block"; // Show delivery address
+            } else {
+                deliveryAddressSection.style.display = "none"; // Hide delivery address
+            }
+        }
+    });
+
 
     // Initialize the page and load data
     initialize();
@@ -227,9 +262,7 @@ address                    <input type="text" name="deliveryInstructionHidden" i
     function initialize() {
         setupEventListeners();
         loadCart();
-        displaySavedAddress();
         displaySelectedStore();
-        displaySavedDeliveryInstruction();
     }
 
     function displaySavedAddress() {
@@ -638,7 +671,7 @@ function closeEditInstructionsModal() {
             localStorage.setItem('pickupLocation', newLocation);
 
             // Define the URL for the store pick-up page
-            const storePickUpUrl = "/storespick";  // Adjust the URL as needed
+            const storePickUpUrl = "/stores";  // Adjust the URL as needed
 
             // Redirect to store pick-up location page to choose a new store
             window.location.href = storePickUpUrl;  // Redirect to the store pick-up page
