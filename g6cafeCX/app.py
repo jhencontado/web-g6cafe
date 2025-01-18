@@ -537,13 +537,20 @@ def admin_update_status():
 
     store_id = session.get('store_id')  # Get store_id from session
 
-    # Fetch required data to populate the admin update status page
-    orders = db.session.execute(
-        text("""
+    # Define column names for orders and riders
+    order_columns = [
+        "order_id", "pickup_date", "delivery_date", "order_type", "order_status", "delivery_rider_id"
+    ]
+    rider_columns = ["delivery_rider_id", "name"]
+
+    # Fetch required data
+    orders_result = db.session.execute(
+        text(""" 
             SELECT 
                 o.order_id, 
                 oa.pickup_date, 
-                oa.delivery_date, 
+                oa.delivery_date,
+                oa.order_type,
                 t.order_status, 
                 t.delivery_rider_id
             FROM orders o
@@ -551,16 +558,23 @@ def admin_update_status():
             LEFT JOIN trackdetails t ON o.order_id = t.order_id
             WHERE t.id = :store_id
         """),
-        {'store_id': store_id}  # Correctly pass store_id here
+        {'store_id': store_id}
     ).fetchall()
 
-    # Fetch delivery riders (no need for store_id here)
-    riders = db.session.execute(
+    # Fetch delivery riders
+    riders_result = db.session.execute(
         text("""
             SELECT delivery_rider_id, name
             FROM delivery_rider
         """)
     ).fetchall()
+
+    # Convert results into dictionaries
+    orders = [dict(zip(order_columns, row)) for row in orders_result]
+    riders = [dict(zip(rider_columns, row)) for row in riders_result]
+
+    # Filter out orders with status 'delivered' or 'picked-up'
+    orders = [order for order in orders if order['order_status'] not in ['delivered', 'picked-up']]
 
     if request.method == 'POST':
         # Process the form data for individual order updates
@@ -584,6 +598,28 @@ def admin_update_status():
 
             db.session.commit()
             flash('Order status updated successfully!', 'success')
+
+            # Re-fetch and re-filter orders after updating
+            orders_result = db.session.execute(
+                text(""" 
+                    SELECT 
+                        o.order_id, 
+                        oa.pickup_date, 
+                        oa.delivery_date,
+                        oa.order_type,
+                        t.order_status, 
+                        t.delivery_rider_id
+                    FROM orders o
+                    LEFT JOIN order_address oa ON o.order_id = oa.order_id
+                    LEFT JOIN trackdetails t ON o.order_id = t.order_id
+                    WHERE t.id = :store_id
+                """),
+                {'store_id': store_id}
+            ).fetchall()
+
+            # Convert rows to dictionaries again and filter orders
+            orders = [dict(zip(order_columns, row)) for row in orders_result]
+            orders = [order for order in orders if order['order_status'] not in ['delivered', 'picked-up']]
 
     return render_template('admin_update_status.html', orders=orders, riders=riders)
 

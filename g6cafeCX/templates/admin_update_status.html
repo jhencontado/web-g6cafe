@@ -98,7 +98,6 @@ button.update-button:hover {
 }
 
 </style>
-<div class="container">
     <h1>Update Order Status</h1>
     <form method="POST" action="{{ url_for('admin_update_status') }}">
         <table class="admin-table">
@@ -107,6 +106,7 @@ button.update-button:hover {
                     <th>Order ID</th>
                     <th>Pickup Date</th>
                     <th>Delivery Date</th>
+                    <th>Order Option</th>
                     <th>Order Status</th>
                     <th>Delivery Rider</th>
                     <th>Action</th>
@@ -118,11 +118,13 @@ button.update-button:hover {
                     <td>{{ order.order_id }}</td>
                     <td>{{ order.pickup_date }}</td>
                     <td>{{ order.delivery_date }}</td>
+                    <td>{{ order.order_type }}</td>
                     <td>
                         <select name="order_status[{{ order.order_id }}]" required>
                             <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
                             <option value="preparing" {% if order.order_status == 'preparing' %}selected{% endif %}>Preparing</option>
                             <option value="ready for pick-up" {% if order.order_status == 'ready for pick-up' %}selected{% endif %}>Ready for Pick-up</option>
+                            <option value="picked-up" {% if order.order_status == 'picked-up' %}selected{% endif %}>Picked-up</option>
                             <option value="out for delivery" {% if order.order_status == 'out for delivery' %}selected{% endif %}>Out for Delivery</option>
                             <option value="delivered" {% if order.order_status == 'delivered' %}selected{% endif %}>Delivered</option>
                             <option value="cancelled" {% if order.order_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
@@ -147,7 +149,7 @@ button.update-button:hover {
         </table>
     </form>
     <div class="footer-text">
-        <p>Return to <a href="{{ url_for('admin_login') }}">Log-In</a></p>
+        <p>Return to <a href="{{ url_for('process_login') }}">Log-In</a></p>
         <p>Return to <a href="{{ url_for('admin_update_status') }}">Dashboard</a></p>
         <p>Return to <a href="{{ url_for('home') }}">Home</a></p>
     </div>
