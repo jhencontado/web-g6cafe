@@ -8,17 +8,19 @@
 </head>
 <body>
   {% include "header.html" %}
-  <section class="checkout">
-        <section class="checkout">
-    <h2>Checkout</h2>
-    <form action="#" method="POST">
-        <div id="pickupDetails" style="display: none;">
-             <h3>Selected Branch</h3>
-             <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
-              <p id="pickup-location">Pick up your order from the selected store.</p>
-              <a href="{{ url_for('stores') }}" class="change-store-link"></a>
-        </div>
-        <!-- Pick Up & Delivery Option -->
+
+  <div class="checkout-container">
+            <!-- Checkout Form -->
+            <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
+      <div class="checkout">
+        <h2>Checkout</h2>
+            <div id="pickupDetails" style="display: none;">
+                 <h3>Selected Branch</h3>
+                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
+                  <p id="pickup-location">Pick up your order from the selected store.</p>
+                  <a href="{{ url_for('stores') }}" class="change-store-link"></a>
+            </div>
+            <!-- Pick Up & Delivery Option -->
         <h3>Order Type</h3>
         <label>
             <input type="radio" name="order_type" value="pick_up"> Pick-Up
@@ -35,8 +37,7 @@
                 <input type="time" name="pickup_time">
             </label>
         </div>
-
-        <div id="delivery_options" style="display: none;">
+            <div id="delivery_options" style="display: none;">
             <label>
                 <input type="radio" name="option" value="delivery"> Delivery Now
             </label>
@@ -50,39 +51,9 @@
                 <h4>Delivery Address</h4>
                 <input type="text" name="address" placeholder="Enter your address" required>
                 <h4>Delivery Instruction</h4>
-                <input type="text" name="delivery-instruction" placeholder="Enter your instruction" required>
+                <input type="text" name="delivery-instruction" placeholder="Enter your instruction" >
             </div>
         </div>
-
- </form>
-        </section>
-        <div class="checkout-container">
-            <!-- Checkout Form -->
-            <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
-                <!-- Order Summary -->
-                 <div class="order-summary">
-                    <div class="order-info">
-                        <h3>Order Details</h3>
-                    </div>
-                    <div id="order-summary"></div>
-                    <div class="order-details">
-                        <div id="hiddenCartListContainer" hidden="hidden">
-                            <input type="text" name="subtotal" id="subtotal_hidden" />
-                            <input type="text" name="vat" id="vat_hidden" />
-                            <input type="text" name="discount" id="discount_hidden" />
-                            <input type="text" name="amount_due" id="amount_due_hidden" />
-                            <input type="text" name="change_value" id="change_value_hidden" />
-                        </div>
-
-                        <p>Total Items: <span id="total-items">0</span></p>
-                        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
-                        <p>Vat: <span id="vat">P0.00</span></p>
-                        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
-                        <p>Amount Due: <span id="amount-due">P0.00</span></p>
-                        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
-                    </div>
-                 </div>
-
                 <!-- Personal Details -->
                 <h3>Personal Details</h3>
                 <label>Name: <input type="text" name="name" required></label>
@@ -170,26 +141,60 @@
                     </div>
                     <label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
                 </div>
-                <button type="submit" id="place_holder_btn">Place Order</button>
-            </form>
-        </div>
-    </section>
+            <button type="submit" id="place_holder_btn">Place Order</button>
+          </div>
+    </form>
 
-        <!-- Thank You Modal -->
-<div id="thankYouModal" class="modal">
-  <div class="modal-content">
-    <!-- Add Image at the top -->
-    <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
+        <div class="order-summary">
+                    <div class="order-info">
+                        <h3>Order Details</h3>
+                    </div>
+                <table class="order-details-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th> <!-- Added header for Subtotal -->
+                    </tr>
+                </thead>
+                <tbody id="item-list">
+                    <!-- Item rows will be added here dynamically -->
+                </tbody>
+            </table>
+                    <div id="order-summary"></div>
+                    <div class="order-details">
+                        <div id="hiddenCartListContainer" hidden="hidden">
+                            <input type="text" name="subtotal" id="subtotal_hidden" />
+                            <input type="text" name="vat" id="vat_hidden" />
+                            <input type="text" name="discount" id="discount_hidden" />
+                            <input type="text" name="amount_due" id="amount_due_hidden" />
+                            <input type="text" name="change_value" id="change_value_hidden" />
+                        </div>
 
-    <h2>Thank you for your Order!</h2>
-    <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
-      <a href=""><button id="confirmSubmit">OK </button></a>
-<!--      onclick="redirectToOrderStatus()"-->
-  </div>
+                        <p>Total Items: <span id="total-items">0</span></p>
+                        <p>Subtotal: <span id="Subtotal">P0.00</span></p>
+                        <p>Vat: <span id="vat">P0.00</span></p>
+                        <p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
+                        <p>Amount Due: <span id="amount-due">P0.00</span></p>
+                        <p id="change-amount">Change: <span id="change-value">P0.00</span></p>
+                    </div>
+            </div>
 </div>
+                <!-- Thank You Modal -->
+        <div id="thankYouModal" class="modal">
+          <div class="modal-content">
+            <!-- Add Image at the top -->
+            <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
+
+            <h2>Thank you for your Order!</h2>
+            <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
+              <a href=""><button id="confirmSubmit">OK </button></a>
+        <!--      onclick="redirectToOrderStatus()"-->
+          </div>
+    </div>
 
 {% include "footer.html" %}
-
 </body>
 </html>
 
@@ -197,8 +202,8 @@
     document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
     const pickupDetailsSection = document.getElementById('pickupDetails');
+    const optionButtons = document.querySelectorAll('.option-button');
     const addressSection = document.getElementById('address');
-    const optionButtons = document.querySelectorAll('.deliveryBtn, .pickupBtn');
     const orderTypeRadios = document.querySelectorAll('input[name="order_type"]');
     const pickUpOptions = document.getElementById("pick_up_options");
     const deliveryOptions = document.getElementById("delivery_options");
@@ -346,7 +351,6 @@
     // Set up event listeners for option buttons
     function setupEventListeners() {
         if (optionButtons.length === 0) {
-            console.error("No option buttons found.");
         }
 
         optionButtons.forEach(button => {
@@ -490,10 +494,17 @@
 <!--                updatedList = addMultipleKeyValuePairs(myList, keyValuePairs);-->
 
                 orderSummaryHtml += `
-                    <div>
-                        <p>${item.itemName} - P${item.itemPrice.toFixed(2)} x ${item.quantity} = P${itemSubtotal.toFixed(2)}</p>
-                        <p>Preferences: ${item.preferences ? item.preferences : "No preferences"}</p>
-                    </div>
+                   <div>
+                    <p class="item-name">
+                        ${item.itemName}
+                        <span class="item-subtotal">P${itemSubtotal.toFixed(2)}</span>
+                        <span class="item-price">P${item.itemPrice.toFixed(2)}</span>
+                        <span class="item-quantity">${item.quantity}</span>
+                    </p>
+                    <p class="item-preference">${item.preferences ? item.preferences : "No preferences"}</p>
+                </div>
+
+
                 `;
             });
 
