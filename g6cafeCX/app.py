@@ -342,16 +342,28 @@ def proceed_checkout():
         #     except json.JSONDecodeError:
         #         return jsonify({'error': 'Invalid JSON data'}), 400
 
-        if 'discount-checkbox' in request.form:
+        if 'discount-checkbox-pwd' in request.form:
             new_pwdsenior_details = PwdSeniorDetails(
                 order_id = last_inserted_id,
-                discount_type = 'Senior',
-                customer_name = request.form.get('discount_name'),
-                id_number = request.form.get('discount_id_number'),
+                discount_type = 'PWD',
+                customer_name = request.form.get('pwd_discount_name'),
+                id_number = request.form.get('pwd_discount_id_number'),
                 discount_amount = discount_amount
             )
 
             db.session.add(new_pwdsenior_details)
+            db.session.commit()
+
+        if 'discount-checkbox-senior' in request.form:
+            new_senior_details = PwdSeniorDetails(
+                order_id = last_inserted_id,
+                discount_type = 'Senior',
+                customer_name = request.form.get('senior_discount_name'),
+                id_number = request.form.get('senior_discount_id_number'),
+                discount_amount = discount_amount
+            )
+
+            db.session.add(new_senior_details)
             db.session.commit()
 
 

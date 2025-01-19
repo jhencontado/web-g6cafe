@@ -92,7 +92,7 @@
                 <!-- PWD/Senior Citizen Discount Section -->
                 <h3>PWD/Senior Citizen Discount</h3>
                 <label>
-                    <input type="checkbox" name="discount-checkbox" id="pwd-checkbox"> PWD
+                    <input type="checkbox" name="discount-checkbox-pwd" id="pwd-checkbox"> PWD
                 </label>
                 <div id="pwd-discount-details" style="display:none;">
                     <label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
@@ -100,7 +100,7 @@
                 </div>
 
                 <label>
-                    <input type="checkbox" name="discount-checkbox" id="senior-checkbox"> Senior Citizen
+                    <input type="checkbox" name="discount-checkbox-senior" id="senior-checkbox"> Senior Citizen
                 </label>
                 <div id="senior-discount-details" style="display:none;">
                     <label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
@@ -170,23 +170,22 @@
                     </div>
                     <label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
                 </div>
-                <button type="submit" id="place_holder_btn">Place Order</button>
+                <button type="button" onclick="showModal()" id="place_order">Place Order</button>
             </form>
         </div>
     </section>
 
         <!-- Thank You Modal -->
-<div id="thankYouModal" class="modal">
-  <div class="modal-content">
-    <!-- Add Image at the top -->
-    <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
+    <div id="thankYouModal" class="modal">
+        <div class="modal-content">
+            <!-- Add Image at the top -->
+            <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
 
-    <h2>Thank you for your Order!</h2>
-    <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
-      <a href=""><button id="confirmSubmit">OK </button></a>
-<!--      onclick="redirectToOrderStatus()"-->
-  </div>
-</div>
+            <h2>Thank you for your Order!</h2>
+            <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
+            <button type="button" onclick="submitForm()" id="confirmSubmit">OK </button>
+        </div>
+    </div>
 
 {% include "footer.html" %}
 
@@ -360,97 +359,82 @@
         });
 
 
-    // Payment method change listener
-    paymentRadioButtons.forEach(button => {
-        button.addEventListener('change', function() {
-            if (this.value === "debit/creditcard") {
-                cardDetailsSection.style.display = 'block';
-                cardNameInput.required = true;
-                cardNumberInput.required = true;
-                cvvInput.required = true;
-            } else {
-                cardDetailsSection.style.display = 'none';
-                cardNameInput.required = false;
-                cardNumberInput.required = false;
-                cvvInput.required = false;
-            }
+		// Payment method change listener
+		paymentRadioButtons.forEach(button => {
+			button.addEventListener('change', function() {
+				if (this.value === "debit/creditcard") {
+					cardDetailsSection.style.display = 'block';
+					cardNameInput.required = true;
+					cardNumberInput.required = true;
+					cvvInput.required = true;
+				} else {
+					cardDetailsSection.style.display = 'none';
+					cardNameInput.required = false;
+					cardNumberInput.required = false;
+					cvvInput.required = false;
+				}
 
 
-            if (this.value !== "cash") {
-                tenderedAmountSection.style.display = 'none';
-                tenderedAmountInput.value = '';
-                changeDisplay.style.display = 'none';
-                changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
-            } else {
-                tenderedAmountSection.style.display = 'block';
-                changeDisplay.style.display = 'block';
-                changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
-            }
-            if (this.value === "gcash") {
-                gcashSection.style.display = 'block';
-                gcashNumberInput.required = false; // Make GCash number input required
-                } else {
-                gcashSection.style.display = 'none';
-                gcashNumberInput.required = false;
-                gcashNumberInput.value = '';
-            }
-        });
-     });
+				if (this.value !== "cash") {
+					tenderedAmountSection.style.display = 'none';
+					tenderedAmountInput.value = '';
+					changeDisplay.style.display = 'none';
+					changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
+				} else {
+					tenderedAmountSection.style.display = 'block';
+					changeDisplay.style.display = 'block';
+					changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
+				}
+				if (this.value === "gcash") {
+					gcashSection.style.display = 'block';
+					gcashNumberInput.required = false; // Make GCash number input required
+					} else {
+					gcashSection.style.display = 'none';
+					gcashNumberInput.required = false;
+					gcashNumberInput.value = '';
+				}
+			});
+		 });
 
-        // Event listener for PWD checkbox
-    pwdCheckbox.addEventListener('change', function () {
-    // Show/hide PWD details
-    pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
-    pwdDiscountNameInput.required = this.checked;
-    pwdDiscountIDNumberInput.required = this.checked;
+		// Event listener for PWD checkbox
+		pwdCheckbox.addEventListener('change', function () {
+			// Show/hide PWD details
+			pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
+			pwdDiscountNameInput.required = this.checked;
+			pwdDiscountIDNumberInput.required = this.checked;
 
-    // If PWD is checked, hide Senior Citizen details and uncheck its checkbox
-    if (this.checked) {
-        seniorCheckbox.checked = false;
-        seniorDiscountDetails.style.display = 'none';
-        seniorDiscountNameInput.required = false;
-        seniorDiscountIDNumberInput.required = false;
-    }
-});
+			// If PWD is checked, hide Senior Citizen details and uncheck its checkbox
+			if (this.checked) {
+				seniorCheckbox.checked = false;
+				seniorDiscountDetails.style.display = 'none';
+				seniorDiscountNameInput.required = false;
+				seniorDiscountIDNumberInput.required = false;
+			}
 
-    // Event listener for PWD checkbox
-    pwdCheckbox.addEventListener('change', function () {
-    // Show/hide PWD details
-    pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
-    pwdDiscountNameInput.required = this.checked;
-    pwdDiscountIDNumberInput.required = this.checked;
+			// Call loadCart() to update the summary with discount
+			loadCart();
+		});
 
-    // If PWD is checked, hide Senior Citizen details and uncheck its checkbox
-    if (this.checked) {
-        seniorCheckbox.checked = false;
-        seniorDiscountDetails.style.display = 'none';
-        seniorDiscountNameInput.required = false;
-        seniorDiscountIDNumberInput.required = false;
-    }
+		// Event listener for Senior Citizen checkbox
+		seniorCheckbox.addEventListener('change', function () {
+			// Show/hide Senior Citizen details
+			seniorDiscountDetails.style.display = this.checked ? 'block' : 'none';
+			seniorDiscountNameInput.required = this.checked;
+			seniorDiscountIDNumberInput.required = this.checked;
 
-    // Call loadCart() to update the summary with discount
-    loadCart();
-});
+			// If Senior Citizen is checked, hide PWD details and uncheck its checkbox
+			if (this.checked) {
+				pwdCheckbox.checked = false;
+				pwdDiscountDetails.style.display = 'none';
+				pwdDiscountNameInput.required = false;
+				pwdDiscountIDNumberInput.required = false;
+			}
 
-    // Event listener for Senior Citizen checkbox
-    seniorCheckbox.addEventListener('change', function () {
-    // Show/hide Senior Citizen details
-    seniorDiscountDetails.style.display = this.checked ? 'block' : 'none';
-    seniorDiscountNameInput.required = this.checked;
-    seniorDiscountIDNumberInput.required = this.checked;
+			// Call loadCart() to update the summary with discount
+			loadCart();
+		});
 
-    // If Senior Citizen is checked, hide PWD details and uncheck its checkbox
-    if (this.checked) {
-        pwdCheckbox.checked = false;
-        pwdDiscountDetails.style.display = 'none';
-        pwdDiscountNameInput.required = false;
-        pwdDiscountIDNumberInput.required = false;
-    }
-
-    // Call loadCart() to update the summary with discount
-    loadCart();
-});
-            tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+		tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     }
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
@@ -472,22 +456,10 @@
         } else {
             let orderSummaryHtml = '';
 
-<!--            const cartList = [];-->
-<!--            const updatedList = [];-->
-
             cartItems.forEach(item => {
                 const itemSubtotal = item.quantity * item.itemPrice;
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
-
-<!--                key_value_pairs = [-->
-<!--                    ["item_name", item.itemName],-->
-<!--                    ["item_price", item.itemPrice.toFixed(2)],-->
-<!--                    ["item_quantity", item.quantity],-->
-<!--                    ["item_subtotal", subtotal]-->
-<!--                ]-->
-
-<!--                updatedList = addMultipleKeyValuePairs(myList, keyValuePairs);-->
 
                 orderSummaryHtml += `
                     <div>
@@ -496,8 +468,6 @@
                     </div>
                 `;
             });
-
-<!--            document.getElementById('hiddenCartListContainer').value = updatedList;-->
 
             if (pwdCheckbox.checked || seniorCheckbox.checked) {
                 discount = subtotal * 0.20;
@@ -548,51 +518,30 @@
 
     const form = document.getElementById('checkout-form');
     const modal = document.getElementById('thankYouModal');
-    const confirmBtn = document.getElementById('confirmSubmit');
 
-     form.addEventListener('submit', (event) => {
-      event.preventDefault(); // Prevent default form submission
+     function showModal() {
       modal.style.display = "block";
-    });
-
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
     }
 
-    confirmBtn.addEventListener('click', () => {
-        modal.style.display = "none";
-        form.submit(); // Submit the form after confirmation
+    const placeOrder = document.getElementById('place_order');
+    placeOrder.addEventListener('click', showModal);
 
-        // Clear the cart
-        clearCart();
-    });
+    function closeModal() {
+      modal.style.display = "none";
+    }
 
-<!--    // Trigger the Thank You modal when the "Place Order" button is clicked-->
-<!--    document.querySelector("#place_holder_btn").addEventListener("click", function(event) {-->
-<!--        event.preventDefault();  // Prevent the default form submission action-->
+    function submitForm() {
+      // Close the modal
+      closeModal();
 
-<!--        // Clear the cart-->
-<!--        clearCart();-->
+      clearCart();
 
-<!--        // Show the Thank You modal-->
-<!--        showThankYouModal();-->
-<!--    });-->
+      // Submit the form
+     form.submit();
+    }
 
-<!--    function showThankYouModal() {-->
-<!--        const modal = document.getElementById("thankYouModal");-->
-<!--        if (modal) {-->
-<!--            modal.style.display = "block";  // Show the modal-->
-<!--        }-->
-<!--    }-->
-
-<!--    function closeThankYouModal() {-->
-<!--        const modal = document.getElementById("thankYouModal");-->
-<!--        if (modal) {-->
-<!--            modal.style.display = "none";  // Hide the modal-->
-<!--        }-->
-<!--    }-->
+    const submitButton = document.getElementById('confirmSubmit');
+    submitButton.addEventListener('click', submitForm);
 
     // Function to clear the cart
     function clearCart() {
@@ -601,7 +550,6 @@
         loadCart();  // Reload the cart to reflect the changes
     }
 
-});
     function editAddress() {
         const currentAddress = document.getElementById('address').innerText;
         document.getElementById('editAddressText').value = currentAddress;
@@ -627,29 +575,29 @@
     }
 
     // Function to edit the delivery instruction
-function editDeliveryInstruction() {
-    const currentInstructions = document.getElementById('deliveryInstruction').innerText;
-    document.getElementById('editInstructionText').value = currentInstructions;
-    document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
-}
+	function editDeliveryInstruction() {
+		const currentInstructions = document.getElementById('deliveryInstruction').innerText;
+		document.getElementById('editInstructionText').value = currentInstructions;
+		document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
+	}
 
 // Function to save the new delivery instruction
-function saveDeliveryInstruction() {
-    const newInstructions = document.getElementById('editInstructionText').value;
-    document.getElementById('deliveryInstruction').innerText = newInstructions;
-    document.getElementById('deliveryInstructionHidden').value = newInstructions;
+	function saveDeliveryInstruction() {
+		const newInstructions = document.getElementById('editInstructionText').value;
+		document.getElementById('deliveryInstruction').innerText = newInstructions;
+		document.getElementById('deliveryInstructionHidden').value = newInstructions;
 
-    // Save the new delivery instruction to local storage
-    localStorage.setItem('deliveryInstruction', newInstructions);
-    localStorage.setItem('deliveryInstructionHidden', newInstructions);
+		// Save the new delivery instruction to local storage
+		localStorage.setItem('deliveryInstruction', newInstructions);
+		localStorage.setItem('deliveryInstructionHidden', newInstructions);
 
-    closeEditInstructionsModal(); // Close the modal
-}
+		closeEditInstructionsModal(); // Close the modal
+	}
 
 // Function to close the modal
-function closeEditInstructionsModal() {
-    document.getElementById('editInstructionModal').style.display = 'none'; // Hide the modal
-}
+	function closeEditInstructionsModal() {
+		document.getElementById('editInstructionModal').style.display = 'none'; // Hide the modal
+	}
 
 
     function editPickUpLocation() {
@@ -677,6 +625,8 @@ function closeEditInstructionsModal() {
             window.location.href = storePickUpUrl;  // Redirect to the store pick-up page
         }
     }
+
+});
 
     </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
