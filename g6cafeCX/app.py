@@ -289,7 +289,8 @@ def proceed_checkout():
         # if len(data) == 0:
         #     return "No cart in session", 500
 
-    # if request.method == 'Post':
+
+
         #insert to order
         subtotal = request.form.get('subtotal')
         vat_amount = request.form.get('vat')
@@ -298,9 +299,9 @@ def proceed_checkout():
         tender_amount = request.form.get('tendered_amount')
         if len (tender_amount) ==0:
             tender_amount = 0
-        change_amount = request.form.get('change_value')
-        if len (change_amount) ==0:
-            change_amount = 0
+        change_value = request.form.get('change_value')
+        if len (change_value) ==0:
+            change_value = 0
         receipt_number = generate_receipt_number()
         new_order = Order(
             subtotal = subtotal,
@@ -308,7 +309,7 @@ def proceed_checkout():
             discount_amount = discount_amount,
             net_amount = net_amount,
             tender_amount = tender_amount,
-            change_amount = change_amount,
+            change_amount = change_value,
             receipt_number = receipt_number
         )
         db.session.add(new_order)

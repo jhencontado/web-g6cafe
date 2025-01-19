@@ -8,144 +8,176 @@
 </head>
 <body>
   {% include "header.html" %}
+	<!-- Checkout Form -->
+	<div class="checkout-container">
+		<form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
+			<div class="checkout">
+				<h2>Checkout</h2>
+					<div id="pickupDetails" style="display: none;">
+						 <h3>Selected Branch</h3>
+						 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
+						  <p id="pickup-location">Pick up your order from the selected store.</p>
+						  <a href="{{ url_for('stores') }}" class="change-store-link"></a>
+					</div>
+					<!-- Pick Up & Delivery Option -->
+				<h3>Order Type</h3>
+				<label>
+					<input type="radio" name="order_type" value="pick_up"> Pick-Up
+					<input type="radio" name="order_type" value="delivery"> Delivery
+				</label>
 
-  <div class="checkout-container">
-            <!-- Checkout Form -->
-            <form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
-      <div class="checkout">
-        <h2>Checkout</h2>
-            <div id="pickupDetails" style="display: none;">
-                 <h3>Selected Branch</h3>
-                 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
-                  <p id="pickup-location">Pick up your order from the selected store.</p>
-                  <a href="{{ url_for('stores') }}" class="change-store-link"></a>
-            </div>
-            <!-- Pick Up & Delivery Option -->
-        <h3>Order Type</h3>
-        <label>
-            <input type="radio" name="order_type" value="pick_up"> Pick-Up
-            <input type="radio" name="order_type" value="delivery"> Delivery
-        </label>
+				<div id="pick_up_options" style="display: none;">
+					<label>
+						<input type="radio" name="option" value="standard"> Pick-up Now
+					</label>
+					<label>
+						<input type="radio" name="option" value="scheduled"> Pick up later
+						<input type="date" name="pickup_date">
+						<input type="time" name="pickup_time">
+					</label>
+				</div>
+					<div id="delivery_options" style="display: none;">
+					<label>
+						<input type="radio" name="option" value="delivery"> Delivery Now
+					</label>
+					<label>
+						<input type="radio" name="option" value="scheduled_delivery"> Delivery Later
+						<input type="date" name="delivery_date">
+						<input type="time" name="delivery_time">
+					</label>
 
-        <div id="pick_up_options" style="display: none;">
-            <label>
-                <input type="radio" name="option" value="standard"> Pick-up Now
-            </label>
-            <label>
-                <input type="radio" name="option" value="scheduled"> Pick up later
-                <input type="date" name="pickup_date">
-                <input type="time" name="pickup_time">
-            </label>
-        </div>
-            <div id="delivery_options" style="display: none;">
-            <label>
-                <input type="radio" name="option" value="delivery"> Delivery Now
-            </label>
-            <label>
-                <input type="radio" name="option" value="scheduled_delivery"> Delivery Later
-                <input type="date" name="delivery_date">
-                <input type="time" name="delivery_time">
-            </label>
+					<div id="delivery_address_section" style="display: none;">
+						<h4>Delivery Address</h4>
+						<input type="text" name="address" placeholder="Enter your address" required>
+						<h4>Delivery Instruction</h4>
+						<input type="text" name="delivery-instruction" placeholder="Enter your instruction" >
+					</div>
+				</div>
+					<!-- Personal Details -->
+				<h3>Personal Details</h3>
+				<label>Name: <input type="text" name="name" required></label>
+				<label>Email: <input type="email" name="email"></label>
+				<label>Contact Number: <input type="tel" name="contact" required></label>
 
-            <div id="delivery_address_section" style="display: none;">
-                <h4>Delivery Address</h4>
-                <input type="text" name="address" placeholder="Enter your address" required>
-                <h4>Delivery Instruction</h4>
-                <input type="text" name="delivery-instruction" placeholder="Enter your instruction" >
-            </div>
-        </div>
-                <!-- Personal Details -->
-                <h3>Personal Details</h3>
-                <label>Name: <input type="text" name="name" required></label>
-                <label>Email: <input type="email" name="email"></label>
-                <label>Contact Number: <input type="tel" name="contact" required></label>
+				<!-- PWD/Senior Citizen Discount Section -->
+				<h3>PWD/Senior Citizen Discount</h3>
+				<label>
+					<input type="checkbox" name="discount-checkbox-pwd" id="pwd-checkbox"> PWD
+				</label>
+				<div id="pwd-discount-details" style="display:none;">
+					<label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
+					<label>ID Number: <input type="text" name="pwd_discount_id_number" id="pwd_discount_id_number" placeholder="Enter your ID number"></label>
+				</div>
 
-                <!-- PWD/Senior Citizen Discount Section -->
-                <h3>PWD/Senior Citizen Discount</h3>
-                <label>
-                    <input type="checkbox" name="discount-checkbox-pwd" id="pwd-checkbox"> PWD
-                </label>
-                <div id="pwd-discount-details" style="display:none;">
-                    <label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
-                    <label>ID Number: <input type="text" name="pwd_discount_id_number" id="pwd_discount_id_number" placeholder="Enter your ID number"></label>
-                </div>
+				<label>
+					<input type="checkbox" name="discount-checkbox-senior" id="senior-checkbox"> Senior Citizen
+				</label>
+				<div id="senior-discount-details" style="display:none;">
+					<label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
+					<label>ID Number: <input type="text" name="senior_discount_id_number" id="senior_discount_id_number" placeholder="Enter your ID number"></label>
+				</div>
 
-                <label>
-                    <input type="checkbox" name="discount-checkbox-senior" id="senior-checkbox"> Senior Citizen
-                </label>
-                <div id="senior-discount-details" style="display:none;">
-                    <label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
-                    <label>ID Number: <input type="text" name="senior_discount_id_number" id="senior_discount_id_number" placeholder="Enter your ID number"></label>
-                </div>
+				<!-- Payment Details -->
+				<h3>Payment Option</h3>
+				<label>
+					<input type="radio" name="payment" value="cash" id="cash-payment" required>
+					<span>Cash</span>
+				</label>
+				<!-- Tendered Amount Section (initially hidden) -->
+				<div id="tendered-amount-section" style="display: none; margin-left: 20px;">
+					Tendered Amount: <input type="number" name="tendered_amount" id="tendered_amount" placeholder="Enter tendered amount">
+				</div>
 
-                <!-- Payment Details -->
-                <h3>Payment Option</h3>
-                <label>
-                    <input type="radio" name="payment" value="cash" id="cash-payment" required>
-                    <span>Cash</span>
-                </label>
-                <!-- Tendered Amount Section (initially hidden) -->
-                <div id="tendered-amount-section" style="display: none; margin-left: 20px;">
-                    Tendered Amount: <input type="number" name="tendered_amount" id="tendered_amount" placeholder="Enter tendered amount">
-                </div>
-
-                <label>
-                    <input type="radio" name="payment" value="gcash">
-                    <span>GCash (Pay online)</span>
-                </label>
-                <div id="gcash-number-section" style="display: none; margin-left: 20px;">
-                    <label>Gcash Number <input type="text" name="gcash-number" id="gcash-number" placeholder="Enter Gcash number"></label>
-                    <span id="gcash-error" style="color: red; display: none;">Please enter a valid 11-digit phone number.</span>
-                </div>
-                <label>
-                    <input type="radio" name="payment" value="debit/creditcard">
-                    <span>Debit/Credit Card (Pay online)</span>
-                </label>
+				<label>
+					<input type="radio" name="payment" value="gcash">
+					<span>GCash (Pay online)</span>
+				</label>
+				<div id="gcash-number-section" style="display: none; margin-left: 20px;">
+					<label>Gcash Number <input type="text" name="gcash-number" id="gcash-number" placeholder="Enter Gcash number"></label>
+					<span id="gcash-error" style="color: red; display: none;">Please enter a valid 11-digit phone number.</span>
+				</div>
+				<label>
+					<input type="radio" name="payment" value="debit/creditcard">
+					<span>Debit/Credit Card (Pay online)</span>
+				</label>
 
 
-                <!-- Card Details (hidden by default) -->
-                <div id="card-details" class="payment-details" hidden="hidden">
-                    <h4>Card Details</h4>
-                    <label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" required></label>
-                    <label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" required></label>
-                    <div class="expiration-container">
-                        <label>Expiration Month:
-                            <select name="expiration_month" required>
-                                <option value="01">01</option>
-                                <option value="02">02</option>
-                                <option value="03">03</option>
-                                <option value="04">04</option>
-                                <option value="05">05</option>
-                                <option value="06">06</option>
-                                <option value="07">07</option>
-                                <option value="08">08</option>
-                                <option value="09">09</option>
-                                <option value="10">10</option>
-                                <option value="11">11</option>
-                                <option value="12">12</option>
-                            </select>
-                        </label>
-                        <label>Expiration Year:
-                            <select name="expiration_year" required>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                                <option value="2026">2026</option>
-                                <option value="2027">2027</option>
-                                <option value="2028">2028</option>
-                                <option value="2029">2029</option>
-                                <option value="2030">2030</option>
-                                <option value="2031">2031</option>
-                                <option value="2032">2032</option>
-                            </select>
-                        </label>
-                    </div>
-                    <label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
-                </div>
-                <button type="button" onclick="showModal()" id="place_order">Place Order</button>
-            </form>
-        </div>
-    </section>
-
+				<!-- Card Details (hidden by default) -->
+				<div id="card-details" class="payment-details" hidden="hidden">
+					<h4>Card Details</h4>
+					<label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" required></label>
+					<label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" required></label>
+					<div class="expiration-container">
+						<label>Expiration Month:
+							<select name="expiration_month" required>
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+						</label>
+						<label>Expiration Year:
+							<select name="expiration_year" required>
+								<option value="2024">2024</option>
+								<option value="2025">2025</option>
+								<option value="2026">2026</option>
+								<option value="2027">2027</option>
+								<option value="2028">2028</option>
+								<option value="2029">2029</option>
+								<option value="2030">2030</option>
+								<option value="2031">2031</option>
+								<option value="2032">2032</option>
+							</select>
+						</label>
+					</div>
+					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
+				</div>
+				<button type="button" onclick="showModal()" id="place_order">Place Order</button>
+			</div>
+			<div id="hiddenCartListContainer" hidden="hidden">
+				<input type="text" name="subtotal" id="subtotal_hidden" />
+				<input type="text" name="vat" id="vat_hidden" />
+				<input type="text" name="discount" id="discount_hidden" />
+				<input type="text" name="amount_due" id="amount_due_hidden" />
+				<input type="text" name="change_value" id="change_value_hidden" />
+			</div>
+		</form>
+		<div class="order-summary">
+			<div class="order-info">
+				<h3>Order Details</h3>
+		</div>
+		<table class="order-details-table" id="order-details-table">
+			<thead>
+				<tr>
+					<th>Item</th>
+					<th>Quantity</th>
+					<th>Price</th>
+					<th>Subtotal</th> <!-- Added header for Subtotal -->
+				</tr>
+			</thead>
+			<tbody id="item-list">
+				<!-- Item rows will be added here dynamically -->
+			</tbody>
+		</table>
+		<div id="order-summary"></div>
+			<div class="order-details">
+				<p>Total Items: <span id="total-items">0</span></p>
+				<p>Subtotal: <span id="Subtotal">P0.00</span></p>
+				<p>Vat: <span id="vat">P0.00</span></p>
+				<p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
+				<p>Amount Due: <span id="amount-due">P0.00</span></p>
+				<p id="change-amount">Change: <span id="change-value">P0.00</span></p>
+			</div>
+		</div>
+	</div>
         <!-- Thank You Modal -->
     <div id="thankYouModal" class="modal">
         <div class="modal-content">
@@ -162,7 +194,7 @@
 </body>
 </html>
 
-    <script>
+<script>
     document.addEventListener("DOMContentLoaded", () => {
     const optionRadioButtons = document.querySelectorAll('input[name="option"]');
     const pickupDetailsSection = document.getElementById('pickupDetails');
@@ -191,7 +223,7 @@
 
     const tenderedAmountSection = document.getElementById("tendered-amount-section");
     const tenderedAmountInput = document.getElementById("tendered_amount");
-    const changeDisplay = document.getElementById('change-amount');
+    const changeDisplay = document.getElementById('change-value');
 
     const cardNameInput = document.getElementById('card_name');
     const cardNumberInput = document.getElementById('card_number');
@@ -348,11 +380,11 @@
 					tenderedAmountSection.style.display = 'none';
 					tenderedAmountInput.value = '';
 					changeDisplay.style.display = 'none';
-					changeDisplay.innerText = `Change: P0.00`; // Reset change to 0
+					changeDisplay.innerText = `P0.00`; // Reset change to 0
 				} else {
 					tenderedAmountSection.style.display = 'block';
 					changeDisplay.style.display = 'block';
-					changeDisplay.innerText = `Change: P0.00`; // Ensure change is reset for cash payment
+					changeDisplay.innerText = `P0.00`; // Ensure change is reset for cash payment
 				}
 				if (this.value === "gcash") {
 					gcashSection.style.display = 'block';
@@ -412,7 +444,7 @@
 
     // Load cart items and update the order summary
     function loadCart() {
-        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+		const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const orderSummary = document.getElementById('order-summary');
 
         let totalItems = 0;
@@ -440,7 +472,6 @@
                     </p>
                     <p class="item-preference">${item.preferences ? item.preferences : "No preferences"}</p>
                 </div>
-
 
                 `;
             });
@@ -482,12 +513,14 @@
 
             if (!isNaN(tenderedAmount) && tenderedAmount >= amountDue) {
                 const change = tenderedAmount - amountDue;
-                changeDisplay.innerText = `Change: P${change.toFixed(2)}`;
+                changeDisplay.innerText = `P${change.toFixed(2)}`;
                 document.getElementById('change_value_hidden').value = change.toFixed(2);
             } else if (!isNaN(tenderedAmount)) {
                 changeDisplay.innerText = `Insufficient funds!`;
+                document.getElementById('change_value_hidden').value = 0;
             } else {
-                changeDisplay.innerText = `Change: P0.00`;
+                changeDisplay.innerText = `P0.00`;
+                document.getElementById('change_value_hidden').value = 0;
             }
         });
     }
@@ -604,5 +637,5 @@
 
 });
 
-    </script>
+</script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
