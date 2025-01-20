@@ -12,13 +12,13 @@
 	<div class="checkout-container">
 		<form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
 			<div class="checkout">
-			<h2>Checkout</h2>
-			<div id="pickupDetails" style="display: none;">
-				<h3>Selected Branch</h3>
-				<a href="{{ url_for('stores') }}" class="change-store-link">
-				<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="edit-pickup-icon"></a>
-				<p id="pickup-location">Pick up your order from the selected store.</p>
-			</div>
+				<h2>Checkout</h2>
+				<div id="pickupDetails" style="display: none;">
+					<h3>Selected Branch</h3>
+					<a href="{{ url_for('stores') }}" class="change-store-link">
+					<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="edit-pickup-icon"></a>
+					<p id="pickup-location">Pick up your order from the selected store.</p>
+				</div>
 					<!-- Pick Up & Delivery Option -->
 				<h3>Order Type</h3>
 				<label>
@@ -26,61 +26,46 @@
 					<input type="radio" name="order_type" value="delivery"> Delivery
 				</label>
 
-			<div id="pick_up_options" style="display: none;">
-				<label>
-					<input type="radio" name="pickup_option" id="standard" value="standard"> Pick-up Now
-				</label>
-				<label>
-					<input type="radio" name="pickup_option" id="scheduled" value="scheduled"> Pick up later
-					<input type="date" name="pickup_date" id="pickup_date">
-					<input type="time" name="pickup_time" id="pickup_time">
-				</label>
-			</div>
-			<div id="delivery_options" style="display: none;">
-				<label>
-					<input type="radio" name="del_option" id="deliver_now" value="deliver_now"> Deliver Now
-				</label>
-				<label>
-					<input type="radio" name="del_option" id="scheduled_delivery" value="scheduled_delivery"> Deliver Later
-					<input type="date" name="delivery_date" id="delivery_date">
-					<input type="time" name="delivery_time" id="delivery_time">
-				</label>
-
-				<div id="delivery_address_section" style="display: none;">
-					<h4>Delivery Address</h4>
-					<input type="text" name="address" id="address" placeholder="Enter your address" required>
-					<h4>Delivery Instruction</h4>
-					<input type="text" name="delivery-instruction" id="delivery-instruction" placeholder="Enter your instruction" >
+				<div id="pick_up_options" style="display: none;">
+					<label>
+						<input type="radio" name="option" id="standard" value="standard"> Pick-up Now
+					</label>
+					<label>
+						<input type="radio" name="option" id="scheduled" value="scheduled"> Pick up later
+						<input type="date" name="pickup_date" id="pickup_date">
+						<input type="time" name="pickup_time" id="pickup_time">
+					</label>
 				</div>
-			</div>
+				<div id="delivery_options" style="display: none;">
+					<label>
+						<input type="radio" name="option" id="deliver_now" value="deliver_now"> Deliver Now
+					</label>
+					<label>
+						<input type="radio" name="option" id="scheduled_delivery" value="scheduled_delivery"> Deliver Later
+						<input type="date" name="delivery_date" id="delivery_date">
+						<input type="time" name="delivery_time" id="delivery_time">
+					</label>
 
-			<!-- Personal Details -->
-			<h3>Personal Details</h3>
-			<label>Name: <input type="text" name="name" required></label>
-			<label>Email: <input type="email" name="email"></label>
-			<label>Contact Number: <input type="tel" name="contact" required></label>
+					<div id="delivery_address_section" style="display: none;">
+						<h4>Delivery Address</h4>
+						<input type="text" name="address" id="address" placeholder="Enter your address" required>
+						<h4>Delivery Instruction</h4>
+						<input type="text" name="delivery-instruction" id="delivery-instruction" placeholder="Enter your instruction" >
+					</div>
+				</div>
 
-			<!-- PWD/Senior Citizen Discount Section -->
-			<h3>PWD/Senior Citizen Discount</h3>
-			<label>
-				<input type="checkbox" name="discount-checkbox-pwd" id="pwd-checkbox"> PWD
-			</label>
-			<div id="pwd-discount-details" style="display:none;">
-				<label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
-				<label>ID Number: <input type="text" name="pwd_discount_id_number" id="pwd_discount_id_number" placeholder="Enter your ID number"></label>
-			</div>
+				<!-- Personal Details -->
+				<h3>Personal Details</h3>
+				<label>Name: <input type="text" name="name" required></label>
+				<label>Email: <input type="email" name="email"></label>
+				<label>Contact Number: <input type="tel" name="contact" required></label>
 
-			<label>
-				<input type="checkbox" name="discount-checkbox-senior" id="senior-checkbox"> Senior Citizen
-			</label>
-			<div id="senior-discount-details" style="display:none;">
-				<label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
-				<label>ID Number: <input type="text" name="senior_discount_id_number" id="senior_discount_id_number" placeholder="Enter your ID number"></label>
-			</div>
 				<!-- PWD/Senior Citizen Discount Section -->
 				<h3>PWD/Senior Citizen Discount</h3>
 				<label>
 					<input type="radio" name="discount-option" id="pwd-radio" value="PWD"> PWD
+				</label>
+				<label>
 					<input type="radio" name="discount-option" id="senior-radio" value="Senior"> Senior Citizen
 				</label>
 				<div id="discount-details" style="display:none;">
@@ -88,69 +73,69 @@
 					<label>ID Number: <input type="text" name="discount_id_number" id="discount_id_number" placeholder="Enter your ID number"></label>
 				</div>
 
-			<!-- Payment Details -->
-			<h3>Payment Option</h3>
-			<label>
-				<input type="radio" name="payment" value="cash" id="cash-payment" required>
-				<span>Cash</span>
-			</label>
-			<!-- Tendered Amount Section (initially hidden) -->
-			<div id="tendered-amount-section" style="display: none; margin-left: 20px;">
-				Tendered Amount: <input type="number" name="tendered_amount" id="tendered_amount" placeholder="Enter tendered amount">
-			</div>
-
-			<label>
-				<input type="radio" name="payment" value="gcash">
-				<span>GCash (Pay online)</span>
-			</label>
-			<div id="gcash-number-section" style="display: none; margin-left: 20px;">
-				<label>Gcash Number <input type="text" name="gcash-number" id="gcash-number" placeholder="Enter Gcash number"></label>
-				<span id="gcash-error" style="color: red; display: none;">Please enter a valid 11-digit phone number.</span>
-			</div>
-			<label>
-				<input type="radio" name="payment" value="debit/creditcard">
-				<span>Debit/Credit Card (Pay online)</span>
-			</label>
-
-			<!-- Card Details (hidden by default) -->
-			<div id="card-details" class="payment-details" hidden="hidden">
-				<h4>Card Details</h4>
-				<label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" required></label>
-				<label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" required></label>
-				<div class="expiration-container">
-					<label>Expiration Month:
-						<select name="expiration_month" required>
-							<option value="01">01</option>
-							<option value="02">02</option>
-							<option value="03">03</option>
-							<option value="04">04</option>
-							<option value="05">05</option>
-							<option value="06">06</option>
-							<option value="07">07</option>
-							<option value="08">08</option>
-							<option value="09">09</option>
-							<option value="10">10</option>
-							<option value="11">11</option>
-							<option value="12">12</option>
-						</select>
-					</label>
-					<label>Expiration Year:
-						<select name="expiration_year" required>
-							<option value="2024">2024</option>
-							<option value="2025">2025</option>
-							<option value="2026">2026</option>
-							<option value="2027">2027</option>
-							<option value="2028">2028</option>
-							<option value="2029">2029</option>
-							<option value="2030">2030</option>
-							<option value="2031">2031</option>
-							<option value="2032">2032</option>
-						</select>
-					</label>
+				<!-- Payment Details -->
+				<h3>Payment Option</h3>
+				<label>
+					<input type="radio" name="payment" value="cash" id="cash-payment" required>
+					<span>Cash</span>
+				</label>
+				<!-- Tendered Amount Section (initially hidden) -->
+				<div id="tendered-amount-section" style="display: none; margin-left: 20px;">
+					Tendered Amount: <input type="number" name="tendered_amount" id="tendered_amount" placeholder="Enter tendered amount">
 				</div>
-				<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
-			</div>
-			<button type="button" onclick="showModal()" id="place_order">Place Order</button>
+
+				<label>
+					<input type="radio" name="payment" value="gcash">
+					<span>GCash (Pay online)</span>
+				</label>
+				<div id="gcash-number-section" style="display: none; margin-left: 20px;">
+					<label>Gcash Number <input type="text" name="gcash-number" id="gcash-number" placeholder="Enter Gcash number"></label>
+					<span id="gcash-error" style="color: red; display: none;">Please enter a valid 11-digit phone number.</span>
+				</div>
+				<label>
+					<input type="radio" name="payment" value="debit/creditcard">
+					<span>Debit/Credit Card (Pay online)</span>
+				</label>
+
+				<!-- Card Details (hidden by default) -->
+				<div id="card-details" class="payment-details" hidden="hidden">
+					<h4>Card Details</h4>
+					<label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" required></label>
+					<label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" required></label>
+					<div class="expiration-container">
+						<label>Expiration Month:
+							<select name="expiration_month" required>
+								<option value="01">01</option>
+								<option value="02">02</option>
+								<option value="03">03</option>
+								<option value="04">04</option>
+								<option value="05">05</option>
+								<option value="06">06</option>
+								<option value="07">07</option>
+								<option value="08">08</option>
+								<option value="09">09</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+						</label>
+						<label>Expiration Year:
+							<select name="expiration_year" required>
+								<option value="2024">2024</option>
+								<option value="2025">2025</option>
+								<option value="2026">2026</option>
+								<option value="2027">2027</option>
+								<option value="2028">2028</option>
+								<option value="2029">2029</option>
+								<option value="2030">2030</option>
+								<option value="2031">2031</option>
+								<option value="2032">2032</option>
+							</select>
+						</label>
+					</div>
+					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
+				</div>
+				<button type="button" onclick="showModal()" id="place_order">Place Order</button>
 			</div>
 			<div id="hiddenCartListContainer" hidden="hidden">
 				<input type="text" name="subtotal" id="subtotal_hidden" />
@@ -158,34 +143,35 @@
 				<input type="text" name="discount" id="discount_hidden" />
 				<input type="text" name="amount_due" id="amount_due_hidden" />
 				<input type="text" name="change_value" id="change_value_hidden" />
+				<input type="text" name="store_name" id="store_name_hidden" />
 			</div>
 		</form>
 		<div class="order-summary">
 			<div class="order-info">
 				<h3>Order Details</h3>
-		</div>
-		<table class="order-details-table" id="order-details-table">
-			<thead>
-				<tr>
-					<th>Item</th>
-					<th>Quantity</th>
-					<th>Price</th>
-					<th>Subtotal</th> <!-- Added header for Subtotal -->
-				</tr>
-			</thead>
-			<tbody id="item-list">
-				<!-- Item rows will be added here dynamically -->
-			</tbody>
-		</table>
-		<div id="order-summary"></div>
-		<div class="order-details">
-			<p>Total Items: <span id="total-items">0</span></p>
-			<p>Subtotal: <span id="Subtotal">P0.00</span></p>
-			<p>Vat: <span id="vat">P0.00</span></p>
-			<p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
-			<p>Amount Due: <span id="amount-due">P0.00</span></p>
-			<p id="change-amount">Change: <span id="change-value">P0.00</span></p>
-		</div>
+			</div>
+			<table class="order-details-table" id="order-details-table">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Quantity</th>
+						<th>Price</th>
+						<th>Subtotal</th> <!-- Added header for Subtotal -->
+					</tr>
+				</thead>
+				<tbody id="item-list">
+					<!-- Item rows will be added here dynamically -->
+				</tbody>
+			</table>
+			<div id="order-summary"></div>
+			<div class="order-details">
+				<p>Total Items: <span id="total-items">0</span></p>
+				<p>Subtotal: <span id="Subtotal">P0.00</span></p>
+				<p>Vat: <span id="vat">P0.00</span></p>
+				<p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
+				<p>Amount Due: <span id="amount-due">P0.00</span></p>
+				<p id="change-amount">Change: <span id="change-value">P0.00</span></p>
+			</div>
 		</div>
 	</div>
         <!-- Thank You Modal -->
@@ -243,6 +229,7 @@
                 // Show delivery options
                 deliveryOptions.style.display = "block";
                 pickUpOptions.style.display = "none";
+                deliveryAddressSection.style.display = "block";
             } else if (this.value === "pick_up") {
                 // Show pick-up options
                 pickUpOptions.style.display = "block";
@@ -255,7 +242,7 @@
     // Event listener for delivery options
     deliveryOptions.addEventListener("change", (event) => {
         if (event.target.name === "option") {
-            if (event.target.value === "delivery" || event.target.value === "scheduled_delivery") {
+            if (event.target.value === "deliver_now" || event.target.value === "scheduled_delivery") {
                 deliveryAddressSection.style.display = "block"; // Show delivery address
             } else {
                 deliveryAddressSection.style.display = "none"; // Hide delivery address
@@ -267,69 +254,70 @@
     // Initialize the page and load data
     initialize();
 
-    function initialize() {
-        setupEventListeners();
-        loadCart();
-        displaySelectedStore();
-    }
- function displayStoreDetails() {
-    const storeDetails = localStorage.getItem('selectedStore');
+	function initialize() {
+		setupEventListeners();
+		loadCart();
+		displaySelectedStore();
+	}
 
-    if (storeDetails) {
-        try {
-            const store = JSON.parse(storeDetails);
-            const pickupDetails = document.getElementById('pickupDetails');
-            const pickupLocation = document.getElementById('pickup-location');
+	function displayStoreDetails() {
+		const storeDetails = localStorage.getItem('selectedStore');
 
-            if (store.name && store.address) {
-                pickupLocation.textContent = `${store.name}, located at ${store.address}.`;
-                pickupDetails.style.display = 'block';
-            } // Close if statement here
-        } catch (error) {
-            console.error("Error parsing store details:", error);
-        }
-    }
-}
+		if (storeDetails) {
+			try {
+				const store = JSON.parse(storeDetails);
+				const pickupDetails = document.getElementById('pickupDetails');
+				const pickupLocation = document.getElementById('pickup-location');
 
+				if (store.name && store.address) {
+					pickupLocation.textContent = `${store.name}, located at ${store.address}.`;
+					pickupDetails.style.display = 'block';
+					document.getElementById('store_name_hidden').value = store.name;
+				} // Close if statement here
+			} catch (error) {
+				console.error("Error parsing store details:", error);
+			}
+		}
+	}
 
-function editPickUpLocation() {
-    console.log('Edit pick-up location triggered'); // Debug log
+	function editPickUpLocation() {
+		console.log('Edit pick-up location triggered'); // Debug log
 
-    // Get the current pick-up location value
-    let currentLocation = document.getElementById('pickup-location').innerText;
-    console.log('Current location:', currentLocation); // Debug log
+		// Get the current pick-up location value
+		let currentLocation = document.getElementById('pickup-location').innerText;
+		console.log('Current location:', currentLocation); // Debug log
 
-    // Prompt user with a confirmation dialog (OK/Cancel)
-    let changeLocation = confirm('Do you want to change the pick-up location?');
+		// Prompt user with a confirmation dialog (OK/Cancel)
+		let changeLocation = confirm('Do you want to change the pick-up location?');
 
-    // If the user clicked OK, allow them to select a new location or handle this logic
-    if (changeLocation) {
-        // Redirect to store pick-up location page to choose a new store
-        const storePickUpUrl = "/stores"; // Adjust the URL as needed
+		// If the user clicked OK, allow them to select a new location or handle this logic
+		if (changeLocation) {
+			// Redirect to store pick-up location page to choose a new store
+			const storePickUpUrl = "/stores"; // Adjust the URL as needed
 
-        console.log('Redirecting to:', storePickUpUrl); // Debug log
+			console.log('Redirecting to:', storePickUpUrl); // Debug log
 
-        // Save the current location temporarily before redirection (optional)
-        localStorage.setItem('previousPickupLocation', currentLocation);
+			// Save the current location temporarily before redirection (optional)
+			localStorage.setItem('previousPickupLocation', currentLocation);
 
-        // Redirect to the store pick-up page
-        window.location.href = storePickUpUrl;
-    }
-}
+			// Redirect to the store pick-up page
+			window.location.href = storePickUpUrl;
+		}
+	}
 
-// Attach click event to the pencil icon
-document.addEventListener('DOMContentLoaded', () => {
-    const editIcon = document.getElementById('edit-pickup-icon');
-    if (editIcon) {
-        console.log('Edit icon found. Adding click event listener.'); // Debug log
-        editIcon.addEventListener('click', editPickUpLocation);
-    } else {
-        console.error('Edit icon not found in the DOM.');
-    }
-});
+	// Attach click event to the pencil icon
+	document.addEventListener('DOMContentLoaded', () => {
+		const editIcon = document.getElementById('edit-pickup-icon');
+		if (editIcon) {
+			console.log('Edit icon found. Adding click event listener.'); // Debug log
+			editIcon.addEventListener('click', editPickUpLocation);
+		} else {
+			console.error('Edit icon not found in the DOM.');
+		}
+	});
 
-// Call the function on page load
-window.onload = displayStoreDetails;
+	// Call the function on page load
+	window.onload = displayStoreDetails;
 
     function displaySavedAddress() {
         if (!addressSection) {
@@ -363,7 +351,7 @@ window.onload = displayStoreDetails;
 
     function displaySelectedStore() {
         if (!pickupDetailsSection) {
-            console.error("Element with ID 'pickupDetails' not found.");
+            console.error("Location not found");
             return;
         }
 
@@ -373,6 +361,7 @@ window.onload = displayStoreDetails;
                 const storeDetails = JSON.parse(selectedStore);
                 const storeDetailsText = `${storeDetails.name}, ${storeDetails.location}`;
                 pickupDetailsSection.style.display = 'block';
+				document.getElementById('store_name_hidden').value = storeDetails.name;
 
                 const pickupLocationElement = document.getElementById('pickup-location');
                 if (pickupLocationElement) {
@@ -462,47 +451,29 @@ window.onload = displayStoreDetails;
 			});
 		 });
 
-	function updateDiscountDetails() {
-  console.log("PWD Checked:", pwdRadio.checked);
-  console.log("Senior Checked:", seniorRadio.checked);
+		function updateDiscountDetails() {
+			// Show the discount details section if either radio button is checked
+			if (pwdRadio.checked || seniorRadio.checked) {
+				discountDetails.style.display = 'block';
+				discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
+				discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
+			} else {
+			// Hide the discount details section and clear the inputs if neither is checked
+				discountDetails.style.display = 'none';
+				discountNameInput.value = '';
+				discountIdInput.value = '';
+			}
 
-  // Show the discount details section if either radio button is checked
-  if (pwdRadio.checked || seniorRadio.checked) {
-    discountDetails.style.display = 'block';
-    discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
-    discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
-  } else {
-    // Hide the discount details section and clear the inputs if neither is checked
-    discountDetails.style.display = 'none';
-    discountNameInput.value = '';
-    discountIdInput.value = '';
-  }
+			// Call loadCart to recalculate the cart
+			loadCart();
+		}
 
-  // Call loadCart to recalculate the cart
-  loadCart();
-}
-
-// Event listeners to update details when either radio button is selected
-pwdRadio.addEventListener('change', updateDiscountDetails);
-seniorRadio.addEventListener('change', updateDiscountDetails);
-
-// Optionally, reset radio buttons when clicking outside the discount section
-document.addEventListener('click', function(event) {
-  if (!event.target.closest('label')) {
-    // Uncheck both if clicked outside the discount section
-    pwdRadio.checked = false;
-    seniorRadio.checked = false;
-    discountDetails.style.display = 'none';
-    discountNameInput.value = '';
-    discountIdInput.value = '';
-
-    // Recalculate the cart after unchecking
-    loadCart();
-  }
-});
-
-tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+		// Event listeners to update details when either radio button is selected
+		pwdRadio.addEventListener('change', updateDiscountDetails);
+		seniorRadio.addEventListener('change', updateDiscountDetails);
+		tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     }
+
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
       return dataList;
@@ -608,75 +579,133 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     const form = document.getElementById('checkout-form');
     const modal = document.getElementById('thankYouModal');
 
-// Show the modal function
-function showModal() {
-    const modal = document.getElementById('thankYouModal');
-    modal.style.display = "block";
-}
+	function showModal() {
+		if (validateForm()) {
+			modal.style.display = "block";
+		} else {
+			alert('Please fill out all required fields.');
+		}
+	}
 
-// Event listener for the "OK" button inside the modal
-document.getElementById('confirmSubmit').addEventListener('click', function() {
-    // Submit the form after confirmation
-    document.getElementById('checkout-form').submit();
+    const placeOrder = document.getElementById('place_order');
+    placeOrder.addEventListener('click', showModal);
 
-    // Close the modal after submitting the form
-    closeModal();
-});
-
-// Close the modal function
-function closeModal() {
-    const modal = document.getElementById('thankYouModal');
-    modal.style.display = "none";
-}
-
-// Form validation function
-function validateForm() {
-    const requiredFields = document.querySelectorAll('#checkout-form [required]');
-
-    // Check if any required field is empty
-    for (let field of requiredFields) {
-        if (!field.value.trim()) {
-            field.focus();
-            return false;  // Return false if a required field is empty
-        }
+    function closeModal() {
+		modal.style.display = "none";
     }
 
-    function editAddress() {
+    function submitForm() {
+		// Close the modal
+		closeModal();
+
+		clearCart();
+
+		// Submit the form
+		form.submit();
+    }
+
+    const submitButton = document.getElementById('confirmSubmit');
+    submitButton.addEventListener('click', submitForm);
+
+    // Function to clear the cart
+    function clearCart() {
+        // If the cart is stored in localStorage, remove it
+        localStorage.removeItem('cart');
+        loadCart();  // Reload the cart to reflect the changes
+    }
+
+	// Form validation function
+	function validateForm() {
+		const requiredFields = document.querySelectorAll('#checkout-form [required]');
+
+		// Check if any required field is empty
+		for (let field of requiredFields) {
+			if (!field.value.trim()) {
+				field.focus();
+				return false;  // Return false if a required field is empty
+			}
+		}
+
+		function editAddress() {
+			const currentAddress = document.getElementById('address').innerText;
+			document.getElementById('editAddressText').value = currentAddress;
+			document.getElementById('editAddressModal').style.display = 'block';
+		}
+
+		// Check if an order type is selected (Pick-Up or Delivery)
+		const orderType = document.querySelector('input[name="order_type"]:checked');
+		if (!orderType) {
+			alert('Please select an order type (Pick-Up or Delivery).');
+			return false;
+		}
+
+		// Check if discount details are filled if a discount option is selected
+		const discountOption = document.querySelector('input[name="discount-option"]:checked');
+		if (discountOption) {
+			const discountName = document.querySelector('input[name="discount_name"]').value.trim();
+			const discountId = document.querySelector('input[name="discount_id_number"]').value.trim();
+			if (!discountName || !discountId) {
+				alert('Please fill out the discount details.');
+				return false;
+			}
+		}
+
+		// Check if delivery address is filled when required
+		const deliveryOption = document.querySelector('input[name="option"]:checked');
+		if (deliveryOption && (deliveryOption.value === 'scheduled_delivery' || deliveryOption.value === 'deliver_now')) {
+			const address = document.querySelector('input[name="address"]').value.trim();
+			if (!address) {
+				alert('Please enter a delivery address.');
+				return false;
+			}
+		}
+
+		return true;  // Return true if all fields are valid
+	}
+
+	function editAddress() {
         const currentAddress = document.getElementById('address').innerText;
         document.getElementById('editAddressText').value = currentAddress;
         document.getElementById('editAddressModal').style.display = 'block';
     }
 
-    // Check if an order type is selected (Pick-Up or Delivery)
-    const orderType = document.querySelector('input[name="order_type"]:checked');
-    if (!orderType) {
-        alert('Please select an order type (Pick-Up or Delivery).');
-        return false;
+    // Function to save the new address
+    function saveAddress() {
+        const newAddress = document.getElementById('editAddressText').value;
+        document.getElementById('address').innerText = newAddress;
+        document.getElementById('addressHidden').value = newAddress;
+
+        // Save the new address to local storage
+        localStorage.setItem('address', newAddress);
+        localStorage.setItem('addressHidden', newAddress);
+
+        closeEditAddressModal();
     }
 
-    // Check if discount details are filled if a discount option is selected
-    const discountOption = document.querySelector('input[name="discount-option"]:checked');
-    if (discountOption) {
-        const discountName = document.querySelector('input[name="discount_name"]').value.trim();
-        const discountId = document.querySelector('input[name="discount_id_number"]').value.trim();
-        if (!discountName || !discountId) {
-            alert('Please fill out the discount details.');
-            return false;
-        }
+    // Function to close the address edit modal
+    function closeEditAddressModal() {
+        document.getElementById('editAddressModal').style.display = 'none';
     }
 
-    // Check if delivery address is filled when required
-    const deliveryOption = document.querySelector('input[name="option"]:checked');
-    if (deliveryOption && (deliveryOption.value === 'scheduled_delivery' || deliveryOption.value === 'delivery')) {
-        const address = document.querySelector('input[name="address"]').value.trim();
-        if (!address) {
-            alert('Please enter a delivery address.');
-            return false;
-        }
-    }
+    // Function to edit the delivery instruction
+	function editDeliveryInstruction() {
+		const currentInstructions = document.getElementById('deliveryInstruction').innerText;
+		document.getElementById('editInstructionText').value = currentInstructions;
+		document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
+	}
 
-    return true;  // Return true if all fields are valid
-}
+	// Function to save the new delivery instruction
+	function saveDeliveryInstruction() {
+		const newInstructions = document.getElementById('editInstructionText').value;
+		document.getElementById('deliveryInstruction').innerText = newInstructions;
+		document.getElementById('deliveryInstructionHidden').value = newInstructions;
+
+		// Save the new delivery instruction to local storage
+		localStorage.setItem('deliveryInstruction', newInstructions);
+		localStorage.setItem('deliveryInstructionHidden', newInstructions);
+
+		closeEditInstructionsModal(); // Close the modal
+	}
 
     // Initialize the cart when page loads
     loadCart();

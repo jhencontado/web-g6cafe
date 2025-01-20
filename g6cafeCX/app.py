@@ -9,9 +9,6 @@ import math
 from flask import session
 
 import datetime
-import json
-
-from sqlalchemy.sql.sqltypes import NULLTYPE
 
 app = Flask(__name__)
 CORS(app)
@@ -73,13 +70,14 @@ class OrderPaymentDetails(db.Model):
     __tablename__ = 'order_payment_details'
     order_payment_details_id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'), nullable=False)
+    payment_option = db.Column(db.String(50))
     gcash_ref_number = db.Column(db.Integer)
     change_for_cash = db.Column(db.Numeric(10, 2), nullable=False)
     card_name = db.Column(db.String(100))
     card_number = db.Column(db.BigInteger)
     card_exp_month = db.Column(db.Integer)
     card_exp_year = db.Column(db.Integer)
-    cvv = db.Column(db.Integer)
+    card_cvv = db.Column(db.String(50))
 
 class OrderAddress(db.Model):
     __tablename__ = 'order_address'
@@ -104,6 +102,16 @@ class Stores(db.Model):
     lng = db.Column(db.Float, nullable=False)
     business_hours = db.Column(db.String(255), nullable=False)
 
+class DeliveryRider(db.Model):
+    __tablename__ = 'delivery_rider'
+
+    delivery_rider_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    vehicle_plate_number = db.Column(db.String(50), nullable=False)
+    vehicle_model = db.Column(db.String(255), nullable=False)
+    vehicle_color = db.Column(db.String(50), nullable=False)
+    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
+
 
 class TrackDetails(db.Model):
     __tablename__ = 'trackdetails'
@@ -115,7 +123,7 @@ class TrackDetails(db.Model):
         db.Enum('pending', 'preparing', 'ready for pick-up', 'out for delivery', 'delivered', 'cancelled'),
         nullable=False
     )
-    delivery_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
+    delivery_rider_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
 
 @app.route('/')
 def home():
@@ -290,9 +298,19 @@ def get_item_id(item_name):
 
 def get_delivery_rider_id(store_id):
     try:
-        item = Stores.query.filter_by(store_id = store_id).first()
+        item = DeliveryRider.query.filter_by(store_id = store_id).first()
         if item:
             return item.delivery_rider_id
+        else:
+            return jsonify({'message': 'item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def get_store_id(store_name):
+    try:
+        item = Stores.query.filter_by(name = store_name).first()
+        if item:
+            return item.id
         else:
             return jsonify({'message': 'item not found'}), 404
     except Exception as e:
@@ -301,21 +319,20 @@ def get_delivery_rider_id(store_id):
 @app.route('/proceed-checkout', methods=['POST'])
 def proceed_checkout():
     try:
-
-        # if len(data) == 0:
-        #     return "No cart in session", 500
-
         # region Insert Order
         subtotal = request.form.get('subtotal')
         vat_amount = request.form.get('vat')
         discount_amount = request.form.get('discount')
         net_amount = request.form.get('amount_due')
+
         tender_amount = request.form.get('tendered_amount')
         if len (tender_amount) ==0:
             tender_amount = 0
         change_value = request.form.get('change_value')
+
         if len (change_value) ==0:
             change_value = 0
+
         receipt_number = generate_receipt_number()
         new_order = Order(
             subtotal = subtotal,
@@ -358,29 +375,24 @@ def proceed_checkout():
         #     except json.JSONDecodeError:
         #         return jsonify({'error': 'Invalid JSON data'}), 400
 
-        #region insert discount if available
-        if 'discount-checkbox-pwd' in request.form:
-            new_pwdsenior_details = PwdSeniorDetails(
-                order_id = last_inserted_id,
-                discount_type = 'PWD',
-                customer_name = request.form.get('pwd_discount_name'),
-                id_number = request.form.get('pwd_discount_id_number'),
-                discount_amount = discount_amount
-            )
+        #region insert PwdSeniorDetails
+        discount = request.form.get('discount-option')
+        if discount == 'PWD':
+            discount_type = 'PWD'
+        elif discount == 'Senior':
+            discount_type = 'Senior'
+        else:
+            discount_type = None
 
-            db.session.add(new_pwdsenior_details)
+        new_pwdsenior_details = PwdSeniorDetails(
+            order_id = last_inserted_id,
+            discount_type = discount_type,
+            customer_name = request.form.get('discount_name'),
+            id_number = request.form.get('discount_id_number'),
+            discount_amount = discount_amount
+        )
 
-        if 'discount-checkbox-senior' in request.form:
-            new_senior_details = PwdSeniorDetails(
-                order_id = last_inserted_id,
-                discount_type = 'Senior',
-                customer_name = request.form.get('senior_discount_name'),
-                id_number = request.form.get('senior_discount_id_number'),
-                discount_amount = discount_amount
-            )
-
-            db.session.add(new_senior_details)
-
+        db.session.add(new_pwdsenior_details)
         db.session.commit()
         #endregion
 
@@ -391,7 +403,7 @@ def proceed_checkout():
         card_number = request.form.get('card_number')
         expiration_month = request.form.get('expiration_month')
         expiration_year = request.form.get('expiration_year')
-        cvv = request.form.get('cvv')
+        card_cvv = request.form.get('cvv')
 
         new_order_payment_details = OrderPaymentDetails(
             order_id = last_inserted_id,
@@ -402,7 +414,7 @@ def proceed_checkout():
             card_number = card_number,
             card_exp_month = expiration_month,
             card_exp_year = expiration_year,
-            card_cvv = cvv
+            card_cvv = card_cvv
         )
 
         db.session.add(new_order_payment_details)
@@ -412,23 +424,27 @@ def proceed_checkout():
         #region insert to order_address
         address = request.form.get('address')
 
-        pickup_option = request.form.get('pickup_option')
+        order_type = request.form.get('order_type')
+        option = request.form.get('option')
+        delivery_date = None
+        delivery_time = None
+        pickup_date = None
+        pickup_time = None
 
-        if pickup_option == 'standard':
-            pickup_date = datetime.datetime.now()
-            pickup_time = datetime.datetime.now().time()
+        if order_type == 'delivery':
+            if option == 'deliver_now':
+                delivery_date = datetime.datetime.now()
+                delivery_time = datetime.datetime.now().time()
+            else:
+                delivery_date = request.form.get('delivery_date')
+                delivery_time = request.form.get('delivery_time')
         else:
-            pickup_date = request.form.get('pickup_date')
-            pickup_time = request.form.get('pickup_time')
-
-        del_option = request.form.get('del_option')
-
-        if del_option == 'standard':
-            delivery_date = datetime.datetime.now()
-            delivery_time = datetime.datetime.now().time()
-        else:
-            delivery_date = request.form.get('delivery_date')
-            delivery_time = request.form.get('delivery_time')
+            if option == 'standard':
+                pickup_date = datetime.datetime.now()
+                pickup_time = datetime.datetime.now().time()
+            else:
+                pickup_date = request.form.get('pickup_date')
+                pickup_time = request.form.get('pickup_time')
 
         contact_name = request.form.get('name')
         contact_email = request.form.get('email')
@@ -453,12 +469,18 @@ def proceed_checkout():
         #endregion
 
         #region insert in trackdetails
+        store_name = request.form.get('store_name')
+        store_id = get_store_id(store_name)
+        rider_id = get_delivery_rider_id(store_id)
         new_trackdetails = TrackDetails(
             order_id = last_inserted_id,
-            store_id = 1, #temporary
+            store_id = store_id,
             order_status = 'pending',
-            delivery_rider_id = 1
+            delivery_rider_id = rider_id
         )
+
+        db.session.add(new_trackdetails)
+        db.session.commit()
         #endregion
 
         return redirect(url_for('receipt', order_id=last_inserted_id))

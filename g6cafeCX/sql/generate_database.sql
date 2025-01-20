@@ -83,7 +83,7 @@ CREATE TABLE order_payment_details (
     card_number LONG NULL,
     card_exp_month INT NULL,
     card_exp_year INT NULL,
-    card_cvv INT NULL,
+    card_cvv VARCHAR(50) NULL,
     FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
 );
 
