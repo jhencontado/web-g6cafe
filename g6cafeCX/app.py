@@ -16,7 +16,7 @@ CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
