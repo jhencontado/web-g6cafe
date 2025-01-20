@@ -136,6 +136,7 @@ nav a:hover {
     text-align: left;
     margin-left: 20%;
     margin-top:0px;
+    padding: 2px;
 }
 
 /* Styling for the container of menu items */
@@ -151,36 +152,42 @@ nav a:hover {
 /* Styling for each individual menu item (card) */
 .menu-category-navigation {
     display: flex;
-    flex-direction: row; /* Align items inside the container horizontally */
-    gap: 15px;
+    flex-direction: row;
+    gap: 20px;
 }
 
 .menu-category-navigation .menu-category-link {
     display: block;
     width: 170px;
+    height: 170px;
     text-align: center;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 50%; /* Make the border circular */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-decoration: none;
     color: #333;
+    line-height: 20px; /* Center text vertically */
 }
+
 
 .menu-category-navigation .menu-category-link img {
     width: 100%;
     height: auto;
-    border-radius: 8px 8px 0 0;
+    padding-bottom: 10px;
 }
 
 .menu-category-navigation .menu-category-link p {
-    padding: 2px;
-    font-size: 10px;
+    padding: 3px;
+    font-size: 12px;
     font-weight: bold;
     margin: 0;
     border-radius: 0 0 8px 8px;
     text-align: center;
+    opacity: 0; /* Hide the text initially */
+    visibility: hidden; /* Make it non-interactive and hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 /* Hover effects for cards */
@@ -192,6 +199,8 @@ nav a:hover {
 
 .menu-category-navigation .menu-category-link:hover p {
     color: #007BFF;
+    opacity: 1; /* Show the text on hover */
+    visibility: visible; /* Make it interactive and visible */
 }
 
         .carousel-container {
@@ -462,7 +471,7 @@ nav a img:hover {
 
 .product-card, .menu-item {
     border: 0px solid #ccc;
-    padding: 10px;
+    padding: 20px;
     text-align: center;
     background-color:#f4f4f4;
     width: 200px;
@@ -1091,7 +1100,7 @@ button:hover {
     display: flex; /* Use Flexbox for layout */
     justify-content: space-evenly; /* Distribute the items evenly */
     align-items: center; /* Align items vertically at the center */
-    margin: 20px 0; /* Add some spacing around the navigation */
+    margin: 20px 10px;
 }
 
 .nav-link {
@@ -1115,13 +1124,19 @@ button:hover {
 }
 
 .nav-link:hover img {
-    transform: scale(1.1); /* Slightly scale up the image on hover */
+    transform: scale(1.1);
+    background-color: #c3b39a;
+    border-radius: 50%;
 }
        .checkout-container {
             display: flex; /* Create a flex container */
             align-items: flex-start; /* Align children at the top */
             gap: 20px; /* Optional: adds space between the sections */
             padding: 50px;
+            flex-wrap: wrap;
+            margin: 0 auto;
+            justify-content: space-between;
+            flex:1;
         }
 
         .checkout-form {
@@ -1132,12 +1147,13 @@ button:hover {
         }
 
         .order-summary {
-            flex: 0 1 45%;
+            flex: 0 1 50%;
             padding: 30px;
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
-            top: 0; /* Sticks to the top of its container */
+            top: 0;
+            margin-left: 20px;
         }
 
         .checkout {
@@ -1355,7 +1371,7 @@ button:hover {
 .checkout label input[type="email"]:hover,
 .checkout label input[type="tel"]:hover {
     background-color: #f9e4d4; /* Light background color on hover */
-    border-color: #8d6e63; /* Darker border color on hover */
+    border-color: #8d6e63;
     width: 100%;
 }
 .checkout label input[type="date"]:hover,
@@ -1437,7 +1453,24 @@ button:hover {
 .edit-icon:hover {
     transform: scale(1.2); /* Slightly enlarge the icon on hover */
 }
+#place_order {
+    background-color: #8d6e63;
+    color: white;
+    border: none; /* Remove default border */
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    border-radius: 50px;
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.5s ease;
+    margin-tp: 20px;
+}
 
+#place_order:hover {
+    background-color: #c3b39a;
+}
 /* Modal container */
 .modal {
   display: none; /* Hidden by default */
@@ -1516,7 +1549,7 @@ button[type="submit"]:hover {
     .checkout {
         padding: 20px;
     }
-
+    
     header h1 {
         font-size: 20px;
     }

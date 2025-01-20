@@ -6,6 +6,7 @@
     <title>Store Locator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <style>
         body {
             background-color: #f4f4f9;
@@ -116,6 +117,15 @@
             <div id="map"></div>
             <div id="store-results">
                 <!-- Store results will appear here -->
+            </div>
+                <!-- Modal for store selection confirmation -->
+            <div id="storeModal" class="modal">
+                <div class="modal-content">
+                    <h2>Store Selected</h2>
+                    <p id="modal-message"></p>
+                    <button id="confirmBtn">OK</button>
+                    <button id="cancelBtn">Cancel</button>
+                </div>
             </div>
        </main>
     </div>

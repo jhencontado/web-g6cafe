@@ -273,16 +273,80 @@ function updateCartDisplay() {
     }
 }
 
+
 let map, userMarker;
-let selectedMarker = null;
+const geocoder = new google.maps.Geocoder();
+let selectedLocation = null;
 
 // Initialize Google Maps
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 14.565111, lng: 121.029889 },  // Default center
+        center: { lat: 14.565111, lng: 121.029889 }, // Default center
         zoom: 12
     });
 
+    // Add click listener for map to allow pinning
+    map.addListener('click', function(event) {
+        placeMarker(event.latLng);
+        reverseGeocodeLocation(event.latLng);
+    });
+}
+
+// Place a marker on the map
+function placeMarker(location) {
+    // Clear the previous user marker if it exists
+    if (userMarker) {
+        userMarker.setMap(null);
+    }
+
+    // Create a new marker at the clicked location with a blue icon
+    userMarker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: 'Selected Location',
+        draggable: true, // Allow marker dragging
+    });
+
+    // Save the selected location
+    selectedLocation = location;
+
+    // Add a listener to handle dragging the marker
+    userMarker.addListener('dragend', function(event) {
+        selectedLocation = event.latLng;
+        reverseGeocodeLocation(event.latLng);
+    });
+}
+
+
+// Reverse geocode the location to get the address and update the input field
+function reverseGeocodeLocation(location) {
+    geocoder.geocode({ location: location }, function(results, status) {
+        if (status === 'OK') {
+            if (results[0]) {
+                const address = results[0].formatted_address;
+
+                // Update the location input field
+                document.getElementById('locationInput').value = address;
+
+                // Optional: Display the address and coordinates below the map
+                const locationDetails = document.getElementById('store-results');
+
+            } else {
+                document.getElementById('locationInput').value = 'No address found for this location.';
+            }
+        } else {
+            console.error('Geocoder failed due to: ' + status);
+            document.getElementById('locationInput').value = 'Unable to retrieve address.';
+        }
+    });
+}
+
+// Clear all markers (not required in this case but useful for future use)
+function clearMarkers() {
+    if (userMarker) {
+        userMarker.setMap(null);
+        userMarker = null;
+    }
 }
 
 // Event listener for store locator form
@@ -340,7 +404,12 @@ document.getElementById('storeLocatorForm').addEventListener('submit', function(
                             const storeMarker = new google.maps.Marker({
                                 position: storeLatLng,
                                 map: map,
-                                title: store.name
+                                title: store.name,
+                                icon: {
+                                        url: '/static/images/trackorder.png',  // Path to your custom icon
+                                        scaledSize: new google.maps.Size(50, 50),  // Resize the icon to 30px by 30px
+                                        anchor: new google.maps.Point(45, 50)    // Adjust the anchor point so the marker is positioned correctly
+                                    }
                             });
 
                             // Hover event for the store marker on the map
@@ -384,16 +453,41 @@ function selectdeliverystore(storeName, storeLocation) {
         location: storeLocation
     };
 
-    localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+    // Set the modal message
+    const modalMessage = document.getElementById("modal-message");
+    modalMessage.innerHTML = `${storeName} at ${storeLocation}. Do you want to proceed?`;
 
-    // Optionally, you can show a message or redirect the user to the checkout page
-    alert("Store selected: " + storeName);
-    // Redirect to checkout page if needed (uncomment the next line if desired)
-    window.location.href = "/menu";
+    // Get the modal and buttons
+    const modal = document.getElementById("storeModal");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    // Show the modal
+    modal.style.display = "block";
+
+    // When the user clicks "OK", save the store and redirect
+    confirmBtn.onclick = function() {
+        localStorage.setItem('selectedStore', JSON.stringify(selectedStore));
+        window.location.href = "/menu";  // Replace "/menu" with the correct URL for your menu page
+    };
+
+    // When the user clicks "Cancel", hide the modal
+    cancelBtn.onclick = function() {
+        modal.style.display = "none";
+        console.log('Store selection cancelled');
+    };
+
+    // When the user clicks outside the modal, close it
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
 }
 
         // Initialize map on page load
         window.onload = initMap;
+
 
 function selectStore(storeName, storeLocation) {
     // Store the selected store's name and location in localStorage
