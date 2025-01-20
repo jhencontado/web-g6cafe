@@ -60,24 +60,25 @@ CREATE TABLE order_address (
 	order_address_id INT AUTO_INCREMENT NOT NULL primary key,
     order_id INT NOT NULL,
     address TEXT NULL,
-    pickup_date DATETIME NULL,
-    delivery_date DATETIME NULL,
+    pickup_date DATETIME NULL, 
+    pickup_time TIME NULL,
+    delivery_date DATETIME NULL, 
+    delivery_time TIME NULL,
     contact_name VARCHAR(100) NOT NULL,
     contact_email VARCHAR(50) NULL,
-    contact_number INT NOT NULL,
-    delivery_instructions TEXT NULL,
+    contact_number VARCHAR(15) NOT NULL,
+    delivery_instruction TEXT NULL,
     FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
-);
-ALTER TABLE order_address MODIFY contact_number VARCHAR(15) NOT NULL;
-ALTER TABLE order_address ADD COLUMN delivery_instruction VARCHAR(255);
+); 
+
 -- Table for order_payment_details
 DROP TABLE IF EXISTS order_payment_details;
 CREATE TABLE order_payment_details (
 	order_payment_details_id INT AUTO_INCREMENT NOT NULL primary key,
     order_id INT NOT NULL,
     payment_option VARCHAR(50) NOT NULL,
-    gcash_ref_number INT NULL,
-    change_for_cash INT NULL,
+    gcash_ref_number LONG NULL,
+    change_for_cash DECIMAL(10, 2) NULL NULL,
     card_name VARCHAR(100) NULL,
     card_number LONG NULL,
     card_exp_month INT NULL,
@@ -153,7 +154,7 @@ INSERT INTO order_address (
     contact_name,
     contact_email,
     contact_number,
-    delivery_instructions
+    delivery_instruction
 )
 VALUES
 (@order_id, '123 Elm Street, Springfield, IL', '2025-01-15 10:00:00', '2025-01-15 14:00:00', 'John Doe', 'johndoe@example.com', 1234567890, null);
@@ -289,7 +290,8 @@ CREATE TABLE delivery_rider (
 	vehicle_plate_number VARCHAR(50) NOT NULL,
 	vehicle_model VARCHAR(255) NOT NULL,
 	vehicle_color VARCHAR(50) NOT NULL,
-	branch_assigned VARCHAR(255) NOT NULL
+	store_id INT NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES stores (id) ON DELETE CASCADE
 );
 
 
@@ -318,38 +320,38 @@ UPDATE admins
 SET store_id = 2
 WHERE username = 'admin_2';
     -- Insert values into delivery_rider table
-INSERT INTO delivery_rider (name, vehicle_plate_number, vehicle_model, vehicle_color, branch_assigned)
+INSERT INTO delivery_rider (name, vehicle_plate_number, vehicle_model, vehicle_color, store_id)
 VALUES
-    ('John Doe', 'ABC1234', 'Yamaha NMAX', 'Black', 'G6 Cafe Hotel Sogo - EDSA Guadalupe'),
-    ('Jane Smith', 'XYZ5678', 'Honda Click', 'White', 'G6 Cafe Makati Ave.'),
-    ('Michael Johnson', 'MNO9876', 'Suzuki Raider', 'Red', 'G6 Cafe Timog Ave., Quezon City'),
-    ('Emily Davis', 'JKL5432', 'Yamaha Aerox', 'Blue', 'G6 Cafe UST'),
-    ('Chris Brown', 'DEF2468', 'Honda Beat', 'Green', 'G6 Cafe Caloocan'),
-    ('Sarah Wilson', 'GHI1357', 'Kawasaki Ninja', 'Yellow', 'G6 Cafe Karuhatan Valenzuela City'),
-    ('David Lee', 'TUV8642', 'Yamaha Mio', 'Gray', 'G6 Cafe Valenzuela'),
-    ('Anna Martinez', 'QRS5791', 'Suzuki Skydrive', 'Black', 'G6 Cafe Tondo, Manila'),
-    ('Paul Anderson', 'WXY3214', 'Honda XRM', 'White', 'G6 Cafe Malabon'),
-    ('Laura Hernandez', 'ZXC8529', 'Yamaha Sniper', 'Blue', 'G6 Cafe Marilao'),
-    ('James Carter', 'BNM6547', 'Suzuki Burgman', 'Red', 'G6 Cafe Maginhawa'),
-    ('Jessica Walker', 'RTY7412', 'Honda PCX', 'Green', 'G6 Cafe Eastwood, Quezon City'),
-    ('Brian Harris', 'UIO9638', 'Kymco Like', 'Yellow', 'G6 Cafe Tomas Morato Ave., Quezon City'),
-    ('Olivia Moore', 'PLM2583', 'Vespa Primavera', 'Pink', 'G6 Cafe East Kapitolyo, Pasig City'),
-    ('Daniel Lewis', 'FGH7531', 'SYM Jet X', 'Orange', 'G6 Cafe Fairview Terraces, Quezon City');
+    ('John Doe', 'ABC1234', 'Yamaha NMAX', 'Black', 1),
+    ('Jane Smith', 'XYZ5678', 'Honda Click', 'White', 2),
+    ('Michael Johnson', 'MNO9876', 'Suzuki Raider', 'Red', 3),
+    ('Emily Davis', 'JKL5432', 'Yamaha Aerox', 'Blue', 4),
+    ('Chris Brown', 'DEF2468', 'Honda Beat', 'Green', 5),
+    ('Sarah Wilson', 'GHI1357', 'Kawasaki Ninja', 'Black', 6),
+    ('David Lee', 'TUV8642', 'Yamaha Mio', 'Gray', 7),
+    ('Anna Martinez', 'QRS5791', 'Suzuki Skydrive', 'Black', 8),
+    ('Paul Anderson', 'WXY3214', 'Honda XRM', 'White', 9),
+    ('Laura Hernandez', 'ZXC8529', 'Yamaha Sniper', 'Blue', 10),
+    ('James Carter', 'BNM6547', 'Suzuki Burgman', 'Red', 11),
+    ('Jessica Walker', 'RTY7412', 'Honda PCX', 'Green', 12),
+    ('Brian Harris', 'UIO9638', 'Kymco Like', 'Yellow', 13),
+    ('Olivia Moore', 'PLM2583', 'Vespa Primavera', 'Pink', 14),
+    ('Daniel Lewis', 'FGH7531', 'SYM Jet X', 'Orange', 15);
 
 -- Table for trackdetails
 DROP TABLE IF EXISTS trackdetails;
 CREATE TABLE trackdetails (
 	track_id INT AUTO_INCREMENT PRIMARY KEY,
 	order_id INT NOT NULL,
-	id INT NOT NULL,
+	store_id INT NOT NULL,
 	order_status ENUM('pending', 'preparing', 'ready for pick-up ','out for delivery', 'delivered', 'cancelled') NOT NULL,
 	delivery_rider_id INT NOT NULL,
 	FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-	FOREIGN KEY (id) REFERENCES stores(id) ON DELETE CASCADE,
+	FOREIGN KEY (store_id) REFERENCES stores(store_id) ON DELETE CASCADE,
 	FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
 );
 
-INSERT INTO trackdetails (order_id,id,order_status,delivery_rider_id)
+INSERT INTO trackdetails (order_id, store_id,order_status,delivery_rider_id)
 values (@order_id, 1,'pending',1),
 (@order_id, 1,'pending',1),
 (@order_id, 2,'pending',2),
@@ -366,8 +368,8 @@ select * from pwdsenior_details ;
 select * from order_address;
 select * from orders;
 select * from order_details;
-select distinct pwd_senior_id from pwdsenior_details;
-SELECT * FROM ORDER_PAYMENT_DETAILSstores;
+select distinct * from pwdsenior_details;
+SELECT * FROM ORDER_PAYMENT_DETAILS;
 SELECT * FROM ORDER_ADDRESS;
 select *from stores;
 select * from delivery_rider;

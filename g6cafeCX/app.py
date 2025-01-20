@@ -11,6 +11,8 @@ from flask import session
 import datetime
 import json
 
+from sqlalchemy.sql.sqltypes import NULLTYPE
+
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -66,19 +68,34 @@ class PwdSeniorDetails(db.Model):
     id_number = db.Column(db.String(100), nullable=False)
     discount_amount = db.Column(db.Numeric(10, 2), nullable=False)
 
+
+class OrderPaymentDetails(db.Model):
+    __tablename__ = 'order_payment_details'
+    order_payment_details_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'), nullable=False)
+    gcash_ref_number = db.Column(db.Integer)
+    change_for_cash = db.Column(db.Numeric(10, 2), nullable=False)
+    card_name = db.Column(db.String(100))
+    card_number = db.Column(db.BigInteger)
+    card_exp_month = db.Column(db.Integer)
+    card_exp_year = db.Column(db.Integer)
+    cvv = db.Column(db.Integer)
+
 class OrderAddress(db.Model):
     __tablename__ = 'order_address'
     order_address_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'), nullable=False)
     address = db.Column(db.Text)
     pickup_date = db.Column(db.DateTime)
+    pickup_time = db.Column(db.Time)
     delivery_date = db.Column(db.DateTime)
+    delivery_time = db.Column(db.Time)
     contact_name = db.Column(db.String(100), nullable=False)
     contact_email = db.Column(db.String(50))
     contact_number = db.Column(db.String(15), nullable=False)
     delivery_instruction = db.Column(db.Text)
 
-class Store(db.Model):
+class Stores(db.Model):
     __tablename__ = 'stores'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -93,10 +110,12 @@ class TrackDetails(db.Model):
 
     track_id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'), nullable=False)
+    store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
     order_status = db.Column(
         db.Enum('pending', 'preparing', 'ready for pick-up', 'out for delivery', 'delivered', 'cancelled'),
         nullable=False
     )
+    delivery_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
 
 @app.route('/')
 def home():
@@ -129,7 +148,7 @@ def stores():
 @app.route('/storespick')
 def storespick():
     # Fetch all stores from the database
-    stores = Store.query.all()
+    stores = Stores.query.all()
 
     # Prepare a list of stores with relevant data (name, address, business_hours)
     store_list = [{
@@ -178,7 +197,7 @@ def get_nearby_stores():
     user_lat = float(request.args.get('lat'))
     user_lng = float(request.args.get('lng'))
 
-    stores = Store.query.all()
+    stores = Stores.query.all()
 
     # Calculate distance between user location and store
     nearby_stores = []
@@ -269,18 +288,15 @@ def get_item_id(item_name):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def get_items():
-    data = request.form.get('hiddenCartListContainer')
-    if data:
-        try:
-            json_data = json.loads(data)
-            # Process the JSON data here (e.g., validate, save to database)
-            return json_data
-        except json.JSONDecodeError:
-            return jsonify({'error': 'Invalid JSON data'}), 400
-    else:
-        return jsonify({'error': 'No JSON data provided'}), 400
-    # return cart
+def get_delivery_rider_id(store_id):
+    try:
+        item = Stores.query.filter_by(store_id = store_id).first()
+        if item:
+            return item.delivery_rider_id
+        else:
+            return jsonify({'message': 'item not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/proceed-checkout', methods=['POST'])
 def proceed_checkout():
@@ -289,9 +305,7 @@ def proceed_checkout():
         # if len(data) == 0:
         #     return "No cart in session", 500
 
-
-
-        #insert to order
+        # region Insert Order
         subtotal = request.form.get('subtotal')
         vat_amount = request.form.get('vat')
         discount_amount = request.form.get('discount')
@@ -317,6 +331,7 @@ def proceed_checkout():
 
         #get the last inserted order id
         last_inserted_id = new_order.order_id
+        # endregion
 
         #insert to order_details
         # data = request.form.get('hiddenCartListContainer')
@@ -343,6 +358,7 @@ def proceed_checkout():
         #     except json.JSONDecodeError:
         #         return jsonify({'error': 'Invalid JSON data'}), 400
 
+        #region insert discount if available
         if 'discount-checkbox-pwd' in request.form:
             new_pwdsenior_details = PwdSeniorDetails(
                 order_id = last_inserted_id,
@@ -353,7 +369,6 @@ def proceed_checkout():
             )
 
             db.session.add(new_pwdsenior_details)
-            db.session.commit()
 
         if 'discount-checkbox-senior' in request.form:
             new_senior_details = PwdSeniorDetails(
@@ -365,26 +380,86 @@ def proceed_checkout():
             )
 
             db.session.add(new_senior_details)
-            db.session.commit()
 
+        db.session.commit()
+        #endregion
 
-        #insert to order_address
-        address = request.form.get('addressHidden')
+        #region insert to order_payment_details
+        payment_option = request.form.get('payment')
+        gcash_number = request.form.get('gcash-number')
+        card_name = request.form.get('card_name')
+        card_number = request.form.get('card_number')
+        expiration_month = request.form.get('expiration_month')
+        expiration_year = request.form.get('expiration_year')
+        cvv = request.form.get('cvv')
+
+        new_order_payment_details = OrderPaymentDetails(
+            order_id = last_inserted_id,
+            payment_option = payment_option,
+            gcash_ref_number = gcash_number,
+            change_for_cash = tender_amount,
+            card_name = card_name,
+            card_number = card_number,
+            card_exp_month = expiration_month,
+            card_exp_year = expiration_year,
+            card_cvv = cvv
+        )
+
+        db.session.add(new_order_payment_details)
+        db.session.commit()
+        #endregion
+
+        #region insert to order_address
+        address = request.form.get('address')
+
+        pickup_option = request.form.get('pickup_option')
+
+        if pickup_option == 'standard':
+            pickup_date = datetime.datetime.now()
+            pickup_time = datetime.datetime.now().time()
+        else:
+            pickup_date = request.form.get('pickup_date')
+            pickup_time = request.form.get('pickup_time')
+
+        del_option = request.form.get('del_option')
+
+        if del_option == 'standard':
+            delivery_date = datetime.datetime.now()
+            delivery_time = datetime.datetime.now().time()
+        else:
+            delivery_date = request.form.get('delivery_date')
+            delivery_time = request.form.get('delivery_time')
+
         contact_name = request.form.get('name')
         contact_email = request.form.get('email')
         contact_number = request.form.get('contact')
-        delivery_instruction = request.form.get('deliveryInstructionHidden')
+        delivery_instruction = request.form.get('delivery-instruction')
 
         new_address = OrderAddress(
             order_id = last_inserted_id,
             address = address,
+            pickup_date = pickup_date,
+            pickup_time = pickup_time,
+            delivery_date = delivery_date,
+            delivery_time = delivery_time,
             contact_name = contact_name,
             contact_email = contact_email,
             contact_number = contact_number,
             delivery_instruction = delivery_instruction
         )
+
         db.session.add(new_address)
         db.session.commit()
+        #endregion
+
+        #region insert in trackdetails
+        new_trackdetails = TrackDetails(
+            order_id = last_inserted_id,
+            store_id = 1, #temporary
+            order_status = 'pending',
+            delivery_rider_id = 1
+        )
+        #endregion
 
         return redirect(url_for('receipt', order_id=last_inserted_id))
 
