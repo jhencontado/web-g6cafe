@@ -12,13 +12,13 @@
 	<div class="checkout-container">
 		<form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
 			<div class="checkout">
-				<h2>Checkout</h2>
-					<div id="pickupDetails" style="display: none;">
-						 <h3>Selected Branch</h3>
-						 <img src="static/images/pencil.png" alt="Edit" class="edit-icon" onclick="editPickUpLocation()">
-						  <p id="pickup-location">Pick up your order from the selected store.</p>
-						  <a href="{{ url_for('stores') }}" class="change-store-link"></a>
-					</div>
+			<h2>Checkout</h2>
+			<div id="pickupDetails" style="display: none;">
+				<h3>Selected Branch</h3>
+				<a href="{{ url_for('stores') }}" class="change-store-link">
+				<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="edit-pickup-icon"></a>
+				<p id="pickup-location">Pick up your order from the selected store.</p>
+			</div>
 					<!-- Pick Up & Delivery Option -->
 				<h3>Order Type</h3>
 				<label>
@@ -62,19 +62,12 @@
 				<!-- PWD/Senior Citizen Discount Section -->
 				<h3>PWD/Senior Citizen Discount</h3>
 				<label>
-					<input type="checkbox" name="discount-checkbox-pwd" id="pwd-checkbox"> PWD
+					<input type="radio" name="discount-option" id="pwd-radio" value="PWD"> PWD
+					<input type="radio" name="discount-option" id="senior-radio" value="Senior"> Senior Citizen
 				</label>
-				<div id="pwd-discount-details" style="display:none;">
-					<label>Full Name: <input type="text" name="pwd_discount_name" id="pwd_discount_name" placeholder="Enter your full name"></label>
-					<label>ID Number: <input type="text" name="pwd_discount_id_number" id="pwd_discount_id_number" placeholder="Enter your ID number"></label>
-				</div>
-
-				<label>
-					<input type="checkbox" name="discount-checkbox-senior" id="senior-checkbox"> Senior Citizen
-				</label>
-				<div id="senior-discount-details" style="display:none;">
-					<label>Full Name: <input type="text" name="senior_discount_name" id="senior_discount_name" placeholder="Enter your full name"></label>
-					<label>ID Number: <input type="text" name="senior_discount_id_number" id="senior_discount_id_number" placeholder="Enter your ID number"></label>
+				<div id="discount-details" style="display:none;">
+					<label>Full Name: <input type="text" name="discount_name" id="discount_name" placeholder="Enter your full name"></label>
+					<label>ID Number: <input type="text" name="discount_id_number" id="discount_id_number" placeholder="Enter your ID number"></label>
 				</div>
 
 				<!-- Payment Details -->
@@ -140,8 +133,16 @@
 					</div>
 					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
 				</div>
-				<button type="button" onclick="showModal()" id="place_order">Place Order</button>
+		<button type="button" id="place_order">Place Order</button>
+		<div id="thankYouModal" class="modal" style="display: none;">
+			<div class="modal-content">
+				<img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
+				<h2>Thank you for your Order!</h2>
+				<p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
+				<button type="button" id="confirmSubmit">OK</button>
 			</div>
+		</div>
+	</div>
 			<div id="hiddenCartListContainer" hidden="hidden">
 				<input type="text" name="subtotal" id="subtotal_hidden" />
 				<input type="text" name="vat" id="vat_hidden" />
@@ -178,17 +179,7 @@
 			</div>
 		</div>
 	</div>
-        <!-- Thank You Modal -->
-    <div id="thankYouModal" class="modal">
-        <div class="modal-content">
-            <!-- Add Image at the top -->
-            <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
 
-            <h2>Thank you for your Order!</h2>
-            <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
-            <button type="button" onclick="submitForm()" id="confirmSubmit">OK </button>
-        </div>
-    </div>
 
 {% include "footer.html" %}
 </body>
@@ -206,15 +197,12 @@
     const deliveryAddressSection = document.getElementById("delivery_address_section");
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
-
-    const pwdCheckbox = document.getElementById('pwd-checkbox');
-    const seniorCheckbox = document.getElementById('senior-checkbox');
-    const pwdDiscountDetails = document.getElementById('pwd-discount-details');
-    const seniorDiscountDetails = document.getElementById('senior-discount-details');
-    const pwdDiscountNameInput = document.getElementById('pwd_discount_name');
-    const pwdDiscountIDNumberInput = document.getElementById('pwd_discount_id_number');
-    const seniorDiscountNameInput = document.getElementById('senior_discount_name');
-    const seniorDiscountIDNumberInput = document.getElementById('senior_discount_id_number');
+	const pwdRadio = document.getElementById('pwd-radio');
+    const seniorRadio = document.getElementById('senior-radio');
+    const discountDetails = document.getElementById('discount-details');
+    const discountNameInput = document.getElementById('discount_name');
+    const discountIdInput = document.getElementById('discount_id_number');
+    const orderSummary = document.getElementById('order-summary');
 
     const cashPaymentRadio = document.getElementById("cash-payment");
     const gcashPaymentRadio = document.getElementById("gcash-payment");
@@ -228,6 +216,10 @@
     const cardNameInput = document.getElementById('card_name');
     const cardNumberInput = document.getElementById('card_number');
     const cvvInput = document.getElementById('cvv');
+
+    const placeOrderButton = document.getElementById('place_order');
+    const confirmButton = document.getElementById('confirmSubmit');
+
 
      // Event listener for order type selection
     orderTypeRadios.forEach(radio => {
@@ -265,6 +257,64 @@
         loadCart();
         displaySelectedStore();
     }
+ function displayStoreDetails() {
+    const storeDetails = localStorage.getItem('selectedStore');
+
+    if (storeDetails) {
+        try {
+            const store = JSON.parse(storeDetails);
+            const pickupDetails = document.getElementById('pickupDetails');
+            const pickupLocation = document.getElementById('pickup-location');
+
+            if (store.name && store.address) {
+                pickupLocation.textContent = `${store.name}, located at ${store.address}.`;
+                pickupDetails.style.display = 'block';
+            } // Close if statement here
+        } catch (error) {
+            console.error("Error parsing store details:", error);
+        }
+    }
+}
+
+
+function editPickUpLocation() {
+    console.log('Edit pick-up location triggered'); // Debug log
+
+    // Get the current pick-up location value
+    let currentLocation = document.getElementById('pickup-location').innerText;
+    console.log('Current location:', currentLocation); // Debug log
+
+    // Prompt user with a confirmation dialog (OK/Cancel)
+    let changeLocation = confirm('Do you want to change the pick-up location?');
+
+    // If the user clicked OK, allow them to select a new location or handle this logic
+    if (changeLocation) {
+        // Redirect to store pick-up location page to choose a new store
+        const storePickUpUrl = "/stores"; // Adjust the URL as needed
+
+        console.log('Redirecting to:', storePickUpUrl); // Debug log
+
+        // Save the current location temporarily before redirection (optional)
+        localStorage.setItem('previousPickupLocation', currentLocation);
+
+        // Redirect to the store pick-up page
+        window.location.href = storePickUpUrl;
+    }
+}
+
+// Attach click event to the pencil icon
+document.addEventListener('DOMContentLoaded', () => {
+    const editIcon = document.getElementById('edit-pickup-icon');
+    if (editIcon) {
+        console.log('Edit icon found. Adding click event listener.'); // Debug log
+        editIcon.addEventListener('click', editPickUpLocation);
+    } else {
+        console.error('Edit icon not found in the DOM.');
+    }
+});
+
+// Call the function on page load
+window.onload = displayStoreDetails;
 
     function displaySavedAddress() {
         if (!addressSection) {
@@ -397,45 +447,46 @@
 			});
 		 });
 
-		// Event listener for PWD checkbox
-		pwdCheckbox.addEventListener('change', function () {
-			// Show/hide PWD details
-			pwdDiscountDetails.style.display = this.checked ? 'block' : 'none';
-			pwdDiscountNameInput.required = this.checked;
-			pwdDiscountIDNumberInput.required = this.checked;
+	function updateDiscountDetails() {
+  console.log("PWD Checked:", pwdRadio.checked);
+  console.log("Senior Checked:", seniorRadio.checked);
 
-			// If PWD is checked, hide Senior Citizen details and uncheck its checkbox
-			if (this.checked) {
-				seniorCheckbox.checked = false;
-				seniorDiscountDetails.style.display = 'none';
-				seniorDiscountNameInput.required = false;
-				seniorDiscountIDNumberInput.required = false;
-			}
+  // Show the discount details section if either radio button is checked
+  if (pwdRadio.checked || seniorRadio.checked) {
+    discountDetails.style.display = 'block';
+    discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
+    discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
+  } else {
+    // Hide the discount details section and clear the inputs if neither is checked
+    discountDetails.style.display = 'none';
+    discountNameInput.value = '';
+    discountIdInput.value = '';
+  }
 
-			// Call loadCart() to update the summary with discount
-			loadCart();
-		});
+  // Call loadCart to recalculate the cart
+  loadCart();
+}
 
-		// Event listener for Senior Citizen checkbox
-		seniorCheckbox.addEventListener('change', function () {
-			// Show/hide Senior Citizen details
-			seniorDiscountDetails.style.display = this.checked ? 'block' : 'none';
-			seniorDiscountNameInput.required = this.checked;
-			seniorDiscountIDNumberInput.required = this.checked;
+// Event listeners to update details when either radio button is selected
+pwdRadio.addEventListener('change', updateDiscountDetails);
+seniorRadio.addEventListener('change', updateDiscountDetails);
 
-			// If Senior Citizen is checked, hide PWD details and uncheck its checkbox
-			if (this.checked) {
-				pwdCheckbox.checked = false;
-				pwdDiscountDetails.style.display = 'none';
-				pwdDiscountNameInput.required = false;
-				pwdDiscountIDNumberInput.required = false;
-			}
+// Optionally, reset radio buttons when clicking outside the discount section
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('label')) {
+    // Uncheck both if clicked outside the discount section
+    pwdRadio.checked = false;
+    seniorRadio.checked = false;
+    discountDetails.style.display = 'none';
+    discountNameInput.value = '';
+    discountIdInput.value = '';
 
-			// Call loadCart() to update the summary with discount
-			loadCart();
-		});
+    // Recalculate the cart after unchecking
+    loadCart();
+  }
+});
 
-		tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     }
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
@@ -476,7 +527,7 @@
                 `;
             });
 
-            if (pwdCheckbox.checked || seniorCheckbox.checked) {
+            if (pwdRadio.checked || seniorRadio.checked) {
                 discount = subtotal * 0.20;
                 vat = 0;
             } else {
@@ -524,118 +575,86 @@
             }
         });
     }
+   // Event listener for the "Place Order" button
+document.getElementById('place_order').addEventListener('click', function(event) {
+    // Prevent form submission
+    event.preventDefault();
 
-    const form = document.getElementById('checkout-form');
+    // Validate the form before showing the modal
+    if (validateForm()) {
+        // Show the modal if validation passes
+        showModal();
+    } else {
+        alert('Please fill out all required fields.');
+    }
+});
+
+// Show the modal function
+function showModal() {
     const modal = document.getElementById('thankYouModal');
+    modal.style.display = "block";
+}
 
-     function showModal() {
-      modal.style.display = "block";
-    }
+// Event listener for the "OK" button inside the modal
+document.getElementById('confirmSubmit').addEventListener('click', function() {
+    // Submit the form after confirmation
+    document.getElementById('checkout-form').submit();
 
-    const placeOrder = document.getElementById('place_order');
-    placeOrder.addEventListener('click', showModal);
+    // Close the modal after submitting the form
+    closeModal();
+});
 
-    function closeModal() {
-      modal.style.display = "none";
-    }
+// Close the modal function
+function closeModal() {
+    const modal = document.getElementById('thankYouModal');
+    modal.style.display = "none";
+}
 
-    function submitForm() {
-      // Close the modal
-      closeModal();
+// Form validation function
+function validateForm() {
+    const requiredFields = document.querySelectorAll('#checkout-form [required]');
 
-      clearCart();
-
-      // Submit the form
-     form.submit();
-    }
-
-    const submitButton = document.getElementById('confirmSubmit');
-    submitButton.addEventListener('click', submitForm);
-
-    // Function to clear the cart
-    function clearCart() {
-        // If the cart is stored in localStorage, remove it
-        localStorage.removeItem('cart');
-        loadCart();  // Reload the cart to reflect the changes
-    }
-
-    function editAddress() {
-        const currentAddress = document.getElementById('address').innerText;
-        document.getElementById('editAddressText').value = currentAddress;
-        document.getElementById('editAddressModal').style.display = 'block';
-    }
-
-    // Function to save the new address
-    function saveAddress() {
-        const newAddress = document.getElementById('editAddressText').value;
-        document.getElementById('address').innerText = newAddress;
-        document.getElementById('addressHidden').value = newAddress;
-
-        // Save the new address to local storage
-        localStorage.setItem('address', newAddress);
-        localStorage.setItem('addressHidden', newAddress);
-
-        closeEditAddressModal();
-    }
-
-    // Function to close the address edit modal
-    function closeEditAddressModal() {
-        document.getElementById('editAddressModal').style.display = 'none';
-    }
-
-    // Function to edit the delivery instruction
-	function editDeliveryInstruction() {
-		const currentInstructions = document.getElementById('deliveryInstruction').innerText;
-		document.getElementById('editInstructionText').value = currentInstructions;
-		document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
-	}
-
-// Function to save the new delivery instruction
-	function saveDeliveryInstruction() {
-		const newInstructions = document.getElementById('editInstructionText').value;
-		document.getElementById('deliveryInstruction').innerText = newInstructions;
-		document.getElementById('deliveryInstructionHidden').value = newInstructions;
-
-		// Save the new delivery instruction to local storage
-		localStorage.setItem('deliveryInstruction', newInstructions);
-		localStorage.setItem('deliveryInstructionHidden', newInstructions);
-
-		closeEditInstructionsModal(); // Close the modal
-	}
-
-// Function to close the modal
-	function closeEditInstructionsModal() {
-		document.getElementById('editInstructionModal').style.display = 'none'; // Hide the modal
-	}
-
-
-    function editPickUpLocation() {
-        // Get the current pick-up location value
-        let currentLocation = document.getElementById('pickup-location').innerText;
-
-        // Prompt user with a confirmation dialog (OK/Cancel)
-        let changeLocation = confirm('Do you want to change the pick-up location?');
-
-        // If the user clicked OK, allow them to select a new location or handle this logic
-        if (changeLocation) {
-            // Example: Directly update the location with a predefined value
-            let newLocation = "New Location"; // Replace this with actual logic for selecting a new location
-
-            // Update the pick-up location on the page
-            document.getElementById('pickup-location').innerText = newLocation;
-
-            // Optionally, save the updated pick-up location to localStorage
-            localStorage.setItem('pickupLocation', newLocation);
-
-            // Define the URL for the store pick-up page
-            const storePickUpUrl = "/stores";  // Adjust the URL as needed
-
-            // Redirect to store pick-up location page to choose a new store
-            window.location.href = storePickUpUrl;  // Redirect to the store pick-up page
+    // Check if any required field is empty
+    for (let field of requiredFields) {
+        if (!field.value.trim()) {
+            field.focus();
+            return false;  // Return false if a required field is empty
         }
     }
 
-});
+    // Check if an order type is selected (Pick-Up or Delivery)
+    const orderType = document.querySelector('input[name="order_type"]:checked');
+    if (!orderType) {
+        alert('Please select an order type (Pick-Up or Delivery).');
+        return false;
+    }
 
+    // Check if discount details are filled if a discount option is selected
+    const discountOption = document.querySelector('input[name="discount-option"]:checked');
+    if (discountOption) {
+        const discountName = document.querySelector('input[name="discount_name"]').value.trim();
+        const discountId = document.querySelector('input[name="discount_id_number"]').value.trim();
+        if (!discountName || !discountId) {
+            alert('Please fill out the discount details.');
+            return false;
+        }
+    }
+
+    // Check if delivery address is filled when required
+    const deliveryOption = document.querySelector('input[name="option"]:checked');
+    if (deliveryOption && (deliveryOption.value === 'scheduled_delivery' || deliveryOption.value === 'delivery')) {
+        const address = document.querySelector('input[name="address"]').value.trim();
+        if (!address) {
+            alert('Please enter a delivery address.');
+            return false;
+        }
+    }
+
+    return true;  // Return true if all fields are valid
+}
+
+    // Initialize the cart when page loads
+    loadCart();
+  });
 </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>

@@ -134,27 +134,33 @@
         }
     });
 
-    // Handle the edit item button click
     cartItemsContainer.addEventListener("click", (event) => {
-        if (event.target && event.target.classList.contains("edit-item")) {
-            const itemIndex = event.target.getAttribute("data-index");
-            const item = cartData[itemIndex];
+    if (event.target && event.target.classList.contains("edit-item")) {
+        const itemIndex = event.target.getAttribute("data-index");
+        console.log("Item index:", itemIndex); // Debugging line
+        const item = cartData[itemIndex];
+        console.log("Item data:", item); // Debugging line
 
+        if (item) {
             // Populate the modal with the current item data
-            document.getElementById("edit-item-name").textContent = item.itemName; // Display item name as text
+            document.getElementById("edit-item-name").textContent = item.itemName || "No name available"; // Fallback if itemName is missing
             editItemQuantityDisplay.textContent = item.quantity.toString().padStart(2, '0');
             editItemPreferencesInput.value = item.preferences || '';
 
             const itemPhoto = item.itemPhoto || 'default-placeholder.jpg'; // Default placeholder if no photo
-            const editItemPhoto = document.getElementById("edit-item-photo"); // Image element in the modal
+            const editItemPhoto = document.getElementById("edit-item-photo");
             editItemPhoto.src = itemPhoto; // Set the photo source
 
             editingItemIndex = itemIndex;
 
             // Open the modal
             modal.style.display = "block";
+        } else {
+            console.log("Item data not found for index:", itemIndex);
         }
-    });
+    }
+});
+
 
     // Handle modal close
     closeModalButton.addEventListener("click", () => {
@@ -178,33 +184,34 @@
 
     // Handle form submission to save changes
     editItemForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        const updatedItemName = editItemNameInput.value;
-        const updatedItemQuantity = parseInt(editItemQuantityDisplay.textContent);
-        const updatedItemPreferences = editItemPreferencesInput.value;
+    const updatedItemName = editItemNameInput.textContent || ''; // Get the item name from modal
+    const updatedItemQuantity = parseInt(editItemQuantityDisplay.textContent);
+    const updatedItemPreferences = editItemPreferencesInput.value;
 
-        if (updatedItemQuantity > 0) {
-            // Update the item in cartData
-            cartData[editingItemIndex] = {
-                ...cartData[editingItemIndex],
-                itemName: updatedItemName,
-                quantity: updatedItemQuantity,
-                preferences: updatedItemPreferences
-            };
+    if (updatedItemQuantity > 0) {
+        // Update the item in cartData
+        cartData[editingItemIndex] = {
+            ...cartData[editingItemIndex],
+            itemName: updatedItemName,
+            quantity: updatedItemQuantity,
+            preferences: updatedItemPreferences
+        };
 
-            // Save the updated cart data
-            localStorage.setItem('cart', JSON.stringify(cartData));
+        // Save the updated cart data back to localStorage
+        localStorage.setItem('cart', JSON.stringify(cartData));
 
-            // Close the modal
-            modal.style.display = "none";
+        // Close the modal
+        modal.style.display = "none";
 
-            // Reload the page to reflect changes
-            window.location.reload();
-        } else {
-            alert("Quantity must be greater than 0.");
-        }
-    });
+        // Reload the page to reflect changes
+        window.location.reload();
+    } else {
+        alert("Quantity must be greater than 0.");
+    }
+});
+
 
     // Checkout button handling
     const checkoutButton = document.getElementById("checkout-button");
