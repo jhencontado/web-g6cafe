@@ -347,7 +347,7 @@ CREATE TABLE trackdetails (
 	order_status ENUM('pending', 'preparing', 'ready for pick-up ','out for delivery', 'delivered', 'cancelled') NOT NULL,
 	delivery_rider_id INT NOT NULL,
 	FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
-	FOREIGN KEY (store_id) REFERENCES stores(store_id) ON DELETE CASCADE,
+	FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE,
 	FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
 );
 

@@ -1094,6 +1094,38 @@ button:hover {
         padding: 3px 6px;
     }
 }
+/* Simple modal styling with class 'store-modal' */
+.store-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.store-modal .modal-content {
+    text-align: center;
+}
+
+.store-modal .modal-footer {
+    text-align: center;
+}
+
+.store-modal .modal-close {
+    background-color: #8d6e63;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.store-modal .modal-close:hover {
+    background-color: #c3b39a;
+}
 
 
 .best-seller-navigation {
@@ -1144,6 +1176,7 @@ button:hover {
             max-width: 55%; /* Adjust width of the checkout form */
             background-color: #fff;
             border-radius: 8px;
+            min-height: 200px
         }
 
         .order-summary {
@@ -1154,6 +1187,7 @@ button:hover {
             box-shadow: 0 2px 10px rgba(165, 42, 42, 0.2);
             top: 0;
             margin-left: 20px;
+            min-height: 200px;
         }
 
         .checkout {
@@ -1376,8 +1410,8 @@ button:hover {
 }
 .checkout label input[type="date"]:hover,
 .checkout label input[type="time"]:hover{
-    background-color: #f9e4d4; /* Light background color on hover */
-    border-color: #8d6e63; /* Darker border color on hover */
+    background-color: #f9e4d4;
+    border-color: #8d6e63;
     width: 100%;
 }
 .checkout strong {
@@ -1471,6 +1505,11 @@ button:hover {
 #place_order:hover {
     background-color: #c3b39a;
 }
+#thankYouModal {
+    display: none;
+    /* Add your styling for the modal */
+}
+
 /* Modal container */
 .modal {
   display: none; /* Hidden by default */

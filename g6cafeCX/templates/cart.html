@@ -66,6 +66,17 @@
     </div>
 </div>
     </section>
+<!-- Modal Structure with a new class 'store-modal' -->
+<div id="store-selection-modal" class="store-modal" style="display: none;">
+    <div class="modal-content">
+        <h4>Please Select a Local Store</h4>
+        <p>You need to select a store to proceed with your order.</p>
+    </div>
+    <div class="modal-footer">
+        <button id="ok-button" class="modal-close btn">OK</button>
+    </div>
+</div>
+
 
     <script>
        document.addEventListener('DOMContentLoaded', () => {
@@ -214,22 +225,41 @@
 
 
     // Checkout button handling
-    const checkoutButton = document.getElementById("checkout-button");
-    if (checkoutButton) {
-        checkoutButton.addEventListener("click", (event) => {
-            event.preventDefault();
+const checkoutButton = document.getElementById("checkout-button");
+if (checkoutButton) {
+    checkoutButton.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        // Check if a store is selected (assuming you store this information in localStorage or some global variable)
+        const selectedStore = localStorage.getItem('selectedStore'); // Or use your preferred method for checking the store selection
+
+        if (!selectedStore) {
+            // If no store is selected, show the modal
+            const modal = document.getElementById("store-selection-modal");
+            const okButton = document.getElementById("ok-button");
+
+            // Show the modal
+            modal.style.display = "block";
+
+            // Handle OK button click to close the modal and redirect to the stores page
+            okButton.addEventListener("click", () => {
+                modal.style.display = "none"; // Close the modal
+                window.location.href = "/stores"; // Redirect to the stores page
+            });
+        } else {
             if (cartData.length > 0) {
                 alert("Proceeding to Checkout. Thank you for your order!");
-
                 localStorage.setItem('cart', JSON.stringify(cartData));
                 window.location.href = "{{ url_for('checkout') }}";
             } else {
                 alert("Your cart is empty. Please add items to your cart before proceeding to checkout.");
             }
-        });
-    } else {
-        console.error("Checkout button not found!");
-    }
+        }
+    });
+} else {
+    console.error("Checkout button not found!");
+}
+
 });
 
     document.addEventListener('DOMContentLoaded', () => {
