@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS pwdsenior_details;
 CREATE TABLE pwdsenior_details (
     pwdsenior_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     order_id INT NULL,
-    discount_type VARCHAR(50) NOT NULL,
+    discount_type VARCHAR(50) NULL,
     customer_name VARCHAR(100) NOT NULL,
     id_number VARCHAR(100) NOT NULL,
     discount_amount DECIMAL(10, 2) NOT NULL,
