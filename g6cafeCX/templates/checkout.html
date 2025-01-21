@@ -144,6 +144,7 @@
 				<input type="text" name="amount_due" id="amount_due_hidden" />
 				<input type="text" name="change_value" id="change_value_hidden" />
 				<input type="text" name="store_name" id="store_name_hidden" />
+				<div id="hidden-order-summary"></div>
 			</div>
 		</form>
 		<div class="order-summary">
@@ -493,6 +494,7 @@
             orderSummary.innerHTML = '<p>Your cart is empty.</p>';
         } else {
             let orderSummaryHtml = '';
+            let hiddenOrderSummary = '';
             itemIndex = 0
 
             cartItems.forEach(item => {
@@ -510,13 +512,6 @@
                    <div>
                     <p class="item-name">
                         ${item.itemName}
-                        <div hidden="hidden">
-							<input type="hidden" name=${item_subtotalName}${itemSubtotal.toFixed(2)}</input>
-							<input type="hidden" name=${item_priceName}>${item.itemPrice.toFixed(2)}</input>
-							<input type="hidden" name=${item_quantityName}>${item.quantity}</input>
-							<input type="hidden" name=${item_preferenceName}>${item_preference}</input>
-						</div>
-
                         <span class="item-subtotal">P${itemSubtotal.toFixed(2)}</span>
                         <span class="item-price">P${item.itemPrice.toFixed(2)}</span>
                         <span class="item-quantity">${item.quantity}</span>
@@ -524,6 +519,13 @@
                     <p class="item-preference">${item_preference}</p>
                 </div>
 
+                `;
+
+                hiddenOrderSummary += `
+					<input type="hidden" name=${item_subtotalName}${itemSubtotal.toFixed(2)}</input>
+					<input type="hidden" name=${item_priceName}>${item.itemPrice.toFixed(2)}</input>
+					<input type="hidden" name=${item_quantityName}>${item.quantity}</input>
+					<input type="hidden" name=${item_preferenceName}>${item_preference}</input>
                 `;
             });
 
@@ -538,6 +540,7 @@
             const totalAmount = subtotal + vat - discount;
 
             orderSummary.innerHTML = orderSummaryHtml;
+            document.getElementById('hidden-order-summary').innerHTML = hiddenOrderSummary;
             document.getElementById('total-items').innerText = totalItems;
 
             document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
