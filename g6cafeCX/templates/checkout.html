@@ -502,6 +502,7 @@
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
 
+				item_name = "item-name" + itemIndex
 				item_subtotalName = "item-subtotal" + itemIndex
 				item_priceName = "item-price" + itemIndex
 				item_quantityName = "item-quantity" + itemIndex
@@ -522,7 +523,8 @@
                 `;
 
                 hiddenOrderSummary += `
-					<input type="hidden" name=${item_subtotalName}${itemSubtotal.toFixed(2)}</input>
+					<input type="hidden" name=${item_name}>${item.itemName}</input>
+					<input type="hidden" name=${item_subtotalName}>${itemSubtotal.toFixed(2)}</input>
 					<input type="hidden" name=${item_priceName}>${item.itemPrice.toFixed(2)}</input>
 					<input type="hidden" name=${item_quantityName}>${item.quantity}</input>
 					<input type="hidden" name=${item_preferenceName}>${item_preference}</input>
