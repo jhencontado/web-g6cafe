@@ -68,9 +68,11 @@ CREATE TABLE order_address (
     contact_email VARCHAR(50) NULL,
     contact_number VARCHAR(15) NOT NULL,
     delivery_instruction TEXT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
-); 
+    order_type varchar(50) not null,
 
+    FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE
+);
+CREATE INDEX idx_order_type ON order_address(order_type);
 -- Table for order_payment_details
 DROP TABLE IF EXISTS order_payment_details;
 CREATE TABLE order_payment_details (
@@ -117,8 +119,8 @@ VALUES
 ('Pastries','Donut','donut.jpg',70	),
 ('Pastries','Muffins','muffin.jpg',75),
 ('Pastries','Biscotto','biscotto.jpg',80),
-('Pasta','Spaghetti Bolognaise','Spaghetti Bolognese.jpg"',185),
-('Pasta','Lasagne','lasagna.jpg"',190),
+('Pasta','Spaghetti Bolognaise','Spaghetti Bolognese.jpg',185),
+('Pasta','Lasagne','lasagna.jpg',190),
 ('Pasta','Pasta Carbonara','Pasta Carbonara.jpg',150),
 ('Pasta','Ravioli','ravioli.jpg',200),
 ('Pasta','Spaghetti alle Vongole','Spaghetti alle Vongole.jpg',200),
@@ -154,10 +156,11 @@ INSERT INTO order_address (
     contact_name,
     contact_email,
     contact_number,
-    delivery_instruction
+    delivery_instruction,
+    order_type
 )
 VALUES
-(@order_id, '123 Elm Street, Springfield, IL', '2025-01-15 10:00:00', '2025-01-15 14:00:00', 'John Doe', 'johndoe@example.com', 1234567890, null);
+(@order_id, '123 Elm Street, Springfield, IL', '2025-01-15 10:00:00', '2025-01-15 14:00:00', 'John Doe', 'johndoe@example.com', 1234567890, null,'delivery');
 
 -- Insert payment details for a cash payment
 INSERT INTO order_payment_details (
@@ -344,20 +347,23 @@ CREATE TABLE trackdetails (
 	track_id INT AUTO_INCREMENT PRIMARY KEY,
 	order_id INT NOT NULL,
 	store_id INT NOT NULL,
-	order_status ENUM('pending', 'preparing', 'ready for pick-up ','out for delivery', 'delivered', 'cancelled') NOT NULL,
+	order_status ENUM('pending', 'preparing', 'ready for pick-up ','picked-up','out for delivery', 'delivered', 'cancelled') NOT NULL,
+    order_type varchar(50)not null,
 	delivery_rider_id INT NOT NULL,
 	FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
 	FOREIGN KEY (store_id) REFERENCES stores(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_type) REFERENCES order_address(order_type) ON DELETE CASCADE,
 	FOREIGN KEY (delivery_rider_id) REFERENCES delivery_rider(delivery_rider_id)
 );
 
-INSERT INTO trackdetails (order_id, store_id,order_status,delivery_rider_id)
-values (@order_id, 1,'pending',1),
-(@order_id, 1,'pending',1),
-(@order_id, 2,'pending',2),
-(@order_id, 2,'pending',2),
-(@order_id, 3,'pending',2),
-(@order_id, 3,'pending',2);
+
+INSERT INTO trackdetails (order_id, store_id,order_status,order_type,delivery_rider_id)
+values (@order_id, 1,'pending','delivery',1),
+(@order_id, 1,'pending','delivery',1),
+(@order_id, 2,'pending','delivery',2),
+(@order_id, 2,'pending','delivery',2),
+(@order_id, 3,'pending','delivery',2),
+(@order_id, 3,'pending','delivery',2);
 
 
 

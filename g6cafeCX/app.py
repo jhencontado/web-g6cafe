@@ -92,6 +92,7 @@ class OrderAddress(db.Model):
     contact_email = db.Column(db.String(50))
     contact_number = db.Column(db.String(15), nullable=False)
     delivery_instruction = db.Column(db.Text)
+    order_type = db.Column(db.String(50), nullable=True)
 
 class Stores(db.Model):
     __tablename__ = 'stores'
@@ -120,10 +121,11 @@ class TrackDetails(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'), nullable=False)
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
     order_status = db.Column(
-        db.Enum('pending', 'preparing', 'ready for pick-up', 'out for delivery', 'delivered', 'cancelled'),
+        db.Enum('pending', 'preparing', 'ready for pick-up','picked-up' 'out for delivery', 'delivered', 'cancelled'),
         nullable=False
     )
     delivery_rider_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
+    order_type = db.Column(db.String(50), db.ForeignKey('order_address.order_type'), nullable=False)
 
 @app.route('/')
 def home():
@@ -451,6 +453,8 @@ def proceed_checkout():
         contact_number = request.form.get('contact')
         delivery_instruction = request.form.get('delivery-instruction')
 
+
+
         new_address = OrderAddress(
             order_id = last_inserted_id,
             address = address,
@@ -461,7 +465,8 @@ def proceed_checkout():
             contact_name = contact_name,
             contact_email = contact_email,
             contact_number = contact_number,
-            delivery_instruction = delivery_instruction
+            delivery_instruction = delivery_instruction,
+            order_type  = order_type
         )
 
         db.session.add(new_address)
@@ -472,11 +477,14 @@ def proceed_checkout():
         store_name = request.form.get('store_name')
         store_id = get_store_id(store_name)
         rider_id = get_delivery_rider_id(store_id)
+
+
         new_trackdetails = TrackDetails(
             order_id = last_inserted_id,
             store_id = store_id,
             order_status = 'pending',
-            delivery_rider_id = rider_id
+            delivery_rider_id = rider_id,
+            order_type = order_type
         )
 
         db.session.add(new_trackdetails)
@@ -666,7 +674,7 @@ def admin_update_status():
             FROM orders o
             LEFT JOIN order_address oa ON o.order_id = oa.order_id
             LEFT JOIN trackdetails t ON o.order_id = t.order_id
-            WHERE t.id = :store_id
+            WHERE t.store_id = :store_id
         """),
         {'store_id': store_id}
     ).fetchall()
@@ -701,7 +709,7 @@ def admin_update_status():
                     UPDATE trackdetails 
                     SET order_status = :status, 
                         delivery_rider_id = :rider_id 
-                    WHERE order_id = :order_id AND id = :store_id
+                    WHERE order_id = :order_id AND store_id = :store_id
                 """),
                 {'status': order_status, 'rider_id': delivery_rider_id, 'order_id': order_id, 'store_id': store_id}
             )
@@ -722,7 +730,7 @@ def admin_update_status():
                     FROM orders o
                     LEFT JOIN order_address oa ON o.order_id = oa.order_id
                     LEFT JOIN trackdetails t ON o.order_id = t.order_id
-                    WHERE t.id = :store_id
+                    WHERE t.store_id = :store_id
                 """),
                 {'store_id': store_id}
             ).fetchall()
