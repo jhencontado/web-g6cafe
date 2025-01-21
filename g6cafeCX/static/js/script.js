@@ -97,11 +97,6 @@ function loadMenu(category) {
             const menuContainer = document.getElementById('menu-items');
             menuContainer.innerHTML = ''; // Clear existing menu items
 
-            if (!data || data.length === 0) {
-                menuContainer.innerHTML = '<p>No menu items found.</p>';
-                return;
-            }
-
             data.forEach(item => {
                 const menuItem = document.createElement('div');
                 menuItem.classList.add('product-card');
@@ -118,10 +113,7 @@ function loadMenu(category) {
                 menuContainer.appendChild(menuItem);
             });
         })
-        .catch(error => {
-            console.error('Error fetching menu:', error);
-            document.getElementById('menu-items').innerHTML = '<p>Error loading menu.</p>';
-        });
+
 }
 
 

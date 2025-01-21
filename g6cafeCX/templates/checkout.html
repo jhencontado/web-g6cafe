@@ -11,14 +11,28 @@
 	<!-- Checkout Form -->
 	<div class="checkout-container">
 		<form id="checkout-form" class="checkout-form" action="{{ url_for('proceed_checkout') }}" method="POST">
-			<div class="checkout">
-				<h2>Checkout</h2>
-				<div id="pickupDetails" style="display: none;">
-					<h3>Selected Branch</h3>
-					<a href="{{ url_for('stores') }}" class="change-store-link">
-					<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="edit-pickup-icon"></a>
-					<p id="pickup-location">Pick up your order from the selected store.</p>
-				</div>
+					<div class="checkout">
+			<h2>Checkout</h2>
+
+			<!-- Branch Selection Details (Initially hidden if a branch is selected) -->
+			<div id="pickupDetails" style="display: none;">
+				<h3>Selected Branch</h3>
+				<a href="{{ url_for('stores') }}" class="change-store-link">
+					<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="edit-pickup-icon">
+				</a>
+				<p id="pickup-location"></p>
+			</div>
+
+			<!-- Store Selection Prompt (Initially hidden if a store is selected) -->
+				<div id="store-selection-prompt" style="display: none;">
+				<a href="{{ url_for('stores') }}" class="select-store-link">
+					<img src="static/images/pencil.png" alt="Edit" class="edit-icon" id="storeselection">
+				</a>
+					<p>Please select a local Store to proceed with your order.</p>
+			</div>
+
+
+
 					<!-- Pick Up & Delivery Option -->
 				<h3>Order Type</h3>
 				<label>
@@ -62,12 +76,16 @@
 
 				<!-- PWD/Senior Citizen Discount Section -->
 				<h3>PWD/Senior Citizen Discount</h3>
+						<label>
+					<input type="radio" name="discount-option" id="none-radio" value="None" checked> None
+				</label>
 				<label>
 					<input type="radio" name="discount-option" id="pwd-radio" value="PWD"> PWD
 				</label>
 				<label>
 					<input type="radio" name="discount-option" id="senior-radio" value="Senior"> Senior Citizen
 				</label>
+
 				<div id="discount-details" style="display:none;">
 					<label>Full Name: <input type="text" name="discount_name" id="discount_name" placeholder="Enter your full name"></label>
 					<label>ID Number: <input type="text" name="discount_id_number" id="discount_id_number" placeholder="Enter your ID number"></label>
@@ -100,11 +118,11 @@
 				<!-- Card Details (hidden by default) -->
 				<div id="card-details" class="payment-details" hidden="hidden">
 					<h4>Card Details</h4>
-					<label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" required></label>
-					<label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" required></label>
+					<label>Name on Card: <input type="text" name="card_name" placeholder="Full Name on Card" id="card_name" ></label>
+					<label>Card Number: <input type="text" name="card_number" placeholder="1234 5678 9012 3456" id="card_number" ></label>
 					<div class="expiration-container">
 						<label>Expiration Month:
-							<select name="expiration_month" required>
+							<select name="expiration_month" >
 								<option value="01">01</option>
 								<option value="02">02</option>
 								<option value="03">03</option>
@@ -120,7 +138,7 @@
 							</select>
 						</label>
 						<label>Expiration Year:
-							<select name="expiration_year" required>
+							<select name="expiration_year" >
 								<option value="2024">2024</option>
 								<option value="2025">2025</option>
 								<option value="2026">2026</option>
@@ -133,7 +151,7 @@
 							</select>
 						</label>
 					</div>
-					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" required></label>
+					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" ></label>
 				</div>
 				<button type="button" onclick="showModal()" id="place_order">Place Order</button>
 			</div>
@@ -205,6 +223,7 @@
     const cardDetailsSection = document.getElementById("card-details");
 	const pwdRadio = document.getElementById('pwd-radio');
     const seniorRadio = document.getElementById('senior-radio');
+    const noneRadio = document.getElementById('none-radio');
     const discountDetails = document.getElementById('discount-details');
     const discountNameInput = document.getElementById('discount_name');
     const discountIdInput = document.getElementById('discount_id_number');
@@ -223,33 +242,42 @@
     const cardNumberInput = document.getElementById('card_number');
     const cvvInput = document.getElementById('cvv');
 
-     // Event listener for order type selection
-    orderTypeRadios.forEach(radio => {
-        radio.addEventListener("change", function () {
-            if (this.value === "delivery") {
-                // Show delivery options
-                deliveryOptions.style.display = "block";
-                pickUpOptions.style.display = "none";
-                deliveryAddressSection.style.display = "block";
-            } else if (this.value === "pick_up") {
-                // Show pick-up options
-                pickUpOptions.style.display = "block";
-                deliveryOptions.style.display = "none";
-                deliveryAddressSection.style.display = "none"; // Hide delivery address
-            }
-        });
-    });
+    const placeOrderButton = document.getElementById('place_order');
+    const confirmButton = document.getElementById('confirmSubmit');
 
-    // Event listener for delivery options
-    deliveryOptions.addEventListener("change", (event) => {
-        if (event.target.name === "option") {
-            if (event.target.value === "deliver_now" || event.target.value === "scheduled_delivery") {
-                deliveryAddressSection.style.display = "block"; // Show delivery address
-            } else {
-                deliveryAddressSection.style.display = "none"; // Hide delivery address
-            }
+
+    // Event listener for order type selection
+orderTypeRadios.forEach(radio => {
+    radio.addEventListener("change", function () {
+        if (this.value === "delivery") {
+            // Show delivery options
+            deliveryOptions.style.display = "block";
+            pickUpOptions.style.display = "none";
+            deliveryAddressSection.style.display = "block";
+        } else if (this.value === "pick_up") {
+            // Show pick-up options
+            pickUpOptions.style.display = "block";
+            deliveryOptions.style.display = "none";
+            deliveryAddressSection.style.display = "none"; // Hide delivery address
+            document.querySelector('input[name="address"]').removeAttribute("required"); // Remove required for pickup
         }
     });
+});
+
+// Event listener for delivery options
+deliveryOptions.addEventListener("change", (event) => {
+    if (event.target.name === "option") {
+        if (event.target.value === "deliver_now" || event.target.value === "scheduled_delivery") {
+            // Show delivery address and make it required
+            deliveryAddressSection.style.display = "block";
+            document.querySelector('input[name="address"]').setAttribute("required", "true");
+        } else {
+            // Hide delivery address and remove required attribute
+            deliveryAddressSection.style.display = "none";
+            document.querySelector('input[name="address"]').removeAttribute("required");
+        }
+    }
+});
 
 
     // Initialize the page and load data
@@ -452,29 +480,38 @@
 			});
 		 });
 
-		function updateDiscountDetails() {
-			// Show the discount details section if either radio button is checked
-			if (pwdRadio.checked || seniorRadio.checked) {
-				discountDetails.style.display = 'block';
-				discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
-				discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
-			} else {
-			// Hide the discount details section and clear the inputs if neither is checked
-				discountDetails.style.display = 'none';
-				discountNameInput.value = '';
-				discountIdInput.value = '';
-			}
+	function updateDiscountDetails() {
 
-			// Call loadCart to recalculate the cart
-			loadCart();
-		}
-
-		// Event listeners to update details when either radio button is selected
-		pwdRadio.addEventListener('change', updateDiscountDetails);
-		seniorRadio.addEventListener('change', updateDiscountDetails);
-		tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+	  if (noneRadio.checked) {
+        discountDetails.style.display = 'none';
+        discountNameInput.value = '';
+        discountIdInput.value = '';
+    }
+    // If PWD or Senior is selected
+    else if (pwdRadio.checked || seniorRadio.checked) {
+        discountDetails.style.display = 'block';
+        discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
+        discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
+    } else {
+        // If none are selected, hide the discount details
+        discountDetails.style.display = 'none';
+        discountNameInput.value = '';
+        discountIdInput.value = '';
     }
 
+    loadCart(); // Reload the cart to reflect changes
+	}
+
+	// Event listeners for radio buttons
+	pwdRadio.addEventListener('change', updateDiscountDetails);
+	seniorRadio.addEventListener('change', updateDiscountDetails);
+	noneRadio.addEventListener('change', updateDiscountDetails);
+
+	// Example of a tendered amount input event listener
+	tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+
+tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+    }
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
       return dataList;
@@ -581,16 +618,83 @@
         });
     }
 
-    const form = document.getElementById('checkout-form');
-    const modal = document.getElementById('thankYouModal');
+    // Function to check if a store is selected
+	function checkSelectedBranch() {
+    const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
 
-	function showModal() {
-		if (validateForm()) {
+    // If no store is selected, show the store selection prompt
+    if (!selectedStore) {
+        document.getElementById('store-selection-prompt').style.display = 'block';  // Show selection prompt
+        document.getElementById('pickupDetails').style.display = 'none';  // Hide selected branch details
+    } else {
+        // If store is selected, show the selected branch details
+        document.getElementById('store-selection-prompt').style.display = 'none';  // Hide selection prompt
+        document.getElementById('pickupDetails').style.display = 'block';  // Show selected branch details
+
+        // Update the pickup location text with the selected store's details
+        const pickupLocation = document.getElementById('pickup-location');
+        if (pickupLocation) {
+            pickupLocation.textContent = `${selectedStore.name} at ${selectedStore.location}.`;
+        }
+    }
+}
+
+	// Function to reset the selected store and prompt user to select one
+	function resetSelectedStore() {
+		localStorage.removeItem('selectedStore');  // Remove the store from localStorage
+		checkSelectedBranch();  // Recheck and show the prompt to select a store
+	}
+
+	// Call the checkSelectedBranch function when the page loads to determine the state of the selected store
+	window.onload = function() {
+		checkSelectedBranch();
+	};
+
+
+			// Function to validate the payment
+function validatePayment() {
+     const totalPrice=document.getElementById('amount_due_hidden');
+    // Get the tendered amount input value
+    if (!tenderedAmountInput) {
+        alert('Tendered amount input not found!');
+        return false; // Exit if the input doesn't exist
+    }
+    const tenderedAmount = parseFloat(tenderedAmountInput.value.trim());
+
+    // Log values to the console for debugging
+   // console.log('Tendered Amount:', tenderedAmount);
+   // console.log('Total Price:', totalPrice);
+
+    // Check if the tendered amount and total price are valid
+    if (isNaN(tenderedAmount)) {
+        alert('Invalid tendered amount or total price.');
+        return false; // Exit if either value is not a number
+    }
+
+    // Check if the tendered amount is less than the total price
+    if (tenderedAmount < totalPrice) {
+        alert('Insufficient funds. Please provide an amount equal to or greater than the total price.');
+        return false; // Exit if funds are insufficient
+    }
+
+    return true;
+}
+
+const form = document.getElementById('checkout-form');const modal = document.getElementById('thankYouModal');
+function showModal() {
+        if (validatePayment()) {
+      	if (validateForm()) {
 			modal.style.display = "block";
 		} else {
 			alert('Please fill out all required fields.');
 		}
-	}
+
+
+
+    } else {
+        console.log('Payment validation failed');
+    }
+}
 
     const placeOrder = document.getElementById('place_order');
     placeOrder.addEventListener('click', showModal);
@@ -603,10 +707,22 @@
 		// Close the modal
 		closeModal();
 
-		clearCart();
-
 		// Submit the form
 		form.submit();
+
+		clearCart();
+
+
+    // Reset the entire checkout process
+    resetForm(form);
+
+    // Reset the cart and cart display
+    resetCart();
+
+    // Reset the order summary
+    resetOrderSummary();
+
+
     }
 
     const submitButton = document.getElementById('confirmSubmit');
@@ -619,17 +735,119 @@
         loadCart();  // Reload the cart to reflect the changes
     }
 
-	// Form validation function
-	function validateForm() {
-		const requiredFields = document.querySelectorAll('#checkout-form [required]');
 
-		// Check if any required field is empty
-		for (let field of requiredFields) {
-			if (!field.value.trim()) {
-				field.focus();
-				return false;  // Return false if a required field is empty
-			}
-		}
+		const requiredFields = document.querySelectorAll('#checkout-form [required]');
+// Reset Form Function
+function resetForm(form) {
+    form.reset(); // Reset all form fields
+
+    // Reset dynamic content like address, order summary, and selected branch
+    resetAddress();
+    resetOrderSummary();
+    resetSelectedBranch();  // Reset the selected branch
+    resetDiscountFields();
+}
+
+// Reset Address fields (custom implementation based on your HTML structure)
+function resetAddress() {
+    const addressFields = document.querySelectorAll('#checkout-form .address');
+    addressFields.forEach(field => {
+        field.value = ''; // Clear address fields
+    });
+}
+
+// Reset Order Summary (custom implementation based on your HTML structure)
+function resetOrderSummary() {
+    // Reset the pickup location message
+    const pickupLocation = document.getElementById('pickup-location');
+    if (pickupLocation) {
+        pickupLocation.textContent = 'Pick up your order from the selected store.';  // Reset default message
+    }
+
+    // Reset order summary content
+    const orderSummary = document.getElementById('order-summary');
+    if (orderSummary) {
+        orderSummary.innerHTML = ''; // Clear order summary content
+    }
+
+    // Reset the order details (items, subtotal, vat, discount, amount due, and change)
+    document.getElementById('total-items').textContent = '0';
+    document.getElementById('Subtotal').textContent = 'P0.00';
+    document.getElementById('vat').textContent = 'P0.00';
+    document.getElementById('discount').textContent = 'P0.00';
+    document.getElementById('amount-due').textContent = 'P0.00';
+    document.getElementById('change-value').textContent = 'P0.00';
+}
+
+// Reset Cart (custom function based on your cart structure)
+function resetCart() {
+    // If your cart data is stored in a global variable, clear it here
+    cart = [];  // Resetting the cart (replace with actual cart reset logic)
+
+    // If your cart data is stored in local storage, clear it
+    localStorage.removeItem('cart');  // Remove the cart from local storage if it's there
+
+    // Clear the cart display (if there's any UI element like a cart container)
+    const cartContainer = document.getElementById('cart-container');
+    if (cartContainer) {
+        cartContainer.innerHTML = ''; // Clear the cart UI display
+    }
+}
+
+function resetSelectedBranch() {
+    // Remove the selected store from localStorage
+    localStorage.removeItem('selectedStore');
+
+    // Reset the selected branch display in the UI
+    const pickupLocation = document.getElementById('pickup-location');
+    if (pickupLocation) {
+        pickupLocation.textContent = 'Pick up your order from the selected store.';  // Reset the message
+    }
+
+    // Reset the store selection UI (if needed)
+    const storeSelectionPrompt = document.getElementById('store-selection-prompt');
+    if (storeSelectionPrompt) {
+        storeSelectionPrompt.style.display = 'none';  // Hide the store selection prompt if needed
+    }
+
+    // Optionally, hide the branch selection UI if it's not needed anymore
+    const branchSelect = document.querySelector('select[name="branch"]');
+    if (branchSelect) {
+        branchSelect.style.display = 'none';  // Hide branch select dropdown if no store is selected
+    } else {
+        // If using radio buttons, hide them
+        const branchRadioButtons = document.querySelectorAll('input[name="branch"]');
+        branchRadioButtons.forEach(button => {
+            button.style.display = 'none';  // Hide radio buttons for branch selection
+        });
+    }
+}
+
+// Reset Discount fields (if applicable)
+function resetDiscountFields() {
+    const discountFields = document.querySelectorAll('input[name="discount_name"], input[name="discount_id_number"]');
+    discountFields.forEach(field => {
+        field.value = ''; // Clear any discount-related fields
+    });
+}
+
+
+// Form validation logic (unchanged)
+function validateForm() {
+    const requiredFields = document.querySelectorAll('#checkout-form [required]');
+    let isValid = true;
+
+    // Check if any required field is empty
+    for (let field of requiredFields) {
+        if (!field.value.trim()) {
+            field.focus();
+            alert('Please fill out all required fields.');  // Alert when a required field is empty
+            isValid = false;
+            break;  // Stop validation if a required field is empty
+        }
+    }
+
+    if (!isValid) return false; // If any required field is not filled, return false
 
 		function editAddress() {
 			const currentAddress = document.getElementById('address').innerText;
@@ -644,17 +862,50 @@
 			return false;
 		}
 
-		// Check if discount details are filled if a discount option is selected
-		const discountOption = document.querySelector('input[name="discount-option"]:checked');
-		if (discountOption) {
-			const discountName = document.querySelector('input[name="discount_name"]').value.trim();
-			const discountId = document.querySelector('input[name="discount_id_number"]').value.trim();
-			if (!discountName || !discountId) {
-				alert('Please fill out the discount details.');
-				return false;
-			}
-		}
+    // Check if discount details are filled if a discount option is selected
+    const discountOption = document.querySelector('input[name="discount-option"]:checked');
 
+    if (discountOption) {
+        const discountName = document.querySelector('input[name="discount_name"]').value.trim();
+        const discountId = document.querySelector('input[name="discount_id_number"]').value.trim();
+
+
+        // Ensure discount details are filled if PWD or Senior is selected
+        if ((discountOption.value === 'PWD' || discountOption.value === 'Senior') && (!discountName || !discountId)) {
+            alert('Please fill out the discount details.');
+            return false;
+        }
+    } else {
+        alert('No discount option selected');
+    }
+
+    // Check if payment is selected and validate specific payment details
+    const paymentOption = document.querySelector('input[name="payment"]:checked');
+    if (!paymentOption) {
+        alert('Please select a payment method.');
+        return false;
+    }
+
+    // For "Cash" payment method, check if tendered amount is filled
+    if (paymentOption.value === 'cash') {
+        const tenderedAmount = document.querySelector('input[name="tendered_amount"]').value.trim();
+        if (tenderedAmount && isNaN(tenderedAmount)) {
+            alert('Please enter a valid tendered amount.');
+            return false;
+        }
+    }
+
+    // For "GCash" payment method, validate the phone number
+    if (paymentOption.value === 'gcash') {
+        const gcashNumber = document.querySelector('input[name="gcash-number"]').value.trim();
+        const gcashError = document.getElementById('gcash-error');
+        if (gcashNumber && !/^\d{11}$/.test(gcashNumber)) {
+            gcashError.style.display = 'inline';
+            return false;
+        } else {
+            gcashError.style.display = 'none';
+        }
+    }
 		// Check if delivery address is filled when required
 		const deliveryOption = document.querySelector('input[name="option"]:checked');
 		if (deliveryOption && (deliveryOption.value === 'scheduled_delivery' || deliveryOption.value === 'deliver_now')) {
@@ -668,51 +919,6 @@
 		return true;  // Return true if all fields are valid
 	}
 
-	function editAddress() {
-        const currentAddress = document.getElementById('address').innerText;
-        document.getElementById('editAddressText').value = currentAddress;
-        document.getElementById('editAddressModal').style.display = 'block';
-    }
-
-    // Function to save the new address
-    function saveAddress() {
-        const newAddress = document.getElementById('editAddressText').value;
-        document.getElementById('address').innerText = newAddress;
-        document.getElementById('addressHidden').value = newAddress;
-
-        // Save the new address to local storage
-        localStorage.setItem('address', newAddress);
-        localStorage.setItem('addressHidden', newAddress);
-
-        closeEditAddressModal();
-    }
-
-    // Function to close the address edit modal
-    function closeEditAddressModal() {
-        document.getElementById('editAddressModal').style.display = 'none';
-    }
-
-    // Function to edit the delivery instruction
-	function editDeliveryInstruction() {
-		const currentInstructions = document.getElementById('deliveryInstruction').innerText;
-		document.getElementById('editInstructionText').value = currentInstructions;
-		document.getElementById('editInstructionModal').style.display = 'block'; // Show the modal
-	}
-
-	// Function to save the new delivery instruction
-	function saveDeliveryInstruction() {
-		const newInstructions = document.getElementById('editInstructionText').value;
-		document.getElementById('deliveryInstruction').innerText = newInstructions;
-		document.getElementById('deliveryInstructionHidden').value = newInstructions;
-
-		// Save the new delivery instruction to local storage
-		localStorage.setItem('deliveryInstruction', newInstructions);
-		localStorage.setItem('deliveryInstructionHidden', newInstructions);
-
-		closeEditInstructionsModal(); // Close the modal
-	}
-
-    // Initialize the cart when page loads
     loadCart();
   });
 </script>
