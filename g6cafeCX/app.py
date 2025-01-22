@@ -545,6 +545,8 @@ def receipt(order_id):
         'contact_name': address.contact_name if address else "N/A",
         'contact_number': address.contact_number if address else "N/A",
         'address': address.address if address else "N/A",
+        'order_type': address.order_type.strip().lower() if address and address.order_type else "N/A",
+
     }
 
     # Add PWD details if available

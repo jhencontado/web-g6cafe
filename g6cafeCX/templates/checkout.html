@@ -658,22 +658,13 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 			// Function to validate the payment
 	function validatePayment() {
      const totalPrice=document.getElementById('amount_due_hidden');
-    // Get the tendered amount input value
-    if (!tenderedAmountInput) {
-        alert('Tendered amount input not found!');
-        return false; // Exit if the input doesn't exist
-    }
+
     const tenderedAmount = parseFloat(tenderedAmountInput.value.trim());
 
     // Log values to the console for debugging
    // console.log('Tendered Amount:', tenderedAmount);
    // console.log('Total Price:', totalPrice);
 
-    // Check if the tendered amount and total price are valid
-    if (isNaN(tenderedAmount)) {
-        alert('Invalid tendered amount or total price.');
-        return false; // Exit if either value is not a number
-    }
 
     // Check if the tendered amount is less than the total price
     if (tenderedAmount < totalPrice) {
@@ -919,8 +910,8 @@ function validateForm() {
 
     // For "Cash" payment method, check if tendered amount is filled
     if (paymentOption.value === 'cash') {
-        const tenderedAmount = document.querySelector('input[name="tendered_amount"]').value.trim();
-        if (tenderedAmount && isNaN(tenderedAmount)) {
+        //const tenderedAmount = document.querySelector('input[name="tendered_amount"]').value.trim();
+        if (tenderedAmountInput && isNaN(tenderedAmountInput)) {
             alert('Please enter a valid tendered amount.');
             return false;
         }
