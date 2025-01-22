@@ -524,6 +524,7 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 		const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const orderSummary = document.getElementById('order-summary');
 
+
         let totalItems = 0;
         let subtotal = 0;
         let vat = 0;
@@ -531,6 +532,7 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 
         if (cartItems.length === 0) {
             orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+
         } else {
             let orderSummaryHtml = '';
             let hiddenOrderSummary = '';
@@ -567,6 +569,8 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 					<input type="hidden" name=${item_preferenceName}>${item_preference}</input>
                 `;
             });
+
+				
 
             if (pwdRadio.checked || seniorRadio.checked) {
                 discount = subtotal * 0.20;
