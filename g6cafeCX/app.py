@@ -7,17 +7,26 @@ from flask_cors import CORS
 from geopy.distance import geodesic
 import math
 from flask import session
-
 import datetime
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'G6cafe.customerservice@gmail.com'  # Replace with your Gmail
+app.config['MAIL_PASSWORD'] = 'tgzq dalx pwwj tgdm'  # Replace with your Gmail password or app password
+app.config['MAIL_DEFAULT_SENDER'] = 'G6cafe.customerservice@gmail.com'  # Default sender email
+
+mail = Mail(app)
 
 class MenuDetails(db.Model):
     __tablename__ = 'menu_details'
@@ -490,6 +499,28 @@ def proceed_checkout():
         db.session.add(new_trackdetails)
         db.session.commit()
         #endregion
+
+        # Prepare email content
+        recipient_email = request.form.get('email')  # Assuming you collect the user's email in the form
+        subject = "Order Confirmation - Receipt #{}".format(receipt_number)
+        message_body = f"""
+                        Dear {contact_name},
+
+                        Thank you for your order! Here are your order details:
+
+                        Receipt Number: {receipt_number}
+                        Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                        Total Amount: {net_amount}
+
+                        If you have any questions, please contact us at G6cafe.customerservice@gmail.com.
+
+                        Regards,
+                        G6 Cafe
+                        """
+
+        # Send the email
+        msg = Message(subject, recipients=[recipient_email], body=message_body)
+        mail.send(msg)
 
         return redirect(url_for('receipt', order_id=last_inserted_id))
 
