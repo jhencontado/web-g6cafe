@@ -27,7 +27,9 @@
     <h2>Order Details</h2>
     <div class="g6-order-details-container">
         <div class="g6-order-details">
+            <p><strong>Order ID:</strong> {{ order['order_id'] }}</p>
             <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
+            <p><strong>Payment Method:</strong> {{ order['payment_option'] }}</p>
             <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
             <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
             <p><strong>Address:</strong> {{ order['address'] }}</p>
@@ -35,9 +37,10 @@
 
         {% if 'pwd_name' in order %}
         <div class="g6-discount-details">
-            <p><strong>PWD Name:</strong> {{ order['pwd_name'] }}</p>
-            <p><strong>PWD ID Number:</strong> {{ order['pwd_id_number'] }}</p>
+            <h3>Discount Details</h3>
             <p><strong>Discount Type:</strong> {{ order['pwd_discount_type'] }}</p>
+            <p><strong>Full Name:</strong> {{ order['pwd_name'] }}</p>
+            <p><strong>ID Number:</strong> {{ order['pwd_id_number'] }}</p>
         </div>
         {% endif %}
     </div>

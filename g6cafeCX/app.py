@@ -529,10 +529,12 @@ def receipt(order_id):
         }
         for item in order_items
     ]
-
+    payment_details = OrderPaymentDetails.query.filter_by ( order_id=order.order_id ).first ()
     # Prepare order dictionary for template
     order_data = {
+        'order_id' : order.order_id,
         'receipt_number': order.receipt_number,
+        'payment_option': payment_details.payment_option,
         'date_time': order.date_time.strftime('%Y-%m-%d %H:%M:%S'),
         'subtotal': float(order.subtotal),
         'vat_amount': float(order.vat_amount),

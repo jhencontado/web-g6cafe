@@ -31,8 +31,6 @@
 					<p>Please select a local Store to proceed with your order.</p>
 			</div>
 
-
-
 					<!-- Pick Up & Delivery Option -->
 				<h3>Order Type</h3>
 				<label>
@@ -45,7 +43,7 @@
 						<input type="radio" name="option" id="standard" value="standard"> Pick-up Now
 					</label>
 					<label>
-						<input type="radio" name="option" id="scheduled" value="scheduled"> Pick up later
+						<input type="radio" name="option" id="scheduled" value="scheduled" > Pick up later
 						<input type="date" name="pickup_date" id="pickup_date">
 						<input type="time" name="pickup_time" id="pickup_time">
 					</label>
@@ -189,6 +187,7 @@
 				<p>Vat: <span id="vat">P0.00</span></p>
 				<p>PWD/SENIOR Discount: <span id="discount">P0.00</span></p>
 				<p>Amount Due: <span id="amount-due">P0.00</span></p>
+				<p id="delivery-fee" style="display: none;">Delivery Fee: <span id="delivery-value">FREE</span></p>
 				<p id="change-amount">Change: <span id="change-value">P0.00</span></p>
 			</div>
 		</div>
@@ -219,6 +218,7 @@
     const pickUpOptions = document.getElementById("pick_up_options");
     const deliveryOptions = document.getElementById("delivery_options");
     const deliveryAddressSection = document.getElementById("delivery_address_section");
+    const deliveryFeeElement = document.getElementById('delivery-fee');
     const paymentRadioButtons = document.querySelectorAll('input[name="payment"]');
     const cardDetailsSection = document.getElementById("card-details");
 	const pwdRadio = document.getElementById('pwd-radio');
@@ -250,15 +250,17 @@
 orderTypeRadios.forEach(radio => {
     radio.addEventListener("change", function () {
         if (this.value === "delivery") {
-            // Show delivery options
+            // Show delivery options and fee
             deliveryOptions.style.display = "block";
             pickUpOptions.style.display = "none";
             deliveryAddressSection.style.display = "block";
+            deliveryFeeElement.style.display = "block"; // Show delivery fee
         } else if (this.value === "pick_up") {
             // Show pick-up options
             pickUpOptions.style.display = "block";
             deliveryOptions.style.display = "none";
             deliveryAddressSection.style.display = "none"; // Hide delivery address
+            deliveryFeeElement.style.display = "none"; // Hide delivery fee
             document.querySelector('input[name="address"]').removeAttribute("required"); // Remove required for pickup
         }
     });
@@ -650,7 +652,7 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 
 
 			// Function to validate the payment
-function validatePayment() {
+	function validatePayment() {
      const totalPrice=document.getElementById('amount_due_hidden');
     // Get the tendered amount input value
     if (!tenderedAmountInput) {
@@ -686,8 +688,6 @@ function showModal() {
 		} else {
 			alert('Please fill out all required fields.');
 		}
-
-
 
     } else {
         console.log('Payment validation failed');
@@ -859,6 +859,35 @@ function validateForm() {
 			alert('Please select an order type (Pick-Up or Delivery).');
 			return false;
 		}
+		if (orderType.value === "pick_up") {
+        const pickUpOption = document.querySelector('input[name="option"]:checked');
+        if (!pickUpOption) {
+            alert("Please select a pick-up option (Pick-Up Now or Pick-Up Later).");
+            return false;
+        }
+        if (pickUpOption.value === "scheduled") {
+            const pickupDate = document.getElementById('pickup_date').value;
+            const pickupTime = document.getElementById('pickup_time').value;
+            if (!pickupDate || !pickupTime) {
+                alert("Please provide a date and time for scheduled pick-up.");
+                return false;
+            }
+        }
+    } else if (orderType.value === "delivery") {
+        const deliveryOption = document.querySelector('input[name="option"]:checked');
+        if (!deliveryOption) {
+            alert("Please select a delivery option (Deliver Now or Deliver Later).");
+            return false;
+        }
+        if (deliveryOption.value === "scheduled_delivery") {
+            const deliveryDate = document.getElementById('delivery_date').value;
+            const deliveryTime = document.getElementById('delivery_time').value;
+            const address = document.getElementById('address').value;
+            if (!deliveryDate || !deliveryTime) {
+                return false;
+            }
+        }
+    }
 
     // Check if discount details are filled if a discount option is selected
     const discountOption = document.querySelector('input[name="discount-option"]:checked');
