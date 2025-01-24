@@ -1,4 +1,5 @@
 import decimal
+import logging
 import os
 
 from flask import Flask, render_template, jsonify, request, url_for, redirect, flash
@@ -9,13 +10,14 @@ import math
 from flask import session
 import datetime
 from flask_mail import Mail, Message
+from sqlalchemy import Enum
 
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -112,6 +114,8 @@ class Stores(db.Model):
     lng = db.Column(db.Float, nullable=False)
     business_hours = db.Column(db.String(255), nullable=False)
 
+
+
 class DeliveryRider(db.Model):
     __tablename__ = 'delivery_rider'
 
@@ -123,18 +127,47 @@ class DeliveryRider(db.Model):
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
 
 
+from sqlalchemy import Enum as SQLAlchemyEnum
+from enum import Enum as PyEnum
+
+
+# Define the OrderStatusEnum class as a Python Enum
+class OrderStatusEnum(PyEnum):
+    pending = 'pending'
+    preparing = 'preparing'
+    ready_for_pick_up = 'ready for pick-up'
+    picked_up = 'picked-up'
+    out_for_delivery = 'out for delivery'
+    delivered = 'delivered'
+    cancelled = 'cancelled'
+
+
+# TrackDetails model
 class TrackDetails(db.Model):
     __tablename__ = 'trackdetails'
 
-    track_id = db.Column(db.Integer, primary_key=True)
+    track_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'), nullable=False)
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'), nullable=False)
+
     order_status = db.Column(
-        db.Enum('pending', 'preparing', 'ready for pick-up','picked-up' 'out for delivery', 'delivered', 'cancelled'),
+        db.Enum('pending', 'preparing', 'ready for pick-up', 'picked-up', 'out for delivery', 'delivered', 'cancelled'),
         nullable=False
     )
-    delivery_rider_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
     order_type = db.Column(db.String(50), db.ForeignKey('order_address.order_type'), nullable=False)
+    delivery_rider_id = db.Column(db.Integer, db.ForeignKey('delivery_rider.delivery_rider_id'), nullable=False)
+
+    # Relationships (use string references for delayed evaluation)
+    order = db.relationship('Order', backref='trackdetails', lazy=True)
+    stores = db.relationship('Stores', backref='trackdetails', lazy=True)
+    rider = db.relationship('DeliveryRider', backref='trackdetails', lazy=True)
+
+
+
+    def __repr__(self):
+        return f'<TrackDetails {self.track_id} {self.order_status}>'
+
+
 
 @app.route('/')
 def home():
@@ -190,7 +223,7 @@ def get_menu():
     if category:
         menu_items = MenuDetails.query.filter_by(category_name=category).all()
     else:
-        menu_items = MenuDetails.query.all()
+        menu_items = MenuDetails.quer.all()
 
     menu_list = [{
         'item_id': item.item_id,
@@ -592,22 +625,29 @@ def receipt(order_id):
     return render_template('receipt.html', order=order_data, items=items)
 
 
+import logging
+
 @app.route('/track-order/<int:order_id>')
 def track_order(order_id):
     try:
-        # Fetch order details based on order_id
+        # Fetch the order details based on order_id
         order = TrackDetails.query.filter_by(order_id=order_id).first()
 
         if order:
-            # Define the statuses and their order
-            status_steps = ["pending", "preparing", "ready for pick-up", "picked-up", "out for delivery", "delivered"]
+            # Define the statuses based on order_type
+            if order.order_type == "pick_up":
+                status_steps = ["pending", "preparing", "ready for pick-up", "picked-up", "cancelled"]
+            elif order.order_type == "delivery":
+                status_steps = ["pending", "preparing", "out for delivery", "delivered", "cancelled"]
+            else:
+                status_steps = []  # Undefined order type
 
             # Check if order_status is valid before proceeding
             if order.order_status in status_steps:
                 completed_steps = status_steps[:status_steps.index(order.order_status) + 1]
                 current_step = order.order_status
             else:
-                # Handle invalid status case
+                # If order_status is invalid, log and handle gracefully
                 completed_steps = []
                 current_step = None
 
@@ -617,11 +657,18 @@ def track_order(order_id):
                 order_status=order.order_status,
                 completed_steps=completed_steps,
                 current_step=current_step,
-                order_id=order_id
+                order_id=order_id,
+                order_type=order.order_type,  # Pass the order_type
+                store_name="Cafe G6",  # Store details (can be fetched dynamically)
+                store_email="support@g6cafe.com",
+                store_phone="123-456-7890"
             )
         else:
             return render_template('tracker.html', error="Order not found!")
+
     except Exception as e:
+        # Log the error for debugging purposes
+        logging.error(f"Error tracking order {order_id}: {str(e)}")
         return render_template('tracker.html', error=f"An error occurred: {str(e)}")
 
 
@@ -679,6 +726,17 @@ def get_order_details(order_id):
     """
     # Using SQLAlchemy's text() function to wrap the raw SQL query
     result = db.session.execute(text(sql), {'order_id': order_id})
+
+ #Define the valid statuses based on order type
+def get_valid_statuses(order_type):
+    if order_type == 'pick_up':
+        return ["pending", "preparing", "ready for pick-up", "picked-up", "cancelled"]
+    elif order_type == 'delivery':
+        return ["pending", "preparing", "out for delivery", "delivered", "cancelled"]
+    else:
+        return []  # Return empty list if order type is neither 'pick_up' nor 'delivery'
+
+
 
 
 @app.route('/admin_update_status', methods=['GET', 'POST'])
