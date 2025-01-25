@@ -94,6 +94,16 @@
             box-shadow: 0 0 10px #ffc107;
         }
 
+
+         /* Disabled Step */
+        .status-circle.disabled::before {
+            content: 'X'; /* Add 'X' symbol */
+            font-size: 24px; /* Size of the 'X' */
+            color: white; /* Make the 'X' white for contrast */
+
+
+         }
+
         .status-text {
             margin-top: 10px;
             font-size: 14px;
@@ -124,9 +134,8 @@
         <img src="{{ url_for('static', filename='images/delivery.png') }}" alt="delivery" class="delivery-image">
         <!-- Order ID Display -->
         <div class="order-id">
-            Order ID: <strong>{{ order_id }}</strong>
-            Order Status:<strong>{{ order_status }}</strong>
-            Order Type:<strong>{{ order_type }}</strong>
+            Order ID: <strong>{{ order_id }}</strong><br>
+
         </div>
 
 
@@ -135,36 +144,36 @@
         <div class="order-status-container">
             {% if order_type == "pick_up" %}
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'pending' in completed_steps %}completed{% endif %} {% if current_step == 'pending' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'pending' in completed_steps %}completed{% endif %} {% if current_step == 'pending' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %} "></div>
                     <p class="status-text">Order Confirmed</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'preparing' in completed_steps %}completed{% endif %} {% if current_step == 'preparing' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'preparing' in completed_steps %}completed{% endif %} {% if current_step == 'preparing' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %} "></div>
                     <p class="status-text">Preparing</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'ready for pick-up' in completed_steps %}completed{% endif %} {% if current_step == 'ready for pick-up' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'ready for pick-up' in completed_steps %}completed{% endif %} {% if current_step == 'ready for pick-up' %}active{% endif %} {% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Ready for Pick-Up</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'picked-up' in completed_steps %}completed{% endif %} {% if current_step == 'picked-up' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'picked-up' in completed_steps %}completed{% endif %} {% if current_step == 'picked-up' %}active{% endif %} {% if current_step == 'pending' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Picked Up</p>
                 </div>
             {% elif order_type == "delivery" %}
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'pending' in completed_steps %}completed{% endif %} {% if current_step == 'pending' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'pending' in completed_steps %}completed{% endif %} {% if current_step == 'pending' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Order Confirmed</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'preparing' in completed_steps %}completed{% endif %} {% if current_step == 'preparing' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'preparing' in completed_steps %}completed{% endif %} {% if current_step == 'preparing' %}active{% endif %} {% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Preparing</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'out for delivery' in completed_steps %}completed{% endif %} {% if current_step == 'out for delivery' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'out for delivery' in completed_steps %}completed{% endif %} {% if current_step == 'out for delivery' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Out for Delivery</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'delivered' in completed_steps %}completed{% endif %} {% if current_step == 'delivered' %}active{% endif %}"></div>
+                    <div class="status-circle {% if 'delivered' in completed_steps %}completed{% endif %} {% if current_step == 'delivered' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Delivered</p>
                 </div>
             {% endif %}
@@ -183,6 +192,20 @@
         {% endif %}
     </div>
     {% include "footer.html" %}
+
+    <script>
+        // JavaScript to disable further steps if the order is cancelled
+        var currentStep = "{{ current_step }}";  // Order status passed from backend
+
+        // Check if the order is cancelled and disable subsequent steps
+        if (currentStep === 'cancelled') {
+            // Disable all further steps after cancellation
+            var steps = document.querySelectorAll('.order-step');
+            steps.forEach(function(step) {
+                step.classList.add('disabled');
+            });
+        }
+    </script>
 </body>
 
 </html>

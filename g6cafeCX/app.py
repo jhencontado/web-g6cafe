@@ -2,6 +2,8 @@ import decimal
 import logging
 import os
 
+
+
 from flask import Flask, render_template, jsonify, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy,session
 from flask_cors import CORS
@@ -621,6 +623,7 @@ def receipt(order_id):
             'pwd_discount_type': pwd_details.discount_type,
 
         })
+
 
     return render_template('receipt.html', order=order_data, items=items)
 
