@@ -440,7 +440,7 @@ def proceed_checkout():
             else:
                 delivery_date = request.form.get('delivery_date')
                 delivery_time = request.form.get('delivery_time')
-        else:
+        else: 
             if option == 'standard':
                 pickup_date = datetime.datetime.now()
                 pickup_time = datetime.datetime.now().time()
@@ -452,8 +452,6 @@ def proceed_checkout():
         contact_email = request.form.get('email')
         contact_number = request.form.get('contact')
         delivery_instruction = request.form.get('delivery-instruction')
-
-
 
         new_address = OrderAddress(
             order_id = last_inserted_id,

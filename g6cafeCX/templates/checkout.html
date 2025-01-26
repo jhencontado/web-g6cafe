@@ -560,12 +560,14 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
                 `;
 
                 hiddenOrderSummary += `
-					<input type="hidden" name=${item_name}>${item.itemName}</input>
-					<input type="hidden" name=${item_subtotalName}>${itemSubtotal.toFixed(2)}</input>
-					<input type="hidden" name=${item_priceName}>${item.itemPrice.toFixed(2)}</input>
-					<input type="hidden" name=${item_quantityName}>${item.quantity}</input>
-					<input type="hidden" name=${item_preferenceName}>${item_preference}</input>
+					<input type="hidden" name=${item_name} value=${item.itemName}></input>
+					<input type="hidden" name=${item_subtotalName} value=${itemSubtotal.toFixed(2)}></input>
+					<input type="hidden" name=${item_priceName} value=${item.itemPrice.toFixed(2)}></input>
+					<input type="hidden" name=${item_quantityName} value=${item.quantity} ></input>
+					<input type="hidden" name=${item_preferenceName} value=${item_preference}></input>
                 `;
+
+                itemIndex += 1;
             });
 
             if (pwdRadio.checked || seniorRadio.checked) {
