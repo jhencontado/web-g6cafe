@@ -309,19 +309,27 @@ ALTER TABLE admins ADD COLUMN store_id INT,
 ADD CONSTRAINT fk_store_id FOREIGN KEY (store_id) REFERENCES stores(id);
 
 
+
 INSERT INTO admins (username, email, password, store_id)
-VALUES ('admin_1', 'admin1@example.com', 'Admin@1', 1);
+VALUES
+  ('admin_1', 'admin1@example.com', 'Admin@1', 1),
+  ('admin_2', 'admin2@example.com', 'Admin@2',2),
+  ('admin_3', 'admin3@example.com', 'Admin@3', 3),
+  ('admin_4', 'admin4@example.com', 'Admin@4', 4),
+  ('admin_5', 'admin5@example.com', 'Admin@5', 5),
+  ('admin_6', 'admin6@example.com', 'Admin@6', 6),
+  ('admin_7', 'admin7@example.com', 'Admin@7', 7),
+  ('admin_8', 'admin8@example.com', 'Admin@8', 8),
+  ('admin_9', 'admin9@example.com', 'Admin@9', 9),
+  ('admin_10', 'admin10@example.com', 'Admin@10', 10),
+  ('admin_11', 'admin11@example.com', 'Admin@11', 11),
+  ('admin_12', 'admin12@example.com', 'Admin@12', 12),
+  ('admin_13', 'admin13@example.com', 'Admin@13', 13),
+  ('admin_14', 'admin14@example.com', 'Admin@14', 14),
+  ('admin_15', 'admin15@example.com', 'Admin@15', 15);
 
-UPDATE admins
-SET store_id = 1
-WHERE username = 'admin_1';
 
-INSERT INTO admins (username, email, password)
-VALUES ('admin_2', 'admin2@example.com', 'Admin@2');
 
-UPDATE admins
-SET store_id = 2
-WHERE username = 'admin_2';
     -- Insert values into delivery_rider table
 INSERT INTO delivery_rider (name, vehicle_plate_number, vehicle_model, vehicle_color, store_id)
 VALUES

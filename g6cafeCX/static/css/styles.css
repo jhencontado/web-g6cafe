@@ -7,7 +7,7 @@ html, body {
     display: flex;
     color: #333;
     flex-direction: column;
-    height: 180%;
+    height: 150%;
     width: 100%
     over-flow-x: hidden;
 }
@@ -517,11 +517,11 @@ button:hover {
 
 .container {
     background-color: #f6f2ef;
-    height: 1600px;
+    height: 1300px;
 }
 .search-invoice-form {
-    max-width: 1400px;
-    height: 1000px;
+    max-width: 1300px;
+    height: 900px;
     border: 1px solid #ccc;
     border-radius: 20px;
     background-color: #f9f9f9;
@@ -541,7 +541,7 @@ button:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-width: 100%;
+    max-width: 80%;
     height: auto;
 }
 #search_option {
@@ -660,7 +660,7 @@ button:hover {
     background-color: #004085;
     transform: scale(0.98); /* Shrink the button slightly on click */
 }
-/* General Container Design */
+/* Receipt Container Design */
 .g6-container {
     width: 80%;
     max-width: 800px;
@@ -669,8 +669,11 @@ button:hover {
     background-color: #f6f2ef;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-top: 30px
+    margin-top: 30px;
+    margin-bottom: 30px
+    flex: 1;
 }
+
 .g6-store-info img {
     width: 200px;
     height: auto;
@@ -704,22 +707,30 @@ button:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
     width: 40%; /* Adjust box width (80% of parent container) */
     margin-right: -20px;
+    border-top-left-radius: 15px; /* Add top-left corner radius */
+    border-bottom-left-radius: 15px; /* Add bottom-left corner radius */
 }
 
 .g6-receipt-number p,h1{
     color: #555;
-    text-align: right;
-    margin-right: 40%;
+    text-align: left;
+    margin-left: 10%;
 }
-
 
 .g6-invoice-info h2 {
     font-size: 18px;
     color: #333;
     font-weight: bold;
     display: flex;
+    margin-left: 15px;
 }
 
+.g6-invoice-info h3 {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    display: flex;
+}
 .g6-order-details-container {
     display: flex;
     justify-content: space-between; /* Space between Order and Discount sections */
@@ -732,7 +743,7 @@ button:hover {
 }
 
 .g6-order-details p, .g6-discount-details p {
-    margin: 5px 0;
+    margin: 3px 0;
     font-size: 14px;
     color: #555;
 }
@@ -971,13 +982,12 @@ button:hover {
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 10% auto;
             padding: 30px;
             border: 1px solid #888;
             width: 80%;
             max-width: 400px;
             text-align: center;
-
         }
         /* Resize the photo inside the modal */
             .modal-content img {
@@ -990,6 +1000,7 @@ button:hover {
             margin-bottom: 10px;
             margin-top: 10px;
         }
+
         .close-button {
             color: #aaa;
             font-size: 28px;
@@ -1527,7 +1538,7 @@ button:hover {
 .modal-content {
   background-color: #fff;
   margin: 10% auto; /* Center vertically and horizontally */
-  padding: 10px;
+  padding: 30px;
   border-radius: 8px;
   width: 100%;
   max-width: 500px;
@@ -1607,6 +1618,7 @@ textarea {
     width: 100%;
     margin-bottom: 10px;
 }
+
 
 button {
     margin-top: 10px;

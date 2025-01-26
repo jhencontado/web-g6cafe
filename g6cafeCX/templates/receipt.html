@@ -27,7 +27,9 @@
     <h2>Order Details</h2>
     <div class="g6-order-details-container">
         <div class="g6-order-details">
+            <p><strong>Order ID:</strong> {{ order['order_id'] }}</p>
             <p><strong>Order Date:</strong> {{ order['date_time'] }}</p>
+            <p><strong>Payment Method:</strong> {{ order['payment_option'] }}</p>
             <p><strong>Customer Name:</strong> {{ order['contact_name'] }}</p>
             <p><strong>Contact Number:</strong> {{ order['contact_number'] }}</p>
             <p><strong>Address:</strong> {{ order['address'] }}</p>
@@ -35,9 +37,10 @@
 
         {% if 'pwd_name' in order %}
         <div class="g6-discount-details">
-            <p><strong>PWD Name:</strong> {{ order['pwd_name'] }}</p>
-            <p><strong>PWD ID Number:</strong> {{ order['pwd_id_number'] }}</p>
+            <h3>Discount Details</h3>
             <p><strong>Discount Type:</strong> {{ order['pwd_discount_type'] }}</p>
+            <p><strong>Full Name:</strong> {{ order['pwd_name'] }}</p>
+            <p><strong>ID Number:</strong> {{ order['pwd_id_number'] }}</p>
         </div>
         {% endif %}
     </div>
@@ -64,18 +67,24 @@
         {% endfor %}
     </div> <!-- Close g6-items-list -->
 
-   <div class="g6-summary">
+<div class="g6-summary">
     <p><strong>Subtotal</strong> {{ "%.2f"|format(order['subtotal']) }}</p>
     <p><strong>VAT</strong> {{ "%.2f"|format(order['vat_amount']) }}</p>
     <p><strong>Discount</strong> {{ "%.2f"|format(order['discount_amount']) }}</p>
+
     {% if 'pwd_discount_amount' in order %}
-    <p><strong>PWD Discount</strong> {{ "%.2f"|format(order['pwd_discount_amount']) }}</p>
+        <p><strong>PWD Discount</strong> {{ "%.2f"|format(order['pwd_discount_amount']) }}</p>
     {% endif %}
+
     <p class="total-line"><strong>Total</strong> {{ "%.2f"|format(order['net_amount']) }}</p>
+
+    {% if order['order_type'] == 'delivery' %}
+        <p><strong>Delivery Fee:</strong> FREE</p>
+    {% endif %}
+
     <p><strong>Tender Amount</strong> {{ "%.2f"|format(order['tender_amount']) }}</p>
     <p><strong>Change Amount</strong> {{ "%.2f"|format(order['change_amount']) }}</p>
 </div>
-
 
 
     <script>
@@ -107,6 +116,5 @@
     <div><a href="javascript:void(0);" onclick="printReceipt()" class="back-button">Print Receipt</a></div>
 </div>
 
-{% include "footer.html" %}
 </body>
 </html>
