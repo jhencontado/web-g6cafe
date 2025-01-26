@@ -19,7 +19,7 @@ CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -537,17 +537,18 @@ def proceed_checkout():
 
         # Prepare email content
         recipient_email = request.form.get('email')  # Assuming you collect the user's email in the form
-        subject = "Order Confirmation - Receipt #{}".format(receipt_number)
+        subject = f"G6 Cafe - Order Confirmation (Order ID #{last_inserted_id})"
         message_body = f"""
                         Dear {contact_name},
 
                         Thank you for your order! Here are your order details:
-
+                
+                        Order Number: {last_inserted_id}
                         Receipt Number: {receipt_number}
                         Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
                         Total Amount: {net_amount}
 
-                        If you have any questions, please contact us at G6cafe.customerservice@gmail.com.
+                        If you have any questions, please contact us at support@example.com.
 
                         Regards,
                         G6 Cafe
@@ -811,6 +812,90 @@ def admin_update_status():
             )
 
             db.session.commit()
+            # Fetch customer details
+            customer_details = db.session.execute(
+                text("""
+                    SELECT oa.contact_email, oa.contact_name
+                    FROM order_address oa
+                    WHERE oa.order_id = :order_id
+                """),
+                {'order_id': order_id}
+            ).mappings().fetchone()
+
+            if customer_details:
+                recipient_email = customer_details['contact_email']
+                contact_name = customer_details['contact_name']
+
+                # Prepare email content based on the new status
+                if order_status == 'preparing':
+                    subject = "Order Update: Your order is being prepared!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    We are excited to let you know that your order #{order_id} is currently being prepared. 
+
+                    We’ll notify you once it’s ready for pickup or out for delivery. Thank you for your patience!
+
+                    Best regards,
+                    G6 Cafe
+                    """
+                elif order_status == 'ready for pickup':
+                    subject = "Order Update: Your order is ready for pickup!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    Your order #{order_id} is now ready for pickup! 
+
+                    Please visit our store during business hours to collect it. If you have any questions, feel free to contact us.
+
+                    Best regards,
+                    G6 Cafe
+                    """
+                elif order_status == 'picked-up':
+                    subject = "Order Picked-Up: Thank you for ordering with us!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    We are delighted to let you know that your order #{order_id} has been successfully picked up.
+
+                    Thank you for choosing G6 Cafe. We hope you enjoy your order and look forward to serving you again soon!
+
+                    Best regards,
+                    G6 Cafe
+                    """
+                elif order_status == 'out for delivery':
+                    subject = "Order Update: Your order is on its way!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    Good news! Your order #{order_id} is now out for delivery. 
+
+                    Please ensure someone is available to receive it. If you have any questions, feel free to contact us.
+
+                    Best regards,
+                    G6 Cafe
+                    """
+                elif order_status == 'delivered':
+                    subject = "Order Delivered: Thank you for ordering with us!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    We are thrilled to let you know that your order #{order_id} has been successfully delivered.
+
+                    Thank you for choosing G6 Cafe. We hope you enjoy your order and look forward to serving you again soon!
+
+                    Best regards,
+                    G6 Cafe
+                    """
+                else:
+                    # No email is sent for other statuses
+                    subject = None
+                    message_body = None
+
+                # Send the email if subject and body are set
+                if subject and message_body:
+                    msg = Message(subject, recipients=[recipient_email], body=message_body)
+                    mail.send(msg)
             flash('Order status updated successfully!', 'success')
 
             # Re-fetch and re-filter orders after updating
