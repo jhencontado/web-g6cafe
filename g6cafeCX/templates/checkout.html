@@ -908,14 +908,15 @@ function validateForm() {
         return false;
     }
 
-    // For "Cash" payment method, check if tendered amount is filled
-    if (paymentOption.value === 'cash') {
-        //const tenderedAmount = document.querySelector('input[name="tendered_amount"]').value.trim();
-        if (tenderedAmountInput && isNaN(tenderedAmountInput)) {
-            alert('Please enter a valid tendered amount.');
-            return false;
-        }
-    }
+      // For "Cash" payment method, check if tendered amount is filled
+		if (paymentOption.value === 'cash') {
+			const tenderedAmountInput = document.querySelector('input[name="tendered_amount"]').value.trim();
+			// Check if the tendered amount is not a valid number
+			if (tenderedAmountInput && isNaN(Number(tenderedAmountInput))) {
+				alert('Please enter a valid tendered amount.');
+				return false;
+			}
+		}
 
     // For "GCash" payment method, validate the phone number
     if (paymentOption.value === 'gcash') {

@@ -517,11 +517,11 @@ button:hover {
 
 .container {
     background-color: #f6f2ef;
-    height: 1600px;
+    height: 1300px;
 }
 .search-invoice-form {
-    max-width: 1400px;
-    height: 1000px;
+    max-width: 1300px;
+    height: 900px;
     border: 1px solid #ccc;
     border-radius: 20px;
     background-color: #f9f9f9;
@@ -541,7 +541,7 @@ button:hover {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    max-width: 100%;
+    max-width: 80%;
     height: auto;
 }
 #search_option {
@@ -982,13 +982,12 @@ button:hover {
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 10% auto;
             padding: 30px;
             border: 1px solid #888;
             width: 80%;
             max-width: 400px;
             text-align: center;
-
         }
         /* Resize the photo inside the modal */
             .modal-content img {
@@ -1001,6 +1000,7 @@ button:hover {
             margin-bottom: 10px;
             margin-top: 10px;
         }
+
         .close-button {
             color: #aaa;
             font-size: 28px;
@@ -1538,7 +1538,7 @@ button:hover {
 .modal-content {
   background-color: #fff;
   margin: 10% auto; /* Center vertically and horizontally */
-  padding: 10px;
+  padding: 30px;
   border-radius: 8px;
   width: 100%;
   max-width: 500px;
@@ -1618,6 +1618,7 @@ textarea {
     width: 100%;
     margin-bottom: 10px;
 }
+
 
 button {
     margin-top: 10px;
