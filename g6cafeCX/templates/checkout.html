@@ -35,9 +35,7 @@
 				<h3>Order Type</h3>
 				<label>
 					<input type="radio" name="order_type" value="pick_up"> Pick-Up
-					<input type="radio" name="order_type" value="delivery"> Delivery
 				</label>
-
 				<div id="pick_up_options" style="display: none;">
 					<label>
 						<input type="radio" name="option" id="standard" value="standard"> Pick-up Now
@@ -48,6 +46,9 @@
 						<input type="time" name="pickup_time" id="pickup_time">
 					</label>
 				</div>
+				<label>
+					<input type="radio" name="order_type" value="delivery"> Delivery
+				</label>
 				<div id="delivery_options" style="display: none;">
 					<label>
 						<input type="radio" name="option" id="deliver_now" value="deliver_now"> Deliver Now
@@ -461,7 +462,6 @@ deliveryOptions.addEventListener("change", (event) => {
 					cvvInput.required = false;
 				}
 
-
 				if (this.value !== "cash") {
 					tenderedAmountSection.style.display = 'none';
 					tenderedAmountInput.value = '';
@@ -472,6 +472,7 @@ deliveryOptions.addEventListener("change", (event) => {
 					changeDisplay.style.display = 'block';
 					changeDisplay.innerText = `P0.00`; // Ensure change is reset for cash payment
 				}
+
 				if (this.value === "gcash") {
 					gcashSection.style.display = 'block';
 					gcashNumberInput.required = false; // Make GCash number input required
@@ -483,26 +484,25 @@ deliveryOptions.addEventListener("change", (event) => {
 			});
 		 });
 
-	function updateDiscountDetails() {
+		function updateDiscountDetails() {
+		  if (noneRadio.checked) {
+			discountDetails.style.display = 'none';
+			discountNameInput.value = '';
+			discountIdInput.value = '';
+		}
+		// If PWD or Senior is selected
+		else if (pwdRadio.checked || seniorRadio.checked) {
+			discountDetails.style.display = 'block';
+			discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
+			discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
+		} else {
+			// If none are selected, hide the discount details
+			discountDetails.style.display = 'none';
+			discountNameInput.value = '';
+			discountIdInput.value = '';
+		}
 
-	  if (noneRadio.checked) {
-        discountDetails.style.display = 'none';
-        discountNameInput.value = '';
-        discountIdInput.value = '';
-    }
-    // If PWD or Senior is selected
-    else if (pwdRadio.checked || seniorRadio.checked) {
-        discountDetails.style.display = 'block';
-        discountNameInput.placeholder = pwdRadio.checked ? "Enter your PWD full name" : "Enter your Senior full name";
-        discountIdInput.placeholder = pwdRadio.checked ? "Enter your PWD ID number" : "Enter your Senior ID number";
-    } else {
-        // If none are selected, hide the discount details
-        discountDetails.style.display = 'none';
-        discountNameInput.value = '';
-        discountIdInput.value = '';
-    }
-
-    loadCart(); // Reload the cart to reflect changes
+		loadCart(); // Reload the cart to reflect changes
 	}
 
 	// Event listeners for radio buttons
@@ -511,10 +511,9 @@ deliveryOptions.addEventListener("change", (event) => {
 	noneRadio.addEventListener('change', updateDiscountDetails);
 
 	// Example of a tendered amount input event listener
-	tenderedAmountInput.addEventListener('input', updateChangeDisplay);
-
-tenderedAmountInput.addEventListener('input', updateChangeDisplay);
+		tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     }
+
     function addMultipleKeyValuePairs(dataList, keyValuePairs) {
       dataList.push(Object.fromEntries(keyValuePairs));
       return dataList;
@@ -524,7 +523,6 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     function loadCart() {
 		const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const orderSummary = document.getElementById('order-summary');
-
 
         let totalItems = 0;
         let subtotal = 0;
@@ -661,22 +659,22 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 
     // Function to check if a store is selected
 	function checkSelectedBranch() {
-    const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
+		const selectedStore = JSON.parse(localStorage.getItem('selectedStore'));
 
-    // If no store is selected, show the store selection prompt
-    if (!selectedStore) {
-        document.getElementById('store-selection-prompt').style.display = 'block';  // Show selection prompt
-        document.getElementById('pickupDetails').style.display = 'none';  // Hide selected branch details
-    } else {
-        // If store is selected, show the selected branch details
-        document.getElementById('store-selection-prompt').style.display = 'none';  // Hide selection prompt
-        document.getElementById('pickupDetails').style.display = 'block';  // Show selected branch details
+		// If no store is selected, show the store selection prompt
+		if (!selectedStore) {
+			document.getElementById('store-selection-prompt').style.display = 'block';  // Show selection prompt
+			document.getElementById('pickupDetails').style.display = 'none';  // Hide selected branch details
+		} else {
+			// If store is selected, show the selected branch details
+			document.getElementById('store-selection-prompt').style.display = 'none';  // Hide selection prompt
+			document.getElementById('pickupDetails').style.display = 'block';  // Show selected branch details
 
-        // Update the pickup location text with the selected store's details
-        const pickupLocation = document.getElementById('pickup-location');
-        if (pickupLocation) {
-            pickupLocation.textContent = `${selectedStore.name} at ${selectedStore.location}.`;
-        }
+			// Update the pickup location text with the selected store's details
+			const pickupLocation = document.getElementById('pickup-location');
+			if (pickupLocation) {
+				pickupLocation.textContent = `${selectedStore.name} at ${selectedStore.location}.`;
+			}
     }
 }
 
@@ -728,8 +726,6 @@ const form = document.getElementById('checkout-form');
                 } else {
                     alert('Please enter your email address.');
                 }
-            } else {
-                alert('Please fill out all required fields.');
             }
         } else {
             console.log('Payment validation failed');
@@ -966,17 +962,32 @@ function validateForm() {
 			}
 		}
 
-    // For "GCash" payment method, validate the phone number
-    if (paymentOption.value === 'gcash') {
-        const gcashNumber = document.querySelector('input[name="gcash-number"]').value.trim();
-        const gcashError = document.getElementById('gcash-error');
-        if (gcashNumber && !/^\d{11}$/.test(gcashNumber)) {
-            gcashError.style.display = 'inline';
-            return false;
-        } else {
-            gcashError.style.display = 'none';
-        }
-    }
+		// For "GCash" payment method, validate the phone number
+		if (paymentOption.value === 'gcash') {
+			const gcashNumber = document.querySelector('input[name="gcash-number"]').value.trim();
+			const gcashError = document.getElementById('gcash-error');
+			if (!gcashNumber) {
+				gcashError.style.display = 'inline';
+				return false;
+			}
+			if (gcashNumber && !/^\d{11}$/.test(gcashNumber)) {
+				gcashError.style.display = 'inline';
+				return false;
+			} else {
+				gcashError.style.display = 'none';
+			}
+    	}
+
+    	//debit/creditcard
+		if (paymentOption.value === 'debit/creditcard') {
+			const cardNumber = document.querySelector('input[name="card_number"]').value.trim();
+
+			if(cardNumber.length < 16){
+				alert('Please input valid card number');
+				return false;
+			}
+		}
+
 		// Check if delivery address is filled when required
 		const deliveryOption = document.querySelector('input[name="option"]:checked');
 		if (deliveryOption && (deliveryOption.value === 'scheduled_delivery' || deliveryOption.value === 'deliver_now')) {

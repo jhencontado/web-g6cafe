@@ -371,7 +371,11 @@ def proceed_checkout():
         discount_amount = request.form.get('discount')
         net_amount = request.form.get('amount_due')
 
-        tender_amount = request.form.get('tendered_amount')
+        if request.form.get('payment') != 'cash':
+            tender_amount = net_amount
+        else:
+            tender_amount = request.form.get('tendered_amount')
+
         if len (tender_amount) ==0:
             tender_amount = 0
         change_value = request.form.get('change_value')
