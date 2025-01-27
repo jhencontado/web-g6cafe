@@ -396,30 +396,33 @@ def proceed_checkout():
         last_inserted_id = new_order.order_id
         # endregion
 
-        #insert to order_details
-        # data = request.form.get('hiddenCartListContainer')
-        # if data:
-        #     try:
-        #         json_data = json.loads(data)
-        #         # Process the JSON data here (e.g., validate, save to database)
-        #         items = []
-        #         for cartItem in json_data:
-        #             item_id = get_item_id(cartItem.itemName)
-        #             qty = int(cartItem.quantity)
-        #             amount = decimal.Decimal(cartItem.itemPrice)
-        #             new_order_details = OrderDetails(
-        #                 order_id = last_inserted_id,
-        #                 item_id = item_id,
-        #                 quantity = qty,
-        #                 subtotal = qty * amount,
-        #                 order_preference = cartItem.preferences
-        #             )
-        #             items.append(new_order_details)
-        #
-        #         db.session.add_all(items)
-        #         db.session.commit()
-        #     except json.JSONDecodeError:
-        #         return jsonify({'error': 'Invalid JSON data'}), 400
+
+        #region insert to order_details
+        item_names = request.form.getlist("item-name")
+        item_subtotals = request.form.getlist("item-subtotal")
+        item_prices = request.form.getlist("item-price")
+        item_quantities = request.form.getlist("item-quantity")
+        item_preferences = request.form.getlist("item-preference")
+
+        index = 0
+        for item_name in item_names:
+            item_id = get_item_id(item_name)
+            qty = int(item_quantities[index])
+            amount = decimal.Decimal(item_prices[index])
+            subtotal = decimal.Decimal(item_subtotals[index])
+            new_order_details = OrderDetails(
+                order_id = last_inserted_id,
+                item_id = item_id,
+                quantity = qty,
+                subtotal = subtotal,
+                order_preference = item_preferences[index]
+            )
+
+            db.session.add(new_order_details)
+            db.session.commit()
+
+            index += 1
+        #endregion
 
         #region insert PwdSeniorDetails
         discount = request.form.get('discount-option')

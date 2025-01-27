@@ -535,19 +535,19 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 
         } else {
             let orderSummaryHtml = '';
-            let hiddenOrderSummary = '';
-            itemIndex = 0
 
-            cartItems.forEach(item => {
+            let divElement = document.getElementById("hiddenCartListContainer");
+            let newInput = document.createElement("input");
+            let newInputSubTotal = document.createElement("input");
+            let newInputPrice = document.createElement("input");
+            let newInputQuantity = document.createElement("input");
+            let newInputPreference = document.createElement("input");
+
+            cartItems.forEach((item, index) => {
                 const itemSubtotal = item.quantity * item.itemPrice;
                 subtotal += itemSubtotal;
                 totalItems += item.quantity;
 
-				item_name = "item-name" + itemIndex
-				item_subtotalName = "item-subtotal" + itemIndex
-				item_priceName = "item-price" + itemIndex
-				item_quantityName = "item-quantity" + itemIndex
-				item_preferenceName = "item-preferences" + itemIndex
 				item_preference = item.preferences ? item.preferences : "No preferences"
 
                 orderSummaryHtml += `
@@ -563,18 +563,51 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 
                 `;
 
-                hiddenOrderSummary += `
-					<input type="hidden" name=${item_name} value=${item.itemName}></input>
-					<input type="hidden" name=${item_subtotalName} value=${itemSubtotal.toFixed(2)}></input>
-					<input type="hidden" name=${item_priceName} value=${item.itemPrice.toFixed(2)}></input>
-					<input type="hidden" name=${item_quantityName} value=${item.quantity} ></input>
-					<input type="hidden" name=${item_preferenceName} value=${item_preference}></input>
-                `;
+				//Set hidden input for item name
+				newInput.setAttribute("type", "text");
+				newInput.setAttribute("id", "item-name" + index);
+				newInput.setAttribute("name", "item-name");
 
-                itemIndex += 1;
+				divElement.appendChild(newInput);
+
+				document.getElementById("item-name" + index).value = item.itemName
+
+				//Set hidden input for item-subtotal
+				newInputSubTotal.setAttribute("type", "text");
+				newInputSubTotal.setAttribute("id", "item-subtotal" + index);
+				newInputSubTotal.setAttribute("name", "item-subtotal");
+
+				divElement.appendChild(newInputSubTotal);
+
+				document.getElementById("item-subtotal" + index).value = itemSubtotal.toFixed(2)
+
+				//Set hidden input for "item-price"
+				newInputPrice.setAttribute("type", "text");
+				newInputPrice.setAttribute("id", "item-price" + index);
+				newInputPrice.setAttribute("name", "item-price");
+
+				divElement.appendChild(newInputPrice);
+
+				document.getElementById("item-price" + index).value = item.itemPrice.toFixed(2)
+
+				//Set hidden input for "item-quantity"
+				newInputQuantity.setAttribute("type", "text");
+				newInputQuantity.setAttribute("id", "item-quantity" + index);
+				newInputQuantity.setAttribute("name", "item-quantity");
+
+				divElement.appendChild(newInputQuantity);
+
+				document.getElementById("item-quantity" + index).value = item.quantity
+
+				//Set hidden input for "item-preference"
+				newInputPreference.setAttribute("type", "text");
+				newInputPreference.setAttribute("id", "item-preference" + index);
+				newInputPreference.setAttribute("name", "item-preference");
+
+				divElement.appendChild(newInputPreference);
+
+				document.getElementById("item-preference" + index).value = item_preference
             });
-
-				
 
             if (pwdRadio.checked || seniorRadio.checked) {
                 discount = subtotal * 0.20;
@@ -587,7 +620,6 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
             const totalAmount = subtotal + vat - discount;
 
             orderSummary.innerHTML = orderSummaryHtml;
-            document.getElementById('hidden-order-summary').innerHTML = hiddenOrderSummary;
             document.getElementById('total-items').innerText = totalItems;
 
             document.getElementById('Subtotal').innerText = `P${subtotal.toFixed(2)}`;
