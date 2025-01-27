@@ -966,7 +966,7 @@ function validateForm() {
 		if (paymentOption.value === 'gcash') {
 			const gcashNumber = document.querySelector('input[name="gcash-number"]').value.trim();
 			const gcashError = document.getElementById('gcash-error');
-			document.querySelector('input[name="gcash-number"]').value = "";
+			document.querySelector('input[name="tendered_amount"]').value = "";
 			if (!gcashNumber) {
 				gcashError.style.display = 'inline';
 				return false;
@@ -982,7 +982,7 @@ function validateForm() {
     	//debit/creditcard
 		if (paymentOption.value === 'debit/creditcard') {
 			const cardNumber = document.querySelector('input[name="card_number"]').value.trim();
-			document.querySelector('input[name="gcash-number"]').value = "";
+			document.querySelector('input[name="tendered_amount"]').value = "";
 			if(cardNumber.length < 16){
 				alert('Please input valid card number');
 				return false;
