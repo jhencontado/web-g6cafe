@@ -27,13 +27,15 @@
             width: 100%;
             height: 800px;
             margin-bottom: 50px;
+            padding: 20px;
+            margin-top: 20px;
         }
 
         .delivery-image {
             height: 300px;
             object-fit: contain;
             display: block;
-            margin: 0 auto;
+            margin: 20px auto;
             padding: 20px;
         }
 
@@ -94,15 +96,19 @@
             box-shadow: 0 0 10px #ffc107;
         }
 
+        /* Disabled Step */
+        .status-circle.disabled {
+            background-color: #d9534f; /* Red for canceled orders */
+            border-color: #d9534f;
+        }
 
          /* Disabled Step */
         .status-circle.disabled::before {
             content: 'X'; /* Add 'X' symbol */
             font-size: 24px; /* Size of the 'X' */
             color: white; /* Make the 'X' white for contrast */
-
-
          }
+
 
         .status-text {
             margin-top: 10px;
