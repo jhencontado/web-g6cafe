@@ -162,7 +162,7 @@
                     <p class="status-text">Ready for Pick-Up</p>
                 </div>
                 <div class="order-status-step">
-                    <div class="status-circle {% if 'picked-up' in completed_steps %}completed{% endif %} {% if current_step == 'picked-up' %}active{% endif %} {% if current_step == 'pending' %}active{% endif %}{% if current_step == 'cancelled' %}disabled{% endif %}"></div>
+                    <div class="status-circle {% if 'picked-up' in completed_steps %}completed{% endif %} {% if current_step == 'picked-up' %}active{% endif %} {% if current_step == 'cancelled' %}disabled{% endif %}"></div>
                     <p class="status-text">Picked Up</p>
                 </div>
             {% elif order_type == "delivery" %}
