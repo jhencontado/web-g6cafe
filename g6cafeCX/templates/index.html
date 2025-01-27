@@ -10,6 +10,10 @@
 <body>
       {% include "header.html" %}
 <div class="carousel-container">
+    <!-- Prev Button -->
+    <button class="carousel-prev">&#10094;</button>
+
+    <!-- Slides Wrapper -->
     <div class="carousel-slides">
         <div class="carousel-slide">
             <img src="/static/images/thumbler.jpg" alt="Promo Image 1">
@@ -18,23 +22,26 @@
             <img src="/static/images/slide1.jpg" alt="Promo Image 2">
         </div>
         <div class="carousel-slide">
-            <img src="/static/images/slide2.jpg" alt="Promo Image 2">
+            <img src="/static/images/slide2.jpg" alt="Promo Image 3">
         </div>
         <div class="carousel-slide">
-            <img src="/static/images/slide3.jpg" alt="Promo Image 2">
+            <img src="/static/images/slide3.jpg" alt="Promo Image 4">
         </div>
         <div class="carousel-slide">
-            <img src="/static/images/slide4.jpg" alt="Promo Image 2">
+            <img src="/static/images/slide4.jpg" alt="Promo Image 5">
         </div>
         <div class="carousel-slide">
-            <img src="/static/images/slide5.jpg" alt="Promo Image 2">
+            <img src="/static/images/slide5.jpg" alt="Promo Image 6">
         </div>
         <div class="carousel-slide">
-            <img src="/static/images/slide6.jpg" alt="Promo Image 2">
+            <img src="/static/images/slide6.jpg" alt="Promo Image 7">
         </div>
     </div>
-    <button class="carousel-prev">&#10094;</button>
+
+    <!-- Next Button -->
     <button class="carousel-next">&#10095;</button>
+
+    <!-- Dots for Navigation -->
     <div class="carousel-dots">
         <span class="carousel-dot active" data-index="0"></span>
         <span class="carousel-dot" data-index="1"></span>
@@ -45,6 +52,7 @@
         <span class="carousel-dot" data-index="6"></span>
     </div>
 </div>
+
     <section class="promo">
     <div class="promo-content">
         <a href="{{ url_for('menu') }}">
@@ -90,71 +98,76 @@
 </html>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     const slides = document.querySelector('.carousel-slides');
     const slide = document.querySelectorAll('.carousel-slide');
     const prev = document.querySelector('.carousel-prev');
     const next = document.querySelector('.carousel-next');
     const dots = document.querySelectorAll('.carousel-dot');
 
+    if (!slides || slide.length === 0) {
+        console.error('Carousel slides not found or empty.');
+        return;
+    }
+
     let currentIndex = 0;
+    const slideCount = slide.length;
+    let autoSlideInterval;
 
     // Update the carousel display based on the current index
     function updateCarousel(index) {
-    const slideWidth = slide[0].clientWidth;
-    console.log("Slide width:", slideWidth);  // Debugging the slide width
-    console.log("Updating carousel to slide:", index); // Debugging log
+        const slideWidth = slide[0].clientWidth;
+        if (!slideWidth) {
+            console.error('Slide width is zero. Check if slides are visible.');
+            return;
+        }
 
-    // Move the carousel to the correct slide
-    slides.style.transform = `translateX(${-index * slideWidth}px)`;
+        slides.style.transform = `translateX(${-index * slideWidth}px)`;
+        slides.style.transition = 'transform 0.5s ease-in-out';
 
-    // Update the active state for the dots
-    dots.forEach(dot => dot.classList.remove('active'));
-    dots[index].classList.add('active');
-}
+        dots.forEach(dot => dot.classList.remove('active'));
+        if (dots[index]) dots[index].classList.add('active');
+    }
 
-
-        // Show the next slide
+    // Show the next slide
     function showNextSlide() {
-        // Increment the index and loop back to the first slide if at the last slide
-        currentIndex = (currentIndex + 1) % slide.length;
+        currentIndex = (currentIndex + 1) % slideCount;
         updateCarousel(currentIndex);
     }
 
     // Show the previous slide
     function showPrevSlide() {
-        currentIndex = (currentIndex - 1 + slide.length) % slide.length;
-        console.log('Showing previous slide:', currentIndex); // Debugging log
+        currentIndex = (currentIndex - 1 + slideCount) % slideCount;
         updateCarousel(currentIndex);
     }
 
+    // Attach event listeners to the navigation buttons
+    if (prev) prev.addEventListener('click', showPrevSlide);
+    if (next) next.addEventListener('click', showNextSlide);
 
-    // Ensure prev and next buttons exist and add event listeners
-    if (prev && next) {
-        // Event listener for "Prev" button
-        prev.addEventListener('click', () => {
-            console.log('Prev button clicked'); // Debugging log
-            showPrevSlide();
-        });
-
-        // Event listener for "Next" button
-        next.addEventListener('click', () => {
-            showNextSlide();
-        });
-    } else {
-        console.error('Prev or Next button not found');
-    }
-
-    // Event listener for dots
-    dots.forEach(dot => {
-        dot.addEventListener('click', (e) => {
-            currentIndex = parseInt(e.target.getAttribute('data-index')); // Get the index from the dot's data attribute
+    // Attach event listeners to the dots
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentIndex = index;
             updateCarousel(currentIndex);
         });
     });
 
-    // Auto-slide every 3 seconds
-    setInterval(showNextSlide, 3000);
+    // Auto-slide
+    function startAutoSlide() {
+        autoSlideInterval = setInterval(showNextSlide, 3000);
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+
+    slides.addEventListener('mouseenter', stopAutoSlide);
+    slides.addEventListener('mouseleave', startAutoSlide);
+
+    // Initialize carousel
+    updateCarousel(currentIndex);
+    startAutoSlide();
 });
 
 

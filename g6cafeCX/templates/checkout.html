@@ -69,7 +69,7 @@
 				<!-- Personal Details -->
 				<h3>Personal Details</h3>
 				<label>Name: <input type="text" name="name" required></label>
-				<label>Email: <input type="email" name="email"></label>
+				<label>Email: <input type="email" name="email" id="emailField" required></label>
 				<label>Contact Number: <input type="tel" name="contact" required></label>
 
 				<!-- PWD/Senior Citizen Discount Section -->
@@ -152,6 +152,7 @@
 					<label>CVV: <input type="text" name="cvv" id="cvv" maxlength="3" placeholder="CVV" ></label>
 				</div>
 				<button type="button" onclick="showModal()" id="place_order">Place Order</button>
+				<input type="email" id="emailInput" value="" style="display: none;">
 			</div>
 			<div id="hiddenCartListContainer" hidden="hidden">
 				<input type="text" name="subtotal" id="subtotal_hidden" />
@@ -192,17 +193,17 @@
 			</div>
 		</div>
 	</div>
-        <!-- Thank You Modal -->
-    <div id="thankYouModal" class="modal">
-        <div class="modal-content">
-            <!-- Add Image at the top -->
-            <img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 20px auto 0 auto;">
+<!-- Thank You Modal -->
+		<div id="thankYouModal" class="modal" style="display: none;">
+			<div class="modal-content">
+				<!-- Add Image at the top -->
+				<img src="/static/images/check.png" alt="Checkmark" style="width: 60px; height: 60px; display: block; margin: 10px auto 10px auto;">
 
-            <h2>Thank you for your Order!</h2>
-            <p>We have received your order and have sent you a text <br> message confirmation to {{ customer_phone_number }}.</p>
-            <button type="button" onclick="submitForm()" id="confirmSubmit">OK </button>
-        </div>
-    </div>
+				<h2>Thank you for your Order!</h2>
+				<p>We have received your order and have sent<br> an email confirmation to <span id="customerEmail"></span>.</p>
+				<button type="button" onclick="submitForm()" id="confirmSubmit">OK</button>
+			</div>
+		</div>
 
 {% include "footer.html" %}
 </body>
@@ -710,33 +711,41 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
     return true;
 }
 
-const form = document.getElementById('checkout-form');const modal = document.getElementById('thankYouModal');
-function showModal() {
-        if (validatePayment()) {
-      	if (validateForm()) {
-			modal.style.display = "block";
-		} else {
-			alert('Please fill out all required fields.');
-		}
+const form = document.getElementById('checkout-form');
+    const modal = document.getElementById('thankYouModal');
+    const emailField = document.querySelector('input[name="email"]');
+    const emailInput = document.getElementById('emailInput');
 
-    } else {
-        console.log('Payment validation failed');
+    function showModal() {
+        if (validatePayment()) {
+            if (validateForm()) {
+                const email = emailField.value.trim();
+                if (email) {
+                    emailInput.value = email;
+                    const customerEmail = document.querySelector('#thankYouModal p');
+                    customerEmail.innerHTML = `We have received your order and have sent<br> an email confirmation to ${email}.`;
+                    modal.style.display = "block";
+                } else {
+                    alert('Please enter your email address.');
+                }
+            } else {
+                alert('Please fill out all required fields.');
+            }
+        } else {
+            console.log('Payment validation failed');
+        }
     }
-}
 
     const placeOrder = document.getElementById('place_order');
     placeOrder.addEventListener('click', showModal);
 
     function closeModal() {
-		modal.style.display = "none";
+        modal.style.display = "none";
     }
 
     function submitForm() {
-		// Close the modal
-		closeModal();
-
-		// Submit the form
-		form.submit();
+        closeModal();
+        form.submit();
 
 		clearCart();
 
@@ -947,6 +956,10 @@ function validateForm() {
 		if (paymentOption.value === 'cash') {
 			const tenderedAmountInput = document.querySelector('input[name="tendered_amount"]').value.trim();
 			// Check if the tendered amount is not a valid number
+			if (!tenderedAmountInput) {
+				alert('Please input tendered amount.');
+				return false;
+				}
 			if (tenderedAmountInput && isNaN(Number(tenderedAmountInput))) {
 				alert('Please enter a valid tendered amount.');
 				return false;

@@ -130,6 +130,7 @@ function openModal(itemName, itemPhoto, itemPrice) {
     const plus = document.querySelector(".plus");
     const minus = document.querySelector(".minus");
     const price = parseFloat(itemPrice); // Parse the price as a number
+    const preferencesEl = document.getElementById('preferences');
 
     if (!quantityInput || !totalEl || !num || !plus || !minus) {
         console.error("Missing required elements in the modal.");
@@ -141,6 +142,7 @@ function openModal(itemName, itemPhoto, itemPrice) {
     quantityInput.value = quantity;
     num.innerText = quantity.toString().padStart(2, '0');
     totalEl.textContent = `P${price.toFixed(2)}`;
+    preferencesEl.value = '';
 
     // Update total amount and quantity display
     const updateDisplay = () => {
