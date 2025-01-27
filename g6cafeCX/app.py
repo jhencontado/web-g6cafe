@@ -563,7 +563,7 @@ def proceed_checkout():
         msg = Message(subject, recipients=[recipient_email], body=message_body)
         mail.send(msg)
 
-        return redirect(url_for('receipt', order_id=last_inserted_id))
+        return redirect(url_for('track_order', order_id=last_inserted_id))
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
