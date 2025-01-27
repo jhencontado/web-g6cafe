@@ -691,16 +691,15 @@ tenderedAmountInput.addEventListener('input', updateChangeDisplay);
 	};
 
 
-			// Function to validate the payment
-	function validatePayment() {
-     const totalPrice=document.getElementById('amount_due_hidden');
-
-    const tenderedAmount = parseFloat(tenderedAmountInput.value.trim());
+			function validatePayment() {
+    const totalPriceElement = document.getElementById('amount_due_hidden');
+    const totalPrice = parseFloat(totalPriceElement.value.trim()); // Get the numeric value of totalPrice
+    const tenderedAmountInput = document.getElementById('tendered_amount'); // Ensure this is defined
+    const tenderedAmount = parseFloat(tenderedAmountInput.value.trim()); // Get the numeric value of tenderedAmount
 
     // Log values to the console for debugging
-   // console.log('Tendered Amount:', tenderedAmount);
-   // console.log('Total Price:', totalPrice);
-
+    console.log('Tendered Amount:', tenderedAmount);
+    console.log('Total Price:', totalPrice);
 
     // Check if the tendered amount is less than the total price
     if (tenderedAmount < totalPrice) {
