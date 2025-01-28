@@ -19,7 +19,7 @@ CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -893,13 +893,15 @@ def admin_update_status():
                     G6 Cafe
                     """
                 elif order_status == 'cancelled':
-                    subject = "Order Delivered: Thank you for ordering with us!"
+                    subject = "Your Oder has been Cancelled."
                     message_body = f"""
                     Dear {contact_name},
 
-                    We regret to inform you that your order #{order_id} from {store_id} has been cancelled.
+                    We regret to inform you that your order #{order_id} has been cancelled.
                                         
-                    We apologize for any inconvenience this may have caused. If you have any questions, or if you believe this cancellation is in error, please do not hesitate to reach out to us at g6cafe.customerservice@gmail.com.
+                    We apologize for any inconvenience this may have caused. 
+                    If you have any questions, or if you believe this cancellation is in error, 
+                    please do not hesitate to reach out to us at g6cafe.customerservice@gmail.com.
 
                     Best regards,
                     G6 Cafe
