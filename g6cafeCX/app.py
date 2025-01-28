@@ -666,7 +666,6 @@ def track_order(order_id):
                 order_status=order.order_status,
                 completed_steps=completed_steps,
                 current_step=current_step,
-                current_step=current_step,
                 order_id=order_id,
                 order_type=order.order_type,  # Pass the order_type
                 store_name="Cafe G6",  # Store details (can be fetched dynamically)
