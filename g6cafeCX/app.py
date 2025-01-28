@@ -19,7 +19,7 @@ CORS(app)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # Configure MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:MySql.Admin@localhost/g6Cafe'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:MySql.Admin@localhost/g6Cafe'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -553,7 +553,7 @@ def proceed_checkout():
                         Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
                         Total Amount: {net_amount}
 
-                        If you have any questions, please contact us at support@example.com.
+                        If you have any questions, please contact us at g6cafe.customerservice@gmail.com.
 
                         Regards,
                         G6 Cafe
@@ -665,6 +665,7 @@ def track_order(order_id):
                 'track_order.html',
                 order_status=order.order_status,
                 completed_steps=completed_steps,
+                current_step=current_step,
                 current_step=current_step,
                 order_id=order_id,
                 order_type=order.order_type,  # Pass the order_type
@@ -892,6 +893,24 @@ def admin_update_status():
                     Best regards,
                     G6 Cafe
                     """
+                elif order_status == 'cancelled':
+                    subject = "Order Delivered: Thank you for ordering with us!"
+                    message_body = f"""
+                    Dear {contact_name},
+
+                    We regret to inform you that your order has been cancelled. Below are the details of your cancelled order:
+                    
+                    Order Number: {last_inserted_id}
+                    Receipt Number: {receipt_number}
+                    Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                    Total Amount: {net_amount}
+                    
+                    We apologize for any inconvenience this may have caused. If you have any questions, or if you believe this cancellation is in error, please do not hesitate to reach out to us at g6cafe.customerservice@gmail.com.
+
+                    Best regards,
+                    G6 Cafe
+                    """
+
                 else:
                     # No email is sent for other statuses
                     subject = None
