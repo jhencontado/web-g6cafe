@@ -958,18 +958,23 @@ function resetSelectedBranch() {
 			return false;
 		}
 
-		// For "Cash" payment method, check if tendered amount is filled
 		if (paymentOption.value === 'cash') {
-			// Check if the tendered amount is not a valid number
-			if (!tenderedAmountInput) {
-				alert('Please input tendered amount.');
-				return false;
-				}
-			if (tenderedAmountInput && isNaN(Number(tenderedAmountInput))) {
-				alert('Please enter a valid tendered amount.');
-				return false;
-			}
-		}
+    // Access the value of the tendered amount input
+    const tenderedAmount = tenderedAmountInput.value.trim();
+
+    // Check if the tendered amount is empty
+    if (!tenderedAmount) {
+        alert('Please input tendered amount.');
+        return false;
+    }
+
+    // Check if the tendered amount is not a valid number
+    if (isNaN(Number(tenderedAmount))) {
+        alert('Please enter a valid tendered amount.');
+        return false;
+    }
+}
+
 
 		// For "GCash" payment method, validate the phone number
 		if (paymentOption.value === 'gcash') {
