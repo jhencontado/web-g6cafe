@@ -519,6 +519,17 @@ deliveryOptions.addEventListener("change", (event) => {
       return dataList;
     }
 
+
+	// Helper function to create and append hidden inputs
+	function createHiddenInput(name, value, index) {
+    	let newInput = document.createElement("input");
+    	newInput.setAttribute("type", "hidden");
+    	newInput.setAttribute("name", name); // Ensure it's unique per field (e.g., "item-name[]")
+    	newInput.setAttribute("id", name + index); // Set a unique ID for each item
+    	newInput.setAttribute("value", value); // Set the value
+    	return newInput;
+	}
+
     // Load cart items and update the order summary
     function loadCart() {
 		const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -537,76 +548,33 @@ deliveryOptions.addEventListener("change", (event) => {
             let orderSummaryHtml = '';
 
             let divElement = document.getElementById("hiddenCartListContainer");
-            let newInput = document.createElement("input");
-            let newInputSubTotal = document.createElement("input");
-            let newInputPrice = document.createElement("input");
-            let newInputQuantity = document.createElement("input");
-            let newInputPreference = document.createElement("input");
 
             cartItems.forEach((item, index) => {
-                const itemSubtotal = item.quantity * item.itemPrice;
-                subtotal += itemSubtotal;
-                totalItems += item.quantity;
+            const itemSubtotal = item.quantity * item.itemPrice;
+            subtotal += itemSubtotal;
+            totalItems += item.quantity;
+            const itemPreference = item.preferences ? item.preferences : "No preferences";
 
-				item_preference = item.preferences ? item.preferences : "No preferences"
-
-                orderSummaryHtml += `
-                   <div>
+            orderSummaryHtml += `
+                <div>
                     <p class="item-name">
                         ${item.itemName}
                         <span class="item-subtotal">P${itemSubtotal.toFixed(2)}</span>
                         <span class="item-price">P${item.itemPrice.toFixed(2)}</span>
                         <span class="item-quantity">${item.quantity}</span>
                     </p>
-                    <p class="item-preference">${item_preference}</p>
+                    <p class="item-preference">${itemPreference}</p>
                 </div>
+            	`;
 
-                `;
+				 // Create and append hidden input for item details
+            	divElement.appendChild(createHiddenInput("item-name[]", item.itemName, index));
+            	divElement.appendChild(createHiddenInput("item-subtotal[]", itemSubtotal.toFixed(2), index));
+            	divElement.appendChild(createHiddenInput("item-price[]", item.itemPrice.toFixed(2), index));
+            	divElement.appendChild(createHiddenInput("item-quantity[]", item.quantity, index));
+            	divElement.appendChild(createHiddenInput("item-preference[]", itemPreference, index));
 
-				//Set hidden input for item name
-				newInput.setAttribute("type", "text");
-				newInput.setAttribute("id", "item-name" + index);
-				newInput.setAttribute("name", "item-name");
 
-				divElement.appendChild(newInput);
-
-				document.getElementById("item-name" + index).value = item.itemName
-
-				//Set hidden input for item-subtotal
-				newInputSubTotal.setAttribute("type", "text");
-				newInputSubTotal.setAttribute("id", "item-subtotal" + index);
-				newInputSubTotal.setAttribute("name", "item-subtotal");
-
-				divElement.appendChild(newInputSubTotal);
-
-				document.getElementById("item-subtotal" + index).value = itemSubtotal.toFixed(2)
-
-				//Set hidden input for "item-price"
-				newInputPrice.setAttribute("type", "text");
-				newInputPrice.setAttribute("id", "item-price" + index);
-				newInputPrice.setAttribute("name", "item-price");
-
-				divElement.appendChild(newInputPrice);
-
-				document.getElementById("item-price" + index).value = item.itemPrice.toFixed(2)
-
-				//Set hidden input for "item-quantity"
-				newInputQuantity.setAttribute("type", "text");
-				newInputQuantity.setAttribute("id", "item-quantity" + index);
-				newInputQuantity.setAttribute("name", "item-quantity");
-
-				divElement.appendChild(newInputQuantity);
-
-				document.getElementById("item-quantity" + index).value = item.quantity
-
-				//Set hidden input for "item-preference"
-				newInputPreference.setAttribute("type", "text");
-				newInputPreference.setAttribute("id", "item-preference" + index);
-				newInputPreference.setAttribute("name", "item-preference");
-
-				divElement.appendChild(newInputPreference);
-
-				document.getElementById("item-preference" + index).value = item_preference
             });
 
             if (pwdRadio.checked || seniorRadio.checked) {
@@ -958,6 +926,7 @@ function resetSelectedBranch() {
 			return false;
 		}
 
+		// For "Cash" payment method, check if tendered amount is filled
 		if (paymentOption.value === 'cash') {
     // Access the value of the tendered amount input
     const tenderedAmount = tenderedAmountInput.value.trim();
@@ -974,7 +943,6 @@ function resetSelectedBranch() {
         return false;
     }
 }
-
 
 		// For "GCash" payment method, validate the phone number
 		if (paymentOption.value === 'gcash') {

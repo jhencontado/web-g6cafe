@@ -1,8 +1,7 @@
 import decimal
 import logging
 import os
-
-
+from typing import List
 
 from flask import Flask, render_template, jsonify, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy,session
@@ -68,6 +67,13 @@ class OrderDetails(db.Model):
     # Relationship with MenuDetails
     menu_item = db.relationship('MenuDetails', back_populates='order_items')
 
+    def to_dict(self):
+        return {
+            "item_id": self.item_id,
+            "quantity": self.quantity,
+            "subtotal": str(self.subtotal),  # Convert Decimal to string for JSON
+            "order_preference": self.order_preference
+        }
 
 class PwdSeniorDetails(db.Model):
     __tablename__ = 'pwdsenior_details'
@@ -362,9 +368,15 @@ def get_store_id(store_name):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
 @app.route('/proceed-checkout', methods=['POST'])
 def proceed_checkout():
     try:
+
+        # Add a log to track flow
+        logging.debug("Processing checkout...")
+
         # region Insert Order
         subtotal = request.form.get('subtotal')
         vat_amount = request.form.get('vat')
@@ -401,32 +413,41 @@ def proceed_checkout():
         # endregion
 
 
-        #region insert to order_details
-        item_names = request.form.getlist("item-name")
-        item_subtotals = request.form.getlist("item-subtotal")
-        item_prices = request.form.getlist("item-price")
-        item_quantities = request.form.getlist("item-quantity")
-        item_preferences = request.form.getlist("item-preference")
 
-        index = 0
-        for item_name in item_names:
+        #region insert to order_details
+        # Collecting form data
+        item_names = request.form.getlist("item-name[]")
+        item_subtotals = request.form.getlist("item-subtotal[]")
+        item_prices = request.form.getlist("item-price[]")
+        item_quantities = request.form.getlist("item-quantity[]")
+        item_preferences = request.form.getlist("item-preference[]")
+
+        # Check if any items were received
+        if not item_names:
+            return jsonify({'error': 'No items were found.'}), 400
+
+
+        order_items = []
+
+        for index, item_name in enumerate(item_names):
             item_id = get_item_id(item_name)
             qty = int(item_quantities[index])
-            amount = decimal.Decimal(item_prices[index])
             subtotal = decimal.Decimal(item_subtotals[index])
+            amount = decimal.Decimal(item_prices[index])
+
+            # Create order details for each item
             new_order_details = OrderDetails(
-                order_id = last_inserted_id,
-                item_id = item_id,
-                quantity = qty,
-                subtotal = subtotal,
-                order_preference = item_preferences[index]
+                order_id=last_inserted_id,
+                item_id=item_id,
+                quantity=qty,
+                subtotal=subtotal,
+                order_preference=item_preferences[index]
             )
+            order_items.append(new_order_details)
 
-            db.session.add(new_order_details)
-            db.session.commit()
+        db.session.add_all(order_items)  # Add all items to the database
+        db.session.commit()  # Commit the transaction
 
-            index += 1
-        #endregion
 
         #region insert PwdSeniorDetails
         discount = request.form.get('discount-option')
@@ -566,6 +587,7 @@ def proceed_checkout():
         return redirect(url_for('track_order', order_id=last_inserted_id))
 
     except Exception as e:
+        logging.error(f"Error during checkout: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/receipt/<int:order_id>')
@@ -669,7 +691,7 @@ def track_order(order_id):
                 order_id=order_id,
                 order_type=order.order_type,  # Pass the order_type
                 store_name="Cafe G6",  # Store details (can be fetched dynamically)
-                store_email="support@g6cafe.com",
+                store_email="g6cafe.customerservice@gmail.com",
                 store_phone="123-456-7890"
             )
         else:
