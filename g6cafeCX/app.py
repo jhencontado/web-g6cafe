@@ -512,7 +512,7 @@ def proceed_checkout():
             else:
                 delivery_date = request.form.get('delivery_date')
                 delivery_time = request.form.get('delivery_time')
-        else: 
+        else:
             if option == 'standard':
                 pickup_date = datetime.datetime.now()
                 pickup_time = datetime.datetime.now().time()
@@ -962,8 +962,32 @@ def admin_update_status():
             orders = [dict(zip(order_columns, row)) for row in orders_result]
             orders = [order for order in orders if order['order_status'] not in ['delivered', 'picked-up']]
 
-    return render_template('admin_update_status.html', orders=orders, riders=riders)
 
+    return render_template('admin_update_status.html', orders=orders, riders=riders)
+@app.route('/fetch_order_items/<int:order_id>')
+def fetch_order_items(order_id):
+
+    # Fetch order items
+    list_items = (
+        db.session.query(OrderDetails, MenuDetails)
+        .join(MenuDetails, MenuDetails.item_id == OrderDetails.item_id)
+        .filter(OrderDetails.order_id == order_id)
+        .all()
+    )
+
+
+    # Prepare items for display
+    list = [
+        {
+            'item_name': item.MenuDetails.item_name,
+            'quantity': item.OrderDetails.quantity,
+            'subtotal': item.OrderDetails.subtotal,
+            'preference': item.OrderDetails.order_preference
+
+        }
+        for item in list_items
+    ]
+    return jsonify({'items': list})
 
 if __name__ == '__main__':
     app.run(debug=True)
